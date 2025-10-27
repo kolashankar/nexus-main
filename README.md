@@ -6,7 +6,7 @@ Karma Nexus is a groundbreaking, AI-powered massively multiplayer karma-based RP
 
 ## ✨ Key Features
 
-### Core Systems
+#### Core Systems
 - **80 Traits** - 20 Virtues, 20 Vices, 20 Skills, 20 Meta Traits
 - **25 Superpowers** - 5 tiers of unlockable abilities
 - **AI Pantheon** - 6 AI entities managing different game aspects
