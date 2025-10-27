@@ -2,6 +2,10 @@ from pydantic_settings import BaseSettings
 from typing import List, Union
 from pydantic import field_validator
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 class Settings(BaseSettings):
     # App
