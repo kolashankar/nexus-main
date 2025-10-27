@@ -1,13 +1,6 @@
-"""AI Services Module - The Pantheon of AI Agents"""
+"""AI services for task generation and trait analysis"""
 
-from .base import BaseAIService
-from .client import AIClient
-from .cache_manager import AICacheManager
-from .cost_tracker import AICostTracker
+from .task_generator import TaskGeneratorService
+from .trait_analyzer import TraitAnalyzer
 
-__all__ = [
-    "BaseAIService",
-    "AIClient",
-    "AICacheManager",
-    "AICostTracker",
-]
+__all__ = ['TaskGeneratorService', 'TraitAnalyzer']
