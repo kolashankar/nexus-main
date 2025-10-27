@@ -647,22 +647,33 @@ class KarmaNexusAPITester:
 
     def run_all_tests(self) -> Dict[str, Any]:
         """Run all backend tests and return comprehensive results."""
-        print("🚀 KARMA NEXUS 2.0 - BACKEND API TESTING")
+        print("🚀 KARMA NEXUS 2.0 - TASK GENERATION & MARKETPLACE API TESTING")
         print("=" * 60)
         
         all_results = {}
         
-        # Run test suites
+        # Run test suites in order
+        print("Phase 1: Basic connectivity and authentication")
         health_results = self.test_health_endpoints()
         auth_results = self.test_auth_endpoints()
         protected_results = self.test_protected_endpoints()
         additional_results = self.test_additional_endpoints()
+        
+        print("Phase 2: Task generation and marketplace APIs")
+        task_results = self.test_task_generation_api()
+        marketplace_results = self.test_marketplace_api()
+        
+        print("Phase 3: Integration scenarios")
+        integration_results = self.test_integration_scenarios()
         
         # Combine results
         all_results.update(health_results)
         all_results.update(auth_results)
         all_results.update(protected_results)
         all_results.update(additional_results)
+        all_results.update(task_results)
+        all_results.update(marketplace_results)
+        all_results.update(integration_results)
         
         # Print summary
         print("📊 TEST SUMMARY")
