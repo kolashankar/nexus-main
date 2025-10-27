@@ -1,0 +1,46 @@
+.landing-page {
+  min-height: 100vh;
+}
+
+.cyber-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50px);
+  }
+}
+
+.hero-section {
+  position: relative;
+  padding: 120px 0;
+}
+
+.features-section {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glowing effects */
+.landing-page h1 {
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+}
+
+/* Card hover effects */
+.features-section .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+}

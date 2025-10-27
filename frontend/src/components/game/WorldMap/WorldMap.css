@@ -1,0 +1,17 @@
+.world-map-container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.territory-card {
+  transition: all 0.2s;
+}
+
+.territory-card:hover {
+  transform: translateY(-2px);
+}
+
+.territory-selected {
+  border-color: var(--primary);
+  background-color: rgba(var(--primary), 0.05);
+}

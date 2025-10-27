@@ -1,0 +1,118 @@
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+!frontend/src/lib/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Testing
+.coverage
+.pytest_cache/
+.hypothesis/
+coverage/
+*.cover
+*.log
+.nyc_output
+jest-results/
+test-results/
+playwright-report/
+test-report/
+
+# Build
+/frontend/build
+/frontend/dist
+/frontend/.next
+/frontend/out
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/var/log/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Secrets
+secrets/
+*.pem
+*.key
+*.crt
+
+# Documentation
+/docs/_build/
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Misc
+.editorconfig
+.eslintcache
+.stylelintcache

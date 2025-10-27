@@ -1,0 +1,27 @@
+.world-events-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.active-event-card {
+  background: linear-gradient(135deg, rgba(var(--primary), 0.05) 0%, transparent 100%);
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(var(--primary), 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(var(--primary), 0.4);
+  }
+}
+
+.event-effect-badge {
+  transition: transform 0.2s;
+}
+
+.event-effect-badge:hover {
+  transform: scale(1.05);
+}

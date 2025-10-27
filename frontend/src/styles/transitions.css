@@ -1,0 +1,417 @@
+/* Smooth Transitions for Karma Nexus */
+
+/* Base transition utility */
+.transition-base {
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-fast {
+  transition-duration: 150ms;
+}
+
+.transition-normal {
+  transition-duration: 300ms;
+}
+
+.transition-slow {
+  transition-duration: 500ms;
+}
+
+/* Property-specific transitions */
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+.transition-opacity {
+  transition-property: opacity;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-all {
+  transition-property: all;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition:
+    opacity 200ms,
+    transform 200ms;
+}
+
+/* Modal transitions */
+.modal-transition-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.modal-transition-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 200ms,
+    transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.modal-transition-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 150ms,
+    transform 150ms ease-in;
+}
+
+/* Sidebar transitions */
+.sidebar-transition-enter {
+  transform: translateX(-100%);
+}
+
+.sidebar-transition-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms ease-out;
+}
+
+.sidebar-transition-exit {
+  transform: translateX(0);
+}
+
+.sidebar-transition-exit-active {
+  transform: translateX(-100%);
+  transition: transform 250ms ease-in;
+}
+
+/* Dropdown transitions */
+.dropdown-transition-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.dropdown-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 150ms,
+    transform 150ms ease-out;
+}
+
+.dropdown-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 100ms,
+    transform 100ms ease-in;
+}
+
+/* Tooltip transitions */
+.tooltip-transition-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.tooltip-transition-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 100ms,
+    transform 100ms ease-out;
+}
+
+.tooltip-transition-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tooltip-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 75ms,
+    transform 75ms ease-in;
+}
+
+/* List item transitions */
+.list-item-enter {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.list-item-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 200ms,
+    transform 200ms ease-out;
+}
+
+.list-item-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.list-item-exit-active {
+  opacity: 0;
+  transform: translateX(20px);
+  transition:
+    opacity 150ms,
+    transform 150ms ease-in;
+}
+
+/* Tab transitions */
+.tab-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.tab-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 200ms,
+    transform 200ms ease-out;
+}
+
+.tab-transition-exit {
+  position: absolute;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tab-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 150ms,
+    transform 150ms ease-in;
+}
+
+/* Card flip transition */
+.card-flip {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card-flip.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-flip .card-front,
+.card-flip .card-back {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.card-flip .card-back {
+  transform: rotateY(180deg);
+}
+
+/* Collapse transition */
+.collapse-enter {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.collapse-enter-active {
+  max-height: 1000px;
+  opacity: 1;
+  transition:
+    max-height 400ms ease-out,
+    opacity 300ms ease-out;
+}
+
+.collapse-exit {
+  max-height: 1000px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.collapse-exit-active {
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 300ms ease-in,
+    opacity 200ms ease-in;
+}
+
+/* Stagger children animation */
+.stagger-children > * {
+  animation: fadeInUp 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover transitions */
+.hover-lift {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hover-glow {
+  transition: box-shadow 200ms ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.hover-scale {
+  transition: transform 200ms ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-rotate {
+  transition: transform 300ms ease;
+}
+
+.hover-rotate:hover {
+  transform: rotate(5deg);
+}
+
+/* Focus transitions */
+.focus-ring {
+  transition:
+    box-shadow 150ms ease,
+    outline 150ms ease;
+}
+
+.focus-ring:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Active state transition */
+.active-press {
+  transition: transform 100ms ease;
+}
+
+.active-press:active {
+  transform: scale(0.95);
+}
+
+/* Loading state transition */
+.loading-state {
+  transition:
+    opacity 200ms ease,
+    filter 200ms ease;
+}
+
+.loading-state.loading {
+  opacity: 0.6;
+  filter: grayscale(50%);
+  pointer-events: none;
+}
+
+/* Slide transitions for carousels */
+.slide-left {
+  animation: slideLeft 0.4s ease-out;
+}
+
+.slide-right {
+  animation: slideRight 0.4s ease-out;
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

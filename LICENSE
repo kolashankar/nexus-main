@@ -1,0 +1,131 @@
+# Proprietary Software License
+
+## Karma Nexus 2.0
+
+Copyright (c) 2025 Karma Nexus Development Team. All rights reserved.
+
+## License Terms
+
+This software and associated documentation files (the "Software") are proprietary and confidential.
+
+### Grant of License
+
+**NO LICENSE IS GRANTED** to any person or entity to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software without explicit written permission from the copyright holder.
+
+### Restrictions
+
+You may **NOT**:
+
+1. Use the Software for any purpose without authorization
+2. Copy, modify, or create derivative works of the Software
+3. Distribute, sublicense, lease, rent, or lend the Software
+4. Reverse engineer, decompile, or disassemble the Software
+5. Remove or modify any copyright notices or labels on the Software
+6. Use the Software in any manner that could damage, disable, or impair the Software
+7. Transfer rights to use the Software to any third party
+
+### Authorized Use
+
+Authorized users (developers, contributors, testers) may:
+
+1. Access the Software for development purposes only
+2. Test the Software in designated environments
+3. Contribute to the Software following established contribution guidelines
+4. Use the Software in accordance with their specific authorization level
+
+### Confidentiality
+
+All information contained in the Software, including but not limited to:
+
+- Source code
+- Documentation
+- Design documents
+- Technical specifications
+- Business logic
+- Trade secrets
+
+Is considered **CONFIDENTIAL** and proprietary information.
+
+### Ownership
+
+The Software is owned by the copyright holder and is protected by:
+
+- Copyright laws
+- International treaty provisions
+- Other applicable laws
+
+All rights, title, and interest in and to the Software remain with the copyright holder.
+
+### Warranty Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF:
+
+- MERCHANTABILITY
+- FITNESS FOR A PARTICULAR PURPOSE
+- NONINFRINGEMENT
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+### Limitation of Liability
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY:
+
+- Direct, indirect, incidental, special, exemplary, or consequential damages
+- Loss of profits, revenue, data, or use
+- Business interruption
+- Loss of business opportunity
+
+Even if advised of the possibility of such damages.
+
+### Term and Termination
+
+- This license is effective until terminated
+- The copyright holder may terminate this license at any time
+- Upon termination, you must destroy all copies of the Software
+- Provisions regarding confidentiality and ownership survive termination
+
+### Governing Law
+
+This license shall be governed by and construed in accordance with applicable laws, without regard to conflicts of law principles.
+
+### Entire Agreement
+
+This license constitutes the entire agreement between you and the copyright holder regarding the Software and supersedes all prior agreements.
+
+### Contact
+
+For licensing inquiries or permission requests, contact:
+
+**Karma Nexus Development Team**
+
+---
+
+## Third-Party Licenses
+
+This software uses various open-source libraries and frameworks, each with their own licenses:
+
+### Backend Dependencies
+- FastAPI - MIT License
+- Pydantic - MIT License
+- Motor - Apache License 2.0
+- Python-JOSE - MIT License
+- Passlib - BSD License
+
+### Frontend Dependencies
+- React - MIT License
+- Three.js - MIT License
+- Tailwind CSS - MIT License
+- Zustand - MIT License
+- React Router - MIT License
+
+For complete license information on third-party dependencies, see the `requirements.txt` and `package.json` files.
+
+### Attribution
+
+When required by third-party licenses, appropriate attribution and license notices are maintained in the project files.
+
+---
+
+**This is proprietary software. Unauthorized use, distribution, or modification is strictly prohibited.**
+
+*Last Updated: Current Development Session*

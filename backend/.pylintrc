@@ -1,0 +1,51 @@
+[MAIN]
+# Files or directories to be skipped
+ignore=venv,__pycache__,.git,tests
+# Use multiple processes to speed up Pylint
+jobs=1
+
+[MESSAGES CONTROL]
+# Disable specific warnings that are acceptable in this project
+disable=
+    # Too few public methods - acceptable for simple data classes
+    too-few-public-methods,
+    # Duplicate code - we'll handle this systematically
+    duplicate-code,
+    # Import outside toplevel - needed for conditional imports
+    import-outside-toplevel,
+    # Broad except - sometimes necessary for robustness
+    broad-except,
+    # Too many arguments - acceptable for complex functions
+    too-many-arguments,
+    # Too many locals - acceptable for complex logic
+    too-many-locals,
+    # Too many branches - acceptable for business logic
+    too-many-branches,
+    # Too many statements - acceptable for initialization
+    too-many-statements,
+    # Fixme comments - we track these in issues
+    fixme
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=120
+# Maximum number of lines in a module
+max-module-lines=1000
+
+[DESIGN]
+# Minimum number of public methods for a class
+min-public-methods=1
+# Maximum number of attributes for a class
+max-attributes=20
+# Maximum number of parents for a class
+max-parents=10
+
+[SIMILARITIES]
+# Minimum lines number of a similarity block
+min-similarity-lines=10
+# Ignore comments when computing similarities
+ignore-comments=yes
+# Ignore docstrings when computing similarities
+ignore-docstrings=yes
+# Ignore imports when computing similarities
+ignore-imports=yes

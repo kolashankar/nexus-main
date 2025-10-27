@@ -1,0 +1,121 @@
+.action-bar {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.action-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.action-bar-header h4 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.ap-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(79, 70, 229, 0.2);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  height: auto;
+  min-height: 80px;
+  transition: all 0.3s ease;
+}
+
+.action-button > svg {
+  flex-shrink: 0;
+}
+
+.action-button > div {
+  flex: 1;
+  text-align: left;
+}
+
+.action-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.action-cost {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.attack-button {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+}
+
+.attack-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+}
+
+.defend-button {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.defend-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+}
+
+.ability-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.ability-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.flee-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.flee-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .action-button {
+    min-height: 70px;
+    padding: 15px;
+  }
+}

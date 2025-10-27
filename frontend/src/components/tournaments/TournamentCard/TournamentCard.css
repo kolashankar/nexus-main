@@ -1,0 +1,131 @@
+.tournament-card {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tournament-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.tournament-header {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.tournament-icon {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.tournament-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.4rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-badge.registration {
+  background: #10b981;
+  color: white;
+}
+
+.status-badge.in-progress {
+  background: #3b82f6;
+  color: white;
+}
+
+.status-badge.completed {
+  background: #6b7280;
+  color: white;
+}
+
+.tournament-description {
+  color: #a0aec0;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.tournament-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e0;
+}
+
+.prize-pool {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.prize-pool h4 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: #f59e0b;
+}
+
+.prizes {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.prize-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.prize-item .place {
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.prize-item .prize {
+  color: #cbd5e0;
+}
+
+.tournament-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.register-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  flex: 1;
+}
+
+.registered-badge {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  color: #10b981;
+  font-weight: 600;
+}

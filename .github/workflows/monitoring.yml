@@ -1,0 +1,112 @@
+name: Monitoring & Health Checks
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Production Health Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check API health
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }}/api/health)
+          if [ $response -ne 200 ]; then
+            echo "API health check failed with status $response"
+            exit 1
+          fi
+      
+      - name: Check frontend
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }})
+          if [ $response -ne 200 ]; then
+            echo "Frontend health check failed with status $response"
+            exit 1
+          fi
+      
+      - name: Check database connectivity
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }}/api/health/db)
+          if [ $response -ne 200 ]; then
+            echo "Database health check failed with status $response"
+            exit 1
+          fi
+      
+      - name: Check WebSocket
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }}/api/health/ws)
+          if [ $response -ne 200 ]; then
+            echo "WebSocket health check failed with status $response"
+            exit 1
+          fi
+      
+      - name: Alert on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: 'failure'
+          text: '🚨 Karma Nexus health check failed!'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  performance-check:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check API response time
+        run: |
+          start_time=$(date +%s%N)
+          curl -s ${{ secrets.APP_URL }}/api/health > /dev/null
+          end_time=$(date +%s%N)
+          response_time=$(( (end_time - start_time) / 1000000 ))
+          
+          echo "API response time: ${response_time}ms"
+          
+          if [ $response_time -gt 1000 ]; then
+            echo "API response time too slow: ${response_time}ms"
+            exit 1
+          fi
+      
+      - name: Check frontend load time
+        run: |
+          start_time=$(date +%s%N)
+          curl -s ${{ secrets.APP_URL }} > /dev/null
+          end_time=$(date +%s%N)
+          load_time=$(( (end_time - start_time) / 1000000 ))
+          
+          echo "Frontend load time: ${load_time}ms"
+          
+          if [ $load_time -gt 3000 ]; then
+            echo "Frontend load time too slow: ${load_time}ms"
+            exit 1
+          fi
+
+  backup-check:
+    name: Backup Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Verify latest backup
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            latest_backup=$(ls -t /backups/karma-nexus/*.gz | head -1)
+            if [ -z "$latest_backup" ]; then
+              echo "No backup found!"
+              exit 1
+            fi
+            
+            backup_age=$(( ($(date +%s) - $(stat -c %Y "$latest_backup")) / 3600 ))
+            if [ $backup_age -gt 24 ]; then
+              echo "Latest backup is ${backup_age} hours old!"
+              exit 1
+            fi
+            
+            echo "Latest backup: $latest_backup (${backup_age} hours old)"

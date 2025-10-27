@@ -1,0 +1,5 @@
+.sidebar {
+  min-height: calc(100vh - 73px);
+  position: sticky;
+  top: 73px;
+}
