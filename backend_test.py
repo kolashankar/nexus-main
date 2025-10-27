@@ -22,10 +22,12 @@ class KarmaNexusAPITester:
         self.api_url = f"{self.base_url}/api"
         self.session = requests.Session()
         self.auth_token = None
+        self.player_id = None
+        self.current_task = None
         self.test_user_data = {
-            "username": "karma_tester_2024",
-            "email": "karma.tester.2024@example.com", 
-            "password": "SecureTestPass123!",
+            "username": "karma_nexus_tester",
+            "email": "karma.nexus.tester@gametest.com", 
+            "password": "GameTest2024!",
             "economic_class": "middle",
             "moral_class": "average"
         }
