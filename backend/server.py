@@ -69,6 +69,8 @@ app.include_router(achievements_router, prefix="/api")
 app.include_router(ai_companion_router, prefix="/api")
 app.include_router(world_router, prefix="/api")
 app.include_router(seasonal_router, prefix="/api")
+app.include_router(tasks_router, prefix="/api")
+app.include_router(marketplace_router, prefix="/api")
 
 
 @app.get("/")
