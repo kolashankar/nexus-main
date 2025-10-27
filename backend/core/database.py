@@ -11,8 +11,13 @@ class Database:
     @classmethod
     def get_client(cls) -> AsyncIOMotorClient:
         if cls.client is None:
-            cls.client = AsyncIOMotorClient(settings.MONGO_URL)
-            logger.info("Connected to MongoDB")
+            # Use serverSelectionTimeoutMS to fail fast if MongoDB is unreachable
+            cls.client = AsyncIOMotorClient(
+                settings.MONGO_URL,
+                serverSelectionTimeoutMS=5000,
+                connectTimeoutMS=5000
+            )
+            logger.info("MongoDB client initialized")
         return cls.client
 
     @classmethod
@@ -27,7 +32,5 @@ class Database:
             logger.info("Closed MongoDB connection")
 
 def get_database():
+    """Dependency for getting database instance."""
     return Database.get_db()
-
-# Alias for backward compatibility
-db = Database.get_db()

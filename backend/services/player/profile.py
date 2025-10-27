@@ -2,14 +2,15 @@
 
 from typing import Optional, Dict, Any
 from datetime import datetime
-from backend.core.database import db
+from backend.core.database import get_database
 from fastapi import HTTPException
 
 class PlayerProfileService:
     """Service for managing player profiles."""
 
     def __init__(self):
-        self.collection = db.players
+        self.db = get_database()
+        self.collection = self.db.players
 
     async def get_player_by_id(self, player_id: str) -> Optional[Dict[str, Any]]:
         """Get player by ID."""

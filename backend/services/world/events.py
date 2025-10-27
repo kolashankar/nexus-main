@@ -2,7 +2,7 @@
 
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
-from backend.core.database import db
+from backend.core.database import get_database
 from backend.services.ai.architect.architect import Architect
 import random
 import uuid
@@ -12,7 +12,7 @@ class WorldEventsService:
     """Service for managing world events triggered by collective karma."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
         self.architect = Architect()
         self.event_types = {
             # Positive Events (triggered by high positive karma)

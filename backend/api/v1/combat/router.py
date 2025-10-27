@@ -16,14 +16,21 @@ from .schemas import (
 )
 
 router = APIRouter(prefix="/combat", tags=["combat"])
-combat_engine = CombatEngine()
-combat_calculator = CombatCalculator()
+
+def get_combat_engine():
+    """Dependency to get combat engine instance."""
+    return CombatEngine()
+
+def get_combat_calculator():
+    """Dependency to get combat calculator instance."""
+    return CombatCalculator()
 
 
 @router.post("/challenge", response_model=ChallengeResponse)
 async def challenge_player(
     request: ChallengeRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine)
 ):
     """Challenge another player to combat."""
     try:
@@ -47,7 +54,8 @@ async def challenge_player(
 @router.post("/accept")
 async def accept_challenge(
     request: AcceptChallengeRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine)
 ):
     """Accept a combat challenge."""
     try:
@@ -70,7 +78,8 @@ async def accept_challenge(
 @router.post("/decline")
 async def decline_challenge(
     request: AcceptChallengeRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine)
 ):
     """Decline a combat challenge."""
     try:
@@ -88,7 +97,9 @@ async def decline_challenge(
 
 @router.get("/active", response_model=CombatStateResponse)
 async def get_active_combat(
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine),
+    combat_calculator: CombatCalculator = Depends(get_combat_calculator)
 ):
     """Get current active combat state."""
     try:
@@ -112,7 +123,9 @@ async def get_active_combat(
 @router.post("/action")
 async def perform_combat_action(
     request: CombatActionRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine),
+    combat_calculator: CombatCalculator = Depends(get_combat_calculator)
 ):
     """Perform a combat action."""
     try:
@@ -134,7 +147,9 @@ async def perform_combat_action(
 @router.get("/state/{battle_id}", response_model=CombatStateResponse)
 async def get_combat_state(
     battle_id: str,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine),
+    combat_calculator: CombatCalculator = Depends(get_combat_calculator)
 ):
     """Get combat state for a specific battle."""
     try:
@@ -149,7 +164,9 @@ async def get_combat_state(
 @router.post("/flee")
 async def flee_combat(
     request: FleeRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine),
+    combat_calculator: CombatCalculator = Depends(get_combat_calculator)
 ):
     """Attempt to flee from combat."""
     try:
@@ -167,7 +184,9 @@ async def flee_combat(
 
 @router.get("/stats")
 async def get_combat_stats(
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine),
+    combat_calculator: CombatCalculator = Depends(get_combat_calculator)
 ):
     """Get player's combat statistics."""
     try:
@@ -182,9 +201,11 @@ async def get_combat_stats(
 
 @router.get("/history")
 async def get_combat_history(
-    current_user: Dict[str, Any] = Depends(get_current_user),
     limit: int = 20,
-    skip: int = 0
+    skip: int = 0,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    combat_engine: CombatEngine = Depends(get_combat_engine),
+    combat_calculator: CombatCalculator = Depends(get_combat_calculator)
 ):
     """Get combat history."""
     try:

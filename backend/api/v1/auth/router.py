@@ -115,6 +115,53 @@ async def login(request: LoginRequest, db: AsyncIOMotorDatabase = Depends(get_da
         player=player_response.model_dump()
     )
 
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh_token(
+    request: dict,
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Refresh access token using refresh token.
+    Note: Currently returns same token. Implement proper refresh logic in production.
+    """
+    refresh_token = request.get("refresh_token")
+    if not refresh_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Refresh token required"
+        )
+    
+    # Decode refresh token (using same decode function for now)
+    payload = decode_access_token(refresh_token)
+    if not payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token"
+        )
+    
+    # Get user from database
+    user_dict = await db.players.find_one({"_id": payload.get("sub")})
+    if not user_dict:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    player = Player(**user_dict)
+    
+    # Create new access token
+    access_token = create_access_token(
+        data={"sub": player.id, "username": player.username}
+    )
+    
+    # Create response
+    player_response = PlayerResponse.from_player(player, requester_id=player.id)
+    
+    return TokenResponse(
+        access_token=access_token,
+        player=player_response.model_dump()
+    )
+
 @router.post("/logout")
 async def logout(
     credentials: HTTPAuthorizationCredentials = Depends(security),

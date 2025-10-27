@@ -2,14 +2,14 @@
 
 from typing import Dict, List, Any
 from datetime import datetime, timedelta
-from backend.core.database import db
+from backend.core.database import get_database
 
 
 class GlobalKarmaTracker:
     """Service for tracking global karma statistics."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
 
     async def get_global_stats(self) -> Dict[str, Any]:
         """Get global karma statistics."""

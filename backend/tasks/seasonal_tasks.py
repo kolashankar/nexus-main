@@ -2,7 +2,7 @@
 
 import asyncio
 from datetime import datetime
-from backend.core.database import db
+from backend.core.database import get_database
 from backend.services.seasonal.battle_pass import BattlePassService
 from backend.services.seasonal.seasons import SeasonService
 from backend.services.world.events import WorldEventsService
@@ -15,7 +15,7 @@ class SeasonalTasksManager:
     """Manager for seasonal background tasks."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
         self.bp_service = BattlePassService()
         self.season_service = SeasonService()
         self.events_service = WorldEventsService()

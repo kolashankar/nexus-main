@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-from backend.core.database import db
+from backend.core.database import get_database
 import uuid
 import random
 
@@ -11,7 +11,7 @@ class RegionalEventsService:
     """Service for managing regional events in territories."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
         self.event_types = {
             "resource_surge": {
                 "name": "Resource Surge",

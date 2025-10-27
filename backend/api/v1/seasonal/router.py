@@ -5,7 +5,7 @@ from backend.api.deps import get_current_player
 from backend.models.player.player import Player
 from backend.services.seasonal.battle_pass import BattlePassService
 from backend.services.seasonal.seasons import SeasonService
-from backend.core.database import db
+from backend.core.database import get_database
 from .schemas import (
     BattlePassResponse,
     PlayerBattlePassProgressResponse,
@@ -136,6 +136,7 @@ async def get_season(
     current_player: Player = Depends(get_current_player)
 ):
     """Get specific season information."""
+    db = get_database()
     season = await db.seasons.find_one({"season_id": season_id})
 
     if not season:

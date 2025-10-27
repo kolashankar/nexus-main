@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Any
 from datetime import datetime, timedelta
-from backend.core.database import db
+from backend.core.database import get_database
 from backend.services.world.events import WorldEventsService
 
 
@@ -10,7 +10,7 @@ class CollectiveConsequencesService:
     """Service for managing consequences based on collective player behavior."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
         self.events_service = WorldEventsService()
 
     async def analyze_collective_behavior(self) -> Dict[str, Any]:

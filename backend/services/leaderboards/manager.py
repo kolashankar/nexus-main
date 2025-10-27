@@ -2,14 +2,14 @@
 
 from typing import Dict, Optional, Any
 from datetime import datetime
-from backend.core.database import db
+from backend.core.database import get_database
 
 
 class LeaderboardManager:
     """Service for managing all leaderboards."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
         self.leaderboard_configs = {
             "karma": {
                 "field": "karma_points",

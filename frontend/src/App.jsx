@@ -24,6 +24,7 @@ import { Skills } from './pages/Skills/Skills';
 import SocialHub from './pages/SocialHub/SocialHub';
 import Territories from './pages/Territories/Territories';
 import World from './pages/World/WorldDashboard';
+import AssetTest from './pages/AssetTest/AssetTest';
 import { Toaster } from './components/ui/sonner';
 
 const ProtectedRoute = ({ children }) => {
@@ -46,6 +47,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/asset-test" element={<AssetTest />} />
             <Route
               path="/dashboard"
               element={

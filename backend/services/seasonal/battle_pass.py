@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Any
 from datetime import datetime
-from backend.core.database import db
+from backend.core.database import get_database
 import uuid
 
 
@@ -10,7 +10,7 @@ class BattlePassService:
     """Service for managing battle pass system."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
 
     async def create_battle_pass(
         self,

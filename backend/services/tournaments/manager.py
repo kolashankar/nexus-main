@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-from backend.core.database import db
+from backend.core.database import get_database
 from backend.models.tournaments.tournament import (
     TournamentType
 )
@@ -14,7 +14,7 @@ class TournamentManager:
     """Service for managing tournaments."""
 
     def __init__(self):
-        self.db = db
+        self.db = get_database()
 
     async def create_tournament(
         self,
