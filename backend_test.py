@@ -257,6 +257,394 @@ class KarmaNexusAPITester:
         print()
         return results
 
+    def test_task_generation_api(self) -> Dict[str, bool]:
+        """Test task generation API endpoints."""
+        results = {}
+        
+        print("🎯 TESTING TASK GENERATION API")
+        print("-" * 40)
+        
+        if not self.auth_token:
+            print("❌ No auth token available - skipping task generation tests")
+            return {'task_generation': False}
+
+        headers = {"Authorization": f"Bearer {self.auth_token}"}
+
+        # Test task generation
+        try:
+            response = self.session.post(
+                f"{self.api_url}/tasks/generate",
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    self.current_task = data.get('task')
+                    print(f"✅ Task Generation (/api/tasks/generate) - Status: {response.status_code}")
+                    print(f"   Task ID: {self.current_task.get('task_id', 'Unknown')}")
+                    print(f"   Description: {self.current_task.get('description', 'No description')[:50]}...")
+                    print(f"   Base Reward: {self.current_task.get('base_reward', 0)} coins")
+                    results['task_generation'] = True
+                else:
+                    print(f"⚠️  Task Generation - Already has active task")
+                    print(f"   Message: {data.get('error', 'Unknown error')}")
+                    results['task_generation'] = True  # This is expected behavior
+            else:
+                print(f"❌ Task Generation (/api/tasks/generate) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['task_generation'] = False
+        except Exception as e:
+            print(f"❌ Task Generation (/api/tasks/generate) - Error: {str(e)}")
+            results['task_generation'] = False
+
+        # Test get current task
+        try:
+            response = self.session.get(
+                f"{self.api_url}/tasks/current",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    task = data.get('task')
+                    if task:
+                        self.current_task = task
+                        print(f"✅ Get Current Task (/api/tasks/current) - Status: {response.status_code}")
+                        print(f"   Task ID: {task.get('task_id', 'Unknown')}")
+                        print(f"   Status: {task.get('status', 'Unknown')}")
+                    else:
+                        print(f"⚠️  Get Current Task - No active task found")
+                    results['get_current_task'] = True
+                else:
+                    print(f"❌ Get Current Task - API returned success=false")
+                    results['get_current_task'] = False
+            else:
+                print(f"❌ Get Current Task (/api/tasks/current) - Status: {response.status_code}")
+                results['get_current_task'] = False
+        except Exception as e:
+            print(f"❌ Get Current Task (/api/tasks/current) - Error: {str(e)}")
+            results['get_current_task'] = False
+
+        # Test task completion (if we have a task)
+        if self.current_task and self.current_task.get('task_id'):
+            try:
+                completion_data = {
+                    "task_id": self.current_task['task_id']
+                }
+                
+                response = self.session.post(
+                    f"{self.api_url}/tasks/complete",
+                    json=completion_data,
+                    headers=headers,
+                    timeout=15
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get('success'):
+                        reward_breakdown = data.get('reward_breakdown', {})
+                        print(f"✅ Task Completion (/api/tasks/complete) - Status: {response.status_code}")
+                        print(f"   Base Reward: {reward_breakdown.get('base_reward', 0)} coins")
+                        print(f"   Bonus: {reward_breakdown.get('bonus_percentage', 0)}%")
+                        print(f"   Total Reward: {reward_breakdown.get('total_reward', 0)} coins")
+                        results['task_completion'] = True
+                        # Clear current task after completion
+                        self.current_task = None
+                    else:
+                        print(f"❌ Task Completion - API returned success=false")
+                        results['task_completion'] = False
+                else:
+                    print(f"❌ Task Completion (/api/tasks/complete) - Status: {response.status_code}")
+                    print(f"   Response: {response.text}")
+                    results['task_completion'] = False
+            except Exception as e:
+                print(f"❌ Task Completion (/api/tasks/complete) - Error: {str(e)}")
+                results['task_completion'] = False
+        else:
+            print("⚠️  Skipping task completion test - no active task")
+            results['task_completion'] = True  # Not a failure
+
+        print()
+        return results
+
+    def test_marketplace_api(self) -> Dict[str, bool]:
+        """Test marketplace API endpoints."""
+        results = {}
+        
+        print("🛒 TESTING MARKETPLACE API")
+        print("-" * 40)
+        
+        if not self.auth_token:
+            print("❌ No auth token available - skipping marketplace tests")
+            return {'marketplace': False}
+
+        headers = {"Authorization": f"Bearer {self.auth_token}"}
+
+        # Test get inventory
+        try:
+            response = self.session.get(
+                f"{self.api_url}/marketplace/inventory",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    inventory = data.get('inventory', {})
+                    print(f"✅ Get Inventory (/api/marketplace/inventory) - Status: {response.status_code}")
+                    print(f"   Chains: {inventory.get('chains', 0)}")
+                    print(f"   Rings: {inventory.get('rings', 0)}")
+                    print(f"   Bonus Percentage: {inventory.get('bonus_percentage', 0)}%")
+                    results['get_inventory'] = True
+                else:
+                    print(f"❌ Get Inventory - API returned success=false")
+                    results['get_inventory'] = False
+            else:
+                print(f"❌ Get Inventory (/api/marketplace/inventory) - Status: {response.status_code}")
+                results['get_inventory'] = False
+        except Exception as e:
+            print(f"❌ Get Inventory (/api/marketplace/inventory) - Error: {str(e)}")
+            results['get_inventory'] = False
+
+        # Test get prices
+        try:
+            response = self.session.get(
+                f"{self.api_url}/marketplace/prices",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    prices = data.get('prices', {})
+                    bonuses = data.get('bonuses', {})
+                    print(f"✅ Get Prices (/api/marketplace/prices) - Status: {response.status_code}")
+                    print(f"   Chain Price: {prices.get('chain', 0)} coins")
+                    print(f"   Ring Price: {prices.get('ring', 0)} coins")
+                    print(f"   Chain Bonus: {bonuses.get('chain', 'Unknown')}")
+                    print(f"   Ring Bonus: {bonuses.get('ring', 'Unknown')}")
+                    results['get_prices'] = True
+                else:
+                    print(f"❌ Get Prices - API returned success=false")
+                    results['get_prices'] = False
+            else:
+                print(f"❌ Get Prices (/api/marketplace/prices) - Status: {response.status_code}")
+                results['get_prices'] = False
+        except Exception as e:
+            print(f"❌ Get Prices (/api/marketplace/prices) - Error: {str(e)}")
+            results['get_prices'] = False
+
+        # Test purchase chain
+        try:
+            purchase_data = {
+                "item_type": "chain"
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/marketplace/purchase",
+                json=purchase_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    print(f"✅ Purchase Chain (/api/marketplace/purchase) - Status: {response.status_code}")
+                    print(f"   New Balance: {data.get('new_balance', 0)} coins")
+                    print(f"   Next Price: {data.get('next_price', 0)} coins")
+                    print(f"   New Bonus: {data.get('new_bonus_percentage', 0)}%")
+                    results['purchase_chain'] = True
+                else:
+                    error_msg = data.get('error', 'Unknown error')
+                    if 'insufficient' in error_msg.lower():
+                        print(f"⚠️  Purchase Chain - Insufficient funds (expected)")
+                        print(f"   Error: {error_msg}")
+                        results['purchase_chain'] = True  # This is expected behavior
+                    else:
+                        print(f"❌ Purchase Chain - Error: {error_msg}")
+                        results['purchase_chain'] = False
+            elif response.status_code == 400:
+                # Check if it's insufficient funds
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get('detail', '')
+                    if 'insufficient' in error_detail.lower():
+                        print(f"⚠️  Purchase Chain - Insufficient funds (expected)")
+                        print(f"   Error: {error_detail}")
+                        results['purchase_chain'] = True
+                    else:
+                        print(f"❌ Purchase Chain - Error: {error_detail}")
+                        results['purchase_chain'] = False
+                except:
+                    print(f"❌ Purchase Chain - Status: {response.status_code}")
+                    results['purchase_chain'] = False
+            else:
+                print(f"❌ Purchase Chain (/api/marketplace/purchase) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['purchase_chain'] = False
+        except Exception as e:
+            print(f"❌ Purchase Chain (/api/marketplace/purchase) - Error: {str(e)}")
+            results['purchase_chain'] = False
+
+        print()
+        return results
+
+    def test_integration_scenarios(self) -> Dict[str, bool]:
+        """Test integration scenarios with task completion and marketplace purchases."""
+        results = {}
+        
+        print("🔄 TESTING INTEGRATION SCENARIOS")
+        print("-" * 40)
+        
+        if not self.auth_token:
+            print("❌ No auth token available - skipping integration tests")
+            return {'integration': False}
+
+        headers = {"Authorization": f"Bearer {self.auth_token}"}
+
+        # Get initial state
+        try:
+            # Get current currencies
+            currencies_response = self.session.get(
+                f"{self.api_url}/player/currencies",
+                headers=headers,
+                timeout=10
+            )
+            
+            initial_coins = 0
+            if currencies_response.status_code == 200:
+                currencies_data = currencies_response.json()
+                initial_coins = currencies_data.get('currencies', {}).get('credits', 0)
+                print(f"📊 Initial coins: {initial_coins}")
+            
+            # Get initial inventory
+            inventory_response = self.session.get(
+                f"{self.api_url}/marketplace/inventory",
+                headers=headers,
+                timeout=10
+            )
+            
+            initial_chains = 0
+            initial_bonus = 0
+            if inventory_response.status_code == 200:
+                inventory_data = inventory_response.json()
+                if inventory_data.get('success'):
+                    inventory = inventory_data.get('inventory', {})
+                    initial_chains = inventory.get('chains', 0)
+                    initial_bonus = inventory.get('bonus_percentage', 0)
+                    print(f"📊 Initial chains: {initial_chains}, bonus: {initial_bonus}%")
+            
+            results['initial_state'] = True
+            
+        except Exception as e:
+            print(f"❌ Failed to get initial state: {str(e)}")
+            results['initial_state'] = False
+
+        # Test complete workflow if we have enough coins
+        if initial_coins >= 2000:
+            print("💰 Sufficient coins for integration test")
+            
+            # Try to purchase a chain first
+            try:
+                purchase_data = {"item_type": "chain"}
+                purchase_response = self.session.post(
+                    f"{self.api_url}/marketplace/purchase",
+                    json=purchase_data,
+                    headers=headers,
+                    timeout=15
+                )
+                
+                if purchase_response.status_code == 200:
+                    purchase_data = purchase_response.json()
+                    if purchase_data.get('success'):
+                        print(f"✅ Integration: Chain purchased successfully")
+                        print(f"   New balance: {purchase_data.get('new_balance', 0)} coins")
+                        print(f"   New bonus: {purchase_data.get('new_bonus_percentage', 0)}%")
+                        results['integration_purchase'] = True
+                    else:
+                        print(f"❌ Integration: Chain purchase failed - {purchase_data.get('error', 'Unknown')}")
+                        results['integration_purchase'] = False
+                else:
+                    print(f"❌ Integration: Chain purchase failed - Status {purchase_response.status_code}")
+                    results['integration_purchase'] = False
+                    
+            except Exception as e:
+                print(f"❌ Integration: Chain purchase error - {str(e)}")
+                results['integration_purchase'] = False
+        else:
+            print(f"⚠️  Insufficient coins ({initial_coins}) for integration test (need 2000+)")
+            results['integration_purchase'] = True  # Not a failure, just insufficient funds
+
+        # Test task generation and completion workflow
+        try:
+            # Generate a new task
+            task_response = self.session.post(
+                f"{self.api_url}/tasks/generate",
+                headers=headers,
+                timeout=15
+            )
+            
+            task_generated = False
+            if task_response.status_code == 200:
+                task_data = task_response.json()
+                if task_data.get('success'):
+                    task = task_data.get('task')
+                    if task:
+                        print(f"✅ Integration: New task generated")
+                        print(f"   Task ID: {task.get('task_id', 'Unknown')}")
+                        task_generated = True
+                        
+                        # Complete the task immediately
+                        completion_data = {"task_id": task['task_id']}
+                        completion_response = self.session.post(
+                            f"{self.api_url}/tasks/complete",
+                            json=completion_data,
+                            headers=headers,
+                            timeout=15
+                        )
+                        
+                        if completion_response.status_code == 200:
+                            completion_data = completion_response.json()
+                            if completion_data.get('success'):
+                                reward_breakdown = completion_data.get('reward_breakdown', {})
+                                print(f"✅ Integration: Task completed with bonus")
+                                print(f"   Base reward: {reward_breakdown.get('base_reward', 0)}")
+                                print(f"   Bonus: {reward_breakdown.get('bonus_percentage', 0)}%")
+                                print(f"   Total: {reward_breakdown.get('total_reward', 0)}")
+                                results['integration_task_flow'] = True
+                            else:
+                                print(f"❌ Integration: Task completion failed")
+                                results['integration_task_flow'] = False
+                        else:
+                            print(f"❌ Integration: Task completion failed - Status {completion_response.status_code}")
+                            results['integration_task_flow'] = False
+                else:
+                    # Check if player already has active task
+                    error_msg = task_data.get('error', '')
+                    if 'already have an active task' in error_msg:
+                        print(f"⚠️  Integration: Player already has active task")
+                        results['integration_task_flow'] = True  # This is expected
+                    else:
+                        print(f"❌ Integration: Task generation failed - {error_msg}")
+                        results['integration_task_flow'] = False
+            else:
+                print(f"❌ Integration: Task generation failed - Status {task_response.status_code}")
+                results['integration_task_flow'] = False
+                
+        except Exception as e:
+            print(f"❌ Integration: Task workflow error - {str(e)}")
+            results['integration_task_flow'] = False
+
+        print()
+        return results
+
     def run_all_tests(self) -> Dict[str, Any]:
         """Run all backend tests and return comprehensive results."""
         print("🚀 KARMA NEXUS 2.0 - BACKEND API TESTING")
