@@ -57,10 +57,33 @@ const Play = () => {
       {/* Game HUD Overlay */}
       <GameHUD player={player} />
       
+      {/* Task Panel - Right Side */}
+      <TaskPanel 
+        player={player} 
+        onTaskComplete={handleTaskComplete}
+      />
+      
+      {/* Marketplace Modal */}
+      <Marketplace
+        player={player}
+        isOpen={showMarketplace}
+        onClose={() => setShowMarketplace(false)}
+        onPurchase={handlePurchase}
+      />
+      
+      {/* Marketplace Button */}
+      <button
+        className="absolute bottom-20 right-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
+        onClick={() => setShowMarketplace(true)}
+        style={{ zIndex: 90 }}
+      >
+        🏪 Marketplace
+      </button>
+      
       {/* Game Instructions (can be toggled) */}
       <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg text-sm">
         <p className="font-semibold mb-1">Controls:</p>
-        <p>WASD - Move | Mouse - Look | Space - Jump | E - Interact</p>
+        <p>WASD/Arrows - Move | Mouse - Look | Space - Jump | E - Interact</p>
       </div>
     </div>
   );
