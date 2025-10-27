@@ -1,30 +1,20 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Karma Nexus 2.0
-Tests health endpoints, auth endpoints, and protected endpoints.
+Tests task generation, marketplace APIs, and integration scenarios.
 """
 
 import requests
 import json
 import sys
 import os
+import time
 from typing import Dict, Any, Optional
 
-# Get backend URL from frontend .env file
+# Use the backend URL from the review request
 def get_backend_url() -> str:
-    """Get backend URL from frontend environment file."""
-    env_path = "/app/frontend/.env"
-    try:
-        with open(env_path, 'r') as f:
-            for line in f:
-                if line.startswith('REACT_APP_BACKEND_URL='):
-                    return line.split('=', 1)[1].strip()
-    except FileNotFoundError:
-        print(f"❌ Environment file not found: {env_path}")
-        return "http://localhost:8001"
-    
-    print("❌ REACT_APP_BACKEND_URL not found in .env file")
-    return "http://localhost:8001"
+    """Get backend URL - using the production URL from review request."""
+    return "https://adventure-rewards-1.preview.emergentagent.com"
 
 class KarmaNexusAPITester:
     def __init__(self):
