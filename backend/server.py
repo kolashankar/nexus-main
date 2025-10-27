@@ -30,6 +30,8 @@ from backend.api.v1.achievements.router import router as achievements_router
 from backend.api.v1.ai.companion.router import router as ai_companion_router
 from backend.api.v1.world.router import router as world_router
 from backend.api.v1.seasonal.router import router as seasonal_router
+from backend.api.v1.tasks.router import router as tasks_router
+from backend.api.v1.marketplace.router import router as marketplace_router
 from backend.api.websocket.handlers import websocket_endpoint
 
 
