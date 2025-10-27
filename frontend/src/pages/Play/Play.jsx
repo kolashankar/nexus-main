@@ -4,12 +4,15 @@
 import React, { useEffect, useState } from 'react';
 import GameWorld from '../../components/game/GameWorld/GameWorld';
 import GameHUD from '../../components/game/GameHUD/GameHUD';
+import TaskPanel from '../../components/game/TaskPanel/TaskPanel';
+import Marketplace from '../../components/game/Marketplace/Marketplace';
 import useStore from '../../store';
 import { Loader2 } from 'lucide-react';
 
 const Play = () => {
   const { player, fetchPlayer, isLoadingPlayer } = useStore();
   const [gameReady, setGameReady] = useState(false);
+  const [showMarketplace, setShowMarketplace] = useState(false);
 
   useEffect(() => {
     if (!player) {
