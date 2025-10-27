@@ -1,0 +1,270 @@
+/* TaskPanel Styles */
+
+.task-panel {
+  position: absolute;
+  right: 20px;
+  top: 80px;
+  width: 320px;
+  background: rgba(10, 10, 30, 0.95);
+  border: 2px solid rgba(147, 112, 219, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(147, 112, 219, 0.3);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.task-panel-header {
+  background: linear-gradient(135deg, rgba(147, 112, 219, 0.3), rgba(75, 0, 130, 0.3));
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(147, 112, 219, 0.3);
+  border-radius: 10px 10px 0 0;
+}
+
+.task-panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.task-panel-content {
+  padding: 16px;
+}
+
+/* Task Card */
+.task-card {
+  background: rgba(20, 20, 40, 0.6);
+  border: 1px solid rgba(147, 112, 219, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.task-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(147, 112, 219, 0.2);
+}
+
+.task-type-icon {
+  font-size: 24px;
+}
+
+.task-type-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #9370db;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-description {
+  margin-bottom: 16px;
+}
+
+.task-description p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e0e0e0;
+}
+
+.task-reward,
+.task-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #b0b0b0;
+}
+
+.reward-icon,
+.timer-icon {
+  font-size: 18px;
+}
+
+.reward-amount {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.timer-value {
+  color: #ff6b6b;
+}
+
+.task-complete-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background: linear-gradient(135deg, #9370db, #6a0dad);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.task-complete-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a888e8, #7b1bb5);
+  box-shadow: 0 4px 12px rgba(147, 112, 219, 0.5);
+  transform: translateY(-2px);
+}
+
+.task-complete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading State */
+.task-loading {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.spinner {
+  border: 3px solid rgba(147, 112, 219, 0.3);
+  border-top: 3px solid #9370db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.task-loading p {
+  color: #9370db;
+  font-size: 14px;
+}
+
+/* No Task State */
+.no-task {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.no-task p {
+  color: #808080;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.no-task button {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #9370db, #6a0dad);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.no-task button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a888e8, #7b1bb5);
+  box-shadow: 0 4px 12px rgba(147, 112, 219, 0.5);
+}
+
+.no-task button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error State */
+.task-error {
+  text-align: center;
+  padding: 16px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.task-error p {
+  color: #ff6b6b;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.task-error button {
+  padding: 8px 16px;
+  background: rgba(147, 112, 219, 0.2);
+  border: 1px solid #9370db;
+  border-radius: 4px;
+  color: #9370db;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.task-error button:hover:not(:disabled) {
+  background: rgba(147, 112, 219, 0.3);
+}
+
+/* Footer */
+.task-panel-footer {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(147, 112, 219, 0.3);
+  background: rgba(20, 20, 40, 0.4);
+  border-radius: 0 0 10px 10px;
+}
+
+.coin-balance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.coin-icon {
+  font-size: 20px;
+}
+
+.coin-amount {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .task-panel {
+    right: 10px;
+    width: 280px;
+    top: 70px;
+  }
+
+  .task-panel-header h3 {
+    font-size: 14px;
+  }
+
+  .task-description p {
+    font-size: 13px;
+  }
+}
