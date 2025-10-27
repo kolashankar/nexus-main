@@ -33,7 +33,7 @@ class Settings(BaseSettings):
         return v
 
     # AI
-    GEMINI_API_KEY: str = ""
+    GEMINI_API_KEY: str = os.environ.get('GEMINI_API_KEY', '')
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
