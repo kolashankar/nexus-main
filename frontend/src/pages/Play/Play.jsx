@@ -27,6 +27,16 @@ const Play = () => {
     }
   }, [player, isLoadingPlayer]);
 
+  const handleTaskComplete = (rewardData) => {
+    // Refresh player data to update coin balance
+    fetchPlayer();
+  };
+
+  const handlePurchase = (purchaseData) => {
+    // Refresh player data to update coin balance and inventory
+    fetchPlayer();
+  };
+
   if (isLoadingPlayer || !player || !gameReady) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
