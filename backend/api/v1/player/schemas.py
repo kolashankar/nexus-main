@@ -2,10 +2,21 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, List
 from datetime import datetime
 
+class AppearanceUpdate(BaseModel):
+    """Character appearance update."""
+    model: Optional[str] = None
+    skin_tone: Optional[str] = None
+    hair_color: Optional[str] = None
+    hair_style: Optional[str] = None
+
 class PlayerUpdateRequest(BaseModel):
     """Request to update player profile."""
     economic_class: Optional[str] = None
     moral_class: Optional[str] = None
+    character_model: Optional[str] = None
+    skin_tone: Optional[str] = None
+    hair_color: Optional[str] = None
+    appearance: Optional[AppearanceUpdate] = None
 
 class PlayerProfileResponse(BaseModel):
     """Complete player profile response."""
