@@ -918,6 +918,476 @@ class KarmaNexusAPITester:
         print()
         return results
 
+    def test_trait_abilities_api(self) -> Dict[str, bool]:
+        """Test newly created trait ability endpoints."""
+        results = {}
+        
+        print("🎭 TESTING TRAIT ABILITIES API")
+        print("-" * 40)
+        
+        if not self.auth_token:
+            print("❌ No auth token available - skipping trait abilities tests")
+            return {'trait_abilities': False}
+
+        headers = {"Authorization": f"Bearer {self.auth_token}"}
+
+        # Test Compassion - Healing Touch
+        try:
+            healing_data = {
+                "target_id": "test_target_player_id",
+                "trait_level": 50
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/compassion/healing_touch",
+                json=healing_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Compassion Healing Touch - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Message: {data.get('message', 'No message')}")
+                results['compassion_healing_touch'] = True
+            else:
+                print(f"❌ Compassion Healing Touch - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['compassion_healing_touch'] = False
+        except Exception as e:
+            print(f"❌ Compassion Healing Touch - Error: {str(e)}")
+            results['compassion_healing_touch'] = False
+
+        # Test Honesty - Truth Reveal
+        try:
+            truth_data = {
+                "target_id": "test_target_player_id",
+                "trait_level": 75
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/honesty/truth_reveal",
+                json=truth_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Honesty Truth Reveal - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Revealed Info: {len(data.get('revealed_info', {}))}")
+                results['honesty_truth_reveal'] = True
+            else:
+                print(f"❌ Honesty Truth Reveal - Status: {response.status_code}")
+                results['honesty_truth_reveal'] = False
+        except Exception as e:
+            print(f"❌ Honesty Truth Reveal - Error: {str(e)}")
+            results['honesty_truth_reveal'] = False
+
+        # Test Envy - Stat Drain
+        try:
+            drain_data = {
+                "target_id": "test_target_player_id",
+                "trait_level": 60
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/envy/stat_drain",
+                json=drain_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Envy Stat Drain - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Stats Drained: {data.get('stats_drained', {})}")
+                results['envy_stat_drain'] = True
+            else:
+                print(f"❌ Envy Stat Drain - Status: {response.status_code}")
+                results['envy_stat_drain'] = False
+        except Exception as e:
+            print(f"❌ Envy Stat Drain - Error: {str(e)}")
+            results['envy_stat_drain'] = False
+
+        # Test Wrath - Berserker Rage
+        try:
+            rage_data = {
+                "trait_level": 80
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/wrath/berserker_rage",
+                json=rage_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Wrath Berserker Rage - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Damage Boost: {data.get('damage_boost', 0)}%")
+                results['wrath_berserker_rage'] = True
+            else:
+                print(f"❌ Wrath Berserker Rage - Status: {response.status_code}")
+                results['wrath_berserker_rage'] = False
+        except Exception as e:
+            print(f"❌ Wrath Berserker Rage - Error: {str(e)}")
+            results['wrath_berserker_rage'] = False
+
+        # Test Sloth - Energy Siphon
+        try:
+            siphon_data = {
+                "target_id": "test_target_player_id",
+                "trait_level": 45
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/sloth/energy_siphon",
+                json=siphon_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Sloth Energy Siphon - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Energy Drained: {data.get('energy_drained', 0)}")
+                results['sloth_energy_siphon'] = True
+            else:
+                print(f"❌ Sloth Energy Siphon - Status: {response.status_code}")
+                results['sloth_energy_siphon'] = False
+        except Exception as e:
+            print(f"❌ Sloth Energy Siphon - Error: {str(e)}")
+            results['sloth_energy_siphon'] = False
+
+        # Test Sloth - Lazy Dodge
+        try:
+            dodge_data = {
+                "trait_level": 30
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/sloth/lazy_dodge",
+                json=dodge_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Sloth Lazy Dodge - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Dodge Chance: {data.get('dodge_chance', 0)}%")
+                results['sloth_lazy_dodge'] = True
+            else:
+                print(f"❌ Sloth Lazy Dodge - Status: {response.status_code}")
+                results['sloth_lazy_dodge'] = False
+        except Exception as e:
+            print(f"❌ Sloth Lazy Dodge - Error: {str(e)}")
+            results['sloth_lazy_dodge'] = False
+
+        # Test Pride - Superior Presence
+        try:
+            pride_data = {
+                "trait_level": 70
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/pride/superior_presence",
+                json=pride_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Pride Superior Presence - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Buff Applied: {data.get('buff_applied', False)}")
+                results['pride_superior_presence'] = True
+            else:
+                print(f"❌ Pride Superior Presence - Status: {response.status_code}")
+                results['pride_superior_presence'] = False
+        except Exception as e:
+            print(f"❌ Pride Superior Presence - Error: {str(e)}")
+            results['pride_superior_presence'] = False
+
+        # Test Luck - Fortune's Favor
+        try:
+            luck_data = {
+                "trait_level": 85
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/luck/fortunes_favor",
+                json=luck_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Luck Fortune's Favor - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Luck Boost: {data.get('luck_boost', 0)}%")
+                results['luck_fortunes_favor'] = True
+            else:
+                print(f"❌ Luck Fortune's Favor - Status: {response.status_code}")
+                results['luck_fortunes_favor'] = False
+        except Exception as e:
+            print(f"❌ Luck Fortune's Favor - Error: {str(e)}")
+            results['luck_fortunes_favor'] = False
+
+        # Test Luck - Lucky Escape
+        try:
+            escape_data = {
+                "trait_level": 50
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/luck/lucky_escape",
+                json=escape_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Luck Lucky Escape - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Escaped: {data.get('escaped', False)}")
+                results['luck_lucky_escape'] = True
+            else:
+                print(f"❌ Luck Lucky Escape - Status: {response.status_code}")
+                results['luck_lucky_escape'] = False
+        except Exception as e:
+            print(f"❌ Luck Lucky Escape - Error: {str(e)}")
+            results['luck_lucky_escape'] = False
+
+        # Test Luck - Treasure Sense
+        try:
+            treasure_data = {
+                "trait_level": 65
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/luck/treasure_sense",
+                json=treasure_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Luck Treasure Sense - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Treasures Found: {len(data.get('treasures_found', []))}")
+                results['luck_treasure_sense'] = True
+            else:
+                print(f"❌ Luck Treasure Sense - Status: {response.status_code}")
+                results['luck_treasure_sense'] = False
+        except Exception as e:
+            print(f"❌ Luck Treasure Sense - Error: {str(e)}")
+            results['luck_treasure_sense'] = False
+
+        # Test Resilience - Unbreakable Will
+        try:
+            resilience_data = {
+                "trait_level": 90
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/resilience/unbreakable_will",
+                json=resilience_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Resilience Unbreakable Will - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Resistance Boost: {data.get('resistance_boost', 0)}%")
+                results['resilience_unbreakable_will'] = True
+            else:
+                print(f"❌ Resilience Unbreakable Will - Status: {response.status_code}")
+                results['resilience_unbreakable_will'] = False
+        except Exception as e:
+            print(f"❌ Resilience Unbreakable Will - Error: {str(e)}")
+            results['resilience_unbreakable_will'] = False
+
+        # Test Resilience - Damage Threshold
+        try:
+            threshold_data = {
+                "incoming_damage": 150,
+                "trait_level": 75
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/resilience/damage_threshold",
+                json=threshold_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Resilience Damage Threshold - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Final Damage: {data.get('final_damage', 0)}")
+                results['resilience_damage_threshold'] = True
+            else:
+                print(f"❌ Resilience Damage Threshold - Status: {response.status_code}")
+                results['resilience_damage_threshold'] = False
+        except Exception as e:
+            print(f"❌ Resilience Damage Threshold - Error: {str(e)}")
+            results['resilience_damage_threshold'] = False
+
+        # Test Wisdom - Sage Insight
+        try:
+            wisdom_data = {
+                "situation_type": "combat",
+                "trait_level": 80
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/wisdom/sage_insight",
+                json=wisdom_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Wisdom Sage Insight - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Insights: {len(data.get('insights', []))}")
+                results['wisdom_sage_insight'] = True
+            else:
+                print(f"❌ Wisdom Sage Insight - Status: {response.status_code}")
+                results['wisdom_sage_insight'] = False
+        except Exception as e:
+            print(f"❌ Wisdom Sage Insight - Error: {str(e)}")
+            results['wisdom_sage_insight'] = False
+
+        # Test Wisdom - Learning Acceleration
+        try:
+            learning_data = {
+                "skill_name": "combat_mastery",
+                "trait_level": 60
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/wisdom/learning_acceleration",
+                json=learning_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Wisdom Learning Acceleration - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   XP Multiplier: {data.get('xp_multiplier', 1.0)}x")
+                results['wisdom_learning_acceleration'] = True
+            else:
+                print(f"❌ Wisdom Learning Acceleration - Status: {response.status_code}")
+                results['wisdom_learning_acceleration'] = False
+        except Exception as e:
+            print(f"❌ Wisdom Learning Acceleration - Error: {str(e)}")
+            results['wisdom_learning_acceleration'] = False
+
+        # Test Adaptability - Quick Adaptation
+        try:
+            adapt_data = {
+                "situation": "combat",
+                "trait_level": 70
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/adaptability/quick_adaptation",
+                json=adapt_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Adaptability Quick Adaptation - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Adaptations: {len(data.get('adaptations', {}))}")
+                results['adaptability_quick_adaptation'] = True
+            else:
+                print(f"❌ Adaptability Quick Adaptation - Status: {response.status_code}")
+                results['adaptability_quick_adaptation'] = False
+        except Exception as e:
+            print(f"❌ Adaptability Quick Adaptation - Error: {str(e)}")
+            results['adaptability_quick_adaptation'] = False
+
+        # Test Adaptability - Environment Mastery
+        try:
+            env_data = {
+                "environment_type": "desert",
+                "trait_level": 55
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/adaptability/environment_mastery",
+                json=env_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Adaptability Environment Mastery - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Mastery Level: {data.get('mastery_level', 0)}")
+                results['adaptability_environment_mastery'] = True
+            else:
+                print(f"❌ Adaptability Environment Mastery - Status: {response.status_code}")
+                results['adaptability_environment_mastery'] = False
+        except Exception as e:
+            print(f"❌ Adaptability Environment Mastery - Error: {str(e)}")
+            results['adaptability_environment_mastery'] = False
+
+        # Test Adaptability - Copy Ability
+        try:
+            copy_data = {
+                "target_id": "test_target_player_id",
+                "ability_name": "strength",
+                "trait_level": 85
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/traits/adaptability/copy_ability",
+                json=copy_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Adaptability Copy Ability - Status: {response.status_code}")
+                print(f"   Success: {data.get('success', False)}")
+                print(f"   Copied Ability: {data.get('copied_ability', 'None')}")
+                results['adaptability_copy_ability'] = True
+            else:
+                print(f"❌ Adaptability Copy Ability - Status: {response.status_code}")
+                results['adaptability_copy_ability'] = False
+        except Exception as e:
+            print(f"❌ Adaptability Copy Ability - Error: {str(e)}")
+            results['adaptability_copy_ability'] = False
+
+        print()
+        return results
+
     def run_all_tests(self) -> Dict[str, Any]:
         """Run all backend tests and return comprehensive results."""
         print("🚀 KARMA NEXUS 2.0 - TASK GENERATION & MARKETPLACE API TESTING")
