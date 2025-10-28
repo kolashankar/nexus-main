@@ -1,57 +1,35 @@
-/**
- * TaskPanel - Right-side panel showing current AI-generated task
- */
 import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Coins, Clock, Target, RefreshCw, Loader2 } from 'lucide-react';
 import './TaskPanel.css';
 
-const BACKEND_URL = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-
-const TaskPanel = ({ player, onTaskComplete }) => {
-  const [currentTask, setCurrentTask] = useState(null);
+const TaskPanel = ({ player }) => {
+  const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [completing, setCompleting] = useState(false);
-  const [coinBalance, setCoinBalance] = useState(player?.currencies?.credits || 0);
+  const [error, setError] = useState(null);
 
-  // Fetch current task on mount
   useEffect(() => {
     fetchCurrentTask();
   }, []);
 
-  // Update coin balance when player changes
-  useEffect(() => {
-    if (player?.currencies?.credits !== undefined) {
-      setCoinBalance(player.currencies.credits);
-    }
-  }, [player]);
-
   const fetchCurrentTask = async () => {
     try {
       setLoading(true);
-      setError(null);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${BACKEND_URL}/api/tasks/current`, {
+      const response = await fetch('/api/tasks/current', {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch current task');
-      }
-
       const data = await response.json();
-      setCurrentTask(data.task);
-
-      // If no task, generate a new one
-      if (!data.task) {
-        await generateNewTask();
+      if (data.success && data.task) {
+        setTask(data.task);
+      } else {
+        setTask(null);
       }
     } catch (err) {
       console.error('Error fetching task:', err);
-      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -61,200 +39,160 @@ const TaskPanel = ({ player, onTaskComplete }) => {
     try {
       setLoading(true);
       setError(null);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${BACKEND_URL}/api/tasks/generate`, {
+      const response = await fetch('/api/tasks/generate', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate task');
-      }
-
       const data = await response.json();
+      
       if (data.success) {
-        setCurrentTask(data.task);
+        setTask(data.task);
       } else {
         setError(data.error || 'Failed to generate task');
       }
     } catch (err) {
+      setError('Network error. Please try again.');
       console.error('Error generating task:', err);
-      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const completeTask = async () => {
-    if (!currentTask) return;
-
+    if (!task) return;
+    
     try {
       setCompleting(true);
-      setError(null);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${BACKEND_URL}/api/tasks/complete`, {
+      const response = await fetch('/api/tasks/complete', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ task_id: currentTask.task_id })
+        body: JSON.stringify({ task_id: task._id })
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to complete task');
-      }
-
       const data = await response.json();
       
       if (data.success) {
-        // Update coin balance
-        const newBalance = coinBalance + data.reward_breakdown.total_reward;
-        setCoinBalance(newBalance);
-
-        // Show success message
-        alert(`Task completed! +${data.reward_breakdown.total_reward} coins!\n\nBase: ${data.reward_breakdown.base_reward}\nBonus: ${data.reward_breakdown.bonus_amount} (+${data.reward_breakdown.bonus_percentage}%)`);
-
-        // Clear current task and generate new one
-        setCurrentTask(null);
+        // Show reward notification
+        alert(`Task completed! You earned ${data.actual_reward} coins!\n` + 
+              `${data.bonus_percentage > 0 ? `(+${data.bonus_percentage}% bonus from ornaments)` : ''}`);
         
-        // Notify parent component
-        if (onTaskComplete) {
-          onTaskComplete(data.reward_breakdown);
-        }
-
-        // Auto-generate new task after a short delay
+        // Clear task and fetch new one
+        setTask(null);
         setTimeout(() => {
-          generateNewTask();
+          fetchCurrentTask();
         }, 1000);
       }
     } catch (err) {
       console.error('Error completing task:', err);
-      setError(err.message);
+      alert('Failed to complete task. Please try again.');
     } finally {
       setCompleting(false);
     }
   };
 
-  const getTimeRemaining = () => {
-    if (!currentTask?.expires_at) return 'N/A';
-    
-    const expiresAt = new Date(currentTask.expires_at);
+  const getTaskTypeColor = () => {
+    if (!task) return 'neutral';
+    switch (task.task_type) {
+      case 'good': return 'text-green-400';
+      case 'bad': return 'text-red-400';
+      default: return 'text-yellow-400';
+    }
+  };
+
+  const formatTimeRemaining = () => {
+    if (!task || !task.expires_at) return 'N/A';
     const now = new Date();
-    const diff = expiresAt - now;
-
-    if (diff <= 0) {
-      return 'Expired';
-    }
-
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    const expires = new Date(task.expires_at);
+    const diff = expires - now;
+    
+    if (diff <= 0) return 'Expired';
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${hours}h ${minutes}m`;
   };
-
-  const getTaskTypeIcon = (taskType) => {
-    switch (taskType) {
-      case 'good':
-        return '✨';
-      case 'bad':
-        return '💀';
-      default:
-        return '⚡';
-    }
-  };
-
-  const getTaskTypeLabel = (taskType) => {
-    switch (taskType) {
-      case 'good':
-        return 'Virtuous Task';
-      case 'bad':
-        return 'Dark Task';
-      default:
-        return 'Neutral Task';
-    }
-  };
-
-  if (loading && !currentTask) {
-    return (
-      <div className="task-panel">
-        <div className="task-panel-header">
-          <h3>🎯 CURRENT TASK</h3>
-        </div>
-        <div className="task-panel-content">
-          <div className="task-loading">
-            <div className="spinner"></div>
-            <p>Loading task...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="task-panel">
-      <div className="task-panel-header">
-        <h3>🎯 CURRENT TASK</h3>
-      </div>
+      <Card className="task-card">
+        <div className="task-header">
+          <Target className="w-5 h-5" />
+          <h3>Current Task</h3>
+        </div>
 
-      <div className="task-panel-content">
+        {loading && (
+          <div className="task-loading">
+            <Loader2 className="w-8 h-8 animate-spin" />
+            <p>Loading task...</p>
+          </div>
+        )}
+
         {error && (
           <div className="task-error">
             <p>{error}</p>
-            <button onClick={generateNewTask} disabled={loading}>
-              Try Again
-            </button>
           </div>
         )}
 
-        {currentTask ? (
-          <div className="task-card">
-            <div className="task-type">
-              <span className="task-type-icon">{getTaskTypeIcon(currentTask.task_type)}</span>
-              <span className="task-type-label">{getTaskTypeLabel(currentTask.task_type)}</span>
-            </div>
-
-            <div className="task-description">
-              <p>{currentTask.description}</p>
-            </div>
-
-            <div className="task-reward">
-              <span className="reward-icon">💰</span>
-              <span className="reward-amount">Reward: {currentTask.base_reward} coins</span>
-            </div>
-
-            <div className="task-timer">
-              <span className="timer-icon">⏱️</span>
-              <span className="timer-value">Expires: {getTimeRemaining()}</span>
-            </div>
-
-            <button 
-              className="task-complete-button"
-              onClick={completeTask}
-              disabled={completing}
-            >
-              {completing ? 'Completing...' : 'Complete Task'}
-            </button>
-          </div>
-        ) : (
+        {!loading && !task && !error && (
           <div className="no-task">
             <p>No active task</p>
-            <button onClick={generateNewTask} disabled={loading}>
-              {loading ? 'Generating...' : 'Get New Task'}
-            </button>
+            <Button onClick={generateNewTask} disabled={loading}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Generate Task
+            </Button>
           </div>
         )}
-      </div>
 
-      <div className="task-panel-footer">
-        <div className="coin-balance">
-          <span className="coin-icon">💰</span>
-          <span className="coin-amount">Coins: {coinBalance.toLocaleString()}</span>
-        </div>
+        {!loading && task && (
+          <div className="task-content">
+            <div className={`task-type ${getTaskTypeColor()}`}>
+              {task.task_type?.toUpperCase() || 'TASK'}
+            </div>
+
+            <h4 className="task-title">{task.title}</h4>
+            <p className="task-description">{task.description}</p>
+
+            <div className="task-details">
+              <div className="task-detail">
+                <Coins className="w-4 h-4" />
+                <span>Reward: {task.coin_reward} coins</span>
+              </div>
+
+              <div className="task-detail">
+                <Clock className="w-4 h-4" />
+                <span>Expires: {formatTimeRemaining()}</span>
+              </div>
+            </div>
+
+            <div className="task-actions">
+              <Button 
+                onClick={completeTask} 
+                disabled={completing}
+                className="complete-btn"
+              >
+                {completing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Completing...
+                  </>
+                ) : (
+                  'Complete Task'
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      <div className="coin-display">
+        <Coins className="w-5 h-5 text-yellow-400" />
+        <span>Coins: {player?.currencies?.credits?.toLocaleString() || 0}</span>
       </div>
     </div>
   );
