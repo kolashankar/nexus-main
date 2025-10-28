@@ -1,0 +1,228 @@
+/* Upgrade Station Styles */
+
+.upgrade-station {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.upgrade-station-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.upgrade-title {
+  background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.upgrade-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.upgrade-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Upgrade Card Styles */
+.upgrade-card {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.upgrade-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.upgrade-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+}
+
+.upgrade-card:hover::before {
+  left: 100%;
+}
+
+/* Progress Bar Animations */
+.upgrade-progress {
+  height: 8px;
+  background: rgba(75, 85, 99, 0.5);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.upgrade-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #a855f7, #3b82f6);
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.upgrade-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Level Badge */
+.upgrade-level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 32px;
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  border-radius: 16px;
+  font-weight: bold;
+  color: white;
+  font-size: 0.875rem;
+  padding: 0 12px;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
+/* Cost Display */
+.upgrade-cost {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.upgrade-cost.insufficient {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Button Styles */
+.upgrade-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.upgrade-button:not(:disabled):hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+}
+
+.upgrade-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Max Level Display */
+.max-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-radius: 9999px;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Unlock Requirements */
+.unlock-requirement {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(251, 191, 36, 0.8);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .upgrade-station-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .upgrade-card {
+    padding: 1rem;
+  }
+}
