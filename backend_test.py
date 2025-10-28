@@ -14,7 +14,7 @@ from typing import Dict, Any, Optional
 # Use the backend URL from the review request
 def get_backend_url() -> str:
     """Get backend URL - using the production URL from review request."""
-    return "https://karma-evolution.preview.emergentagent.com"
+    return "https://attribute-manager.preview.emergentagent.com"
 
 class KarmaNexusAPITester:
     def __init__(self):
