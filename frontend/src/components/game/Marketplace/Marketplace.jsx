@@ -68,14 +68,8 @@ const Marketplace = ({ player, isOpen, onClose, onPurchase }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="marketplace-overlay">
-        <Card className="marketplace-modal">
-          <div className="loading-state">Loading marketplace...</div>
-        </Card>
-      </div>
-    );
+  if (loading || !isOpen) {
+    return null;
   }
 
   return (
