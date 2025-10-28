@@ -496,6 +496,279 @@ class KarmaNexusAPITester:
         print()
         return results
 
+    def test_upgrade_station_api(self) -> Dict[str, bool]:
+        """Test UpgradeStation API endpoints."""
+        results = {}
+        
+        print("⚡ TESTING UPGRADE STATION API")
+        print("-" * 40)
+        
+        if not self.auth_token:
+            print("❌ No auth token available - skipping upgrade station tests")
+            return {'upgrade_station': False}
+
+        headers = {"Authorization": f"Bearer {self.auth_token}"}
+
+        # Get initial currencies to check if player has enough for upgrades
+        initial_currencies = {}
+        try:
+            currencies_response = self.session.get(
+                f"{self.api_url}/player/currencies",
+                headers=headers,
+                timeout=10
+            )
+            
+            if currencies_response.status_code == 200:
+                currencies_data = currencies_response.json()
+                initial_currencies = currencies_data.get('currencies', {})
+                print(f"📊 Initial currencies:")
+                print(f"   Credits: {initial_currencies.get('credits', 0)}")
+                print(f"   Karma Tokens: {initial_currencies.get('karma_tokens', 0)}")
+                print(f"   Dark Matter: {initial_currencies.get('dark_matter', 0)}")
+            
+        except Exception as e:
+            print(f"❌ Failed to get initial currencies: {str(e)}")
+
+        # Test trait upgrade
+        try:
+            trait_data = {"trait_id": "strength"}
+            
+            response = self.session.post(
+                f"{self.api_url}/upgrades/traits",
+                json=trait_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    print(f"✅ Trait Upgrade (/api/upgrades/traits) - Status: {response.status_code}")
+                    print(f"   Trait: {data.get('item_id', 'Unknown')}")
+                    print(f"   Level: {data.get('old_level', 0)} → {data.get('new_level', 0)}")
+                    cost = data.get('cost', {})
+                    print(f"   Cost: {cost.get('credits', 0)} credits, {cost.get('karma_tokens', 0)} karma, {cost.get('dark_matter', 0)} dark matter")
+                    results['trait_upgrade'] = True
+                else:
+                    print(f"❌ Trait Upgrade - API returned success=false")
+                    print(f"   Message: {data.get('message', 'Unknown error')}")
+                    results['trait_upgrade'] = False
+            elif response.status_code == 400:
+                # Check if it's insufficient funds or other expected error
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get('detail', '')
+                    if 'insufficient' in error_detail.lower() or 'not enough' in error_detail.lower():
+                        print(f"⚠️  Trait Upgrade - Insufficient funds (expected)")
+                        print(f"   Error: {error_detail}")
+                        results['trait_upgrade'] = True  # This is expected behavior
+                    else:
+                        print(f"❌ Trait Upgrade - Error: {error_detail}")
+                        results['trait_upgrade'] = False
+                except:
+                    print(f"❌ Trait Upgrade - Status: {response.status_code}")
+                    print(f"   Response: {response.text}")
+                    results['trait_upgrade'] = False
+            else:
+                print(f"❌ Trait Upgrade (/api/upgrades/traits) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['trait_upgrade'] = False
+        except Exception as e:
+            print(f"❌ Trait Upgrade (/api/upgrades/traits) - Error: {str(e)}")
+            results['trait_upgrade'] = False
+
+        # Test robot upgrade
+        try:
+            robot_data = {"robot_id": "scout"}
+            
+            response = self.session.post(
+                f"{self.api_url}/upgrades/robots",
+                json=robot_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    print(f"✅ Robot Upgrade (/api/upgrades/robots) - Status: {response.status_code}")
+                    print(f"   Robot: {data.get('item_id', 'Unknown')}")
+                    print(f"   Level: {data.get('old_level', 0)} → {data.get('new_level', 0)}")
+                    cost = data.get('cost', {})
+                    print(f"   Cost: {cost.get('credits', 0)} credits, {cost.get('karma_tokens', 0)} karma, {cost.get('dark_matter', 0)} dark matter")
+                    results['robot_upgrade'] = True
+                else:
+                    print(f"❌ Robot Upgrade - API returned success=false")
+                    print(f"   Message: {data.get('message', 'Unknown error')}")
+                    results['robot_upgrade'] = False
+            elif response.status_code == 400:
+                # Check if it's insufficient funds or other expected error
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get('detail', '')
+                    if 'insufficient' in error_detail.lower() or 'not enough' in error_detail.lower():
+                        print(f"⚠️  Robot Upgrade - Insufficient funds (expected)")
+                        print(f"   Error: {error_detail}")
+                        results['robot_upgrade'] = True  # This is expected behavior
+                    else:
+                        print(f"❌ Robot Upgrade - Error: {error_detail}")
+                        results['robot_upgrade'] = False
+                except:
+                    print(f"❌ Robot Upgrade - Status: {response.status_code}")
+                    print(f"   Response: {response.text}")
+                    results['robot_upgrade'] = False
+            else:
+                print(f"❌ Robot Upgrade (/api/upgrades/robots) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['robot_upgrade'] = False
+        except Exception as e:
+            print(f"❌ Robot Upgrade (/api/upgrades/robots) - Error: {str(e)}")
+            results['robot_upgrade'] = False
+
+        # Test ornament upgrade
+        try:
+            ornament_data = {"ornament_id": "avatar_frame"}
+            
+            response = self.session.post(
+                f"{self.api_url}/upgrades/ornaments",
+                json=ornament_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    print(f"✅ Ornament Upgrade (/api/upgrades/ornaments) - Status: {response.status_code}")
+                    print(f"   Ornament: {data.get('item_id', 'Unknown')}")
+                    print(f"   Level: {data.get('old_level', 0)} → {data.get('new_level', 0)}")
+                    results['ornament_upgrade'] = True
+                else:
+                    print(f"❌ Ornament Upgrade - API returned success=false")
+                    results['ornament_upgrade'] = False
+            elif response.status_code == 400:
+                # Check if it's insufficient funds or other expected error
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get('detail', '')
+                    if 'insufficient' in error_detail.lower() or 'not enough' in error_detail.lower():
+                        print(f"⚠️  Ornament Upgrade - Insufficient funds (expected)")
+                        results['ornament_upgrade'] = True  # This is expected behavior
+                    else:
+                        print(f"❌ Ornament Upgrade - Error: {error_detail}")
+                        results['ornament_upgrade'] = False
+                except:
+                    print(f"❌ Ornament Upgrade - Status: {response.status_code}")
+                    results['ornament_upgrade'] = False
+            else:
+                print(f"❌ Ornament Upgrade (/api/upgrades/ornaments) - Status: {response.status_code}")
+                results['ornament_upgrade'] = False
+        except Exception as e:
+            print(f"❌ Ornament Upgrade (/api/upgrades/ornaments) - Error: {str(e)}")
+            results['ornament_upgrade'] = False
+
+        # Test chip upgrade
+        try:
+            chip_data = {"chip_id": "neural_enhancer"}
+            
+            response = self.session.post(
+                f"{self.api_url}/upgrades/chips",
+                json=chip_data,
+                headers=headers,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    print(f"✅ Chip Upgrade (/api/upgrades/chips) - Status: {response.status_code}")
+                    print(f"   Chip: {data.get('item_id', 'Unknown')}")
+                    print(f"   Level: {data.get('old_level', 0)} → {data.get('new_level', 0)}")
+                    results['chip_upgrade'] = True
+                else:
+                    print(f"❌ Chip Upgrade - API returned success=false")
+                    results['chip_upgrade'] = False
+            elif response.status_code == 400:
+                # Check if it's insufficient funds or other expected error
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get('detail', '')
+                    if 'insufficient' in error_detail.lower() or 'not enough' in error_detail.lower():
+                        print(f"⚠️  Chip Upgrade - Insufficient funds (expected)")
+                        results['chip_upgrade'] = True  # This is expected behavior
+                    else:
+                        print(f"❌ Chip Upgrade - Error: {error_detail}")
+                        results['chip_upgrade'] = False
+                except:
+                    print(f"❌ Chip Upgrade - Status: {response.status_code}")
+                    results['chip_upgrade'] = False
+            else:
+                print(f"❌ Chip Upgrade (/api/upgrades/chips) - Status: {response.status_code}")
+                results['chip_upgrade'] = False
+        except Exception as e:
+            print(f"❌ Chip Upgrade (/api/upgrades/chips) - Error: {str(e)}")
+            results['chip_upgrade'] = False
+
+        # Test upgrade history
+        try:
+            response = self.session.get(
+                f"{self.api_url}/upgrades/history",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    print(f"✅ Upgrade History (/api/upgrades/history) - Status: {response.status_code}")
+                    print(f"   History entries: {len(data)}")
+                    if data:
+                        latest = data[0]
+                        print(f"   Latest: {latest.get('upgrade_type', 'Unknown')} - {latest.get('item_name', 'Unknown')}")
+                    results['upgrade_history'] = True
+                else:
+                    print(f"❌ Upgrade History - Invalid response format")
+                    results['upgrade_history'] = False
+            else:
+                print(f"❌ Upgrade History (/api/upgrades/history) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['upgrade_history'] = False
+        except Exception as e:
+            print(f"❌ Upgrade History (/api/upgrades/history) - Error: {str(e)}")
+            results['upgrade_history'] = False
+
+        # Test upgrade stats
+        try:
+            response = self.session.get(
+                f"{self.api_url}/upgrades/stats",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'total_upgrades' in data:
+                    print(f"✅ Upgrade Stats (/api/upgrades/stats) - Status: {response.status_code}")
+                    print(f"   Total upgrades: {data.get('total_upgrades', 0)}")
+                    upgrades_by_type = data.get('upgrades_by_type', {})
+                    print(f"   By type: {upgrades_by_type}")
+                    total_spent = data.get('total_spent', {})
+                    print(f"   Total spent: {total_spent.get('credits', 0)} credits, {total_spent.get('karma_tokens', 0)} karma")
+                    results['upgrade_stats'] = True
+                else:
+                    print(f"❌ Upgrade Stats - Invalid response format")
+                    results['upgrade_stats'] = False
+            else:
+                print(f"❌ Upgrade Stats (/api/upgrades/stats) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['upgrade_stats'] = False
+        except Exception as e:
+            print(f"❌ Upgrade Stats (/api/upgrades/stats) - Error: {str(e)}")
+            results['upgrade_stats'] = False
+
+        print()
+        return results
+
     def test_integration_scenarios(self) -> Dict[str, bool]:
         """Test integration scenarios with task completion and marketplace purchases."""
         results = {}
