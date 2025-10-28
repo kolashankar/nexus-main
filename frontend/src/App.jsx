@@ -169,6 +169,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/upgrades"
+              element={
+                <ProtectedRoute>
+                  <UpgradeStation />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
