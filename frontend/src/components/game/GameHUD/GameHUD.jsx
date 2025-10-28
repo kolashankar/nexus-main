@@ -267,6 +267,16 @@ const GameHUD = ({ player }) => {
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div className="w-4 h-4 border-2 border-white rounded-full opacity-50" />
       </div>
+
+      {/* Trait Action Panel - Right Side */}
+      {showTraitPanel && player && (
+        <TraitActionPanel player={player} onUseAbility={handleUseAbility} />
+      )}
+
+      {/* Trait Effects Display - Left Side */}
+      {showEffectsPanel && player && (
+        <TraitEffectsDisplay player={player} />
+      )}
     </>
   );
 };
