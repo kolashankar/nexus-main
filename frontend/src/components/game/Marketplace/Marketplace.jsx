@@ -52,6 +52,11 @@ const Marketplace = ({ player, isOpen, onClose, onPurchase }) => {
         
         // Refresh marketplace info
         await fetchMarketplaceInfo();
+        
+        // Notify parent
+        if (onPurchase) {
+          onPurchase(data);
+        }
       } else {
         alert(data.error || 'Purchase failed');
       }
