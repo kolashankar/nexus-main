@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://trait-journey.preview.emergentagent.com"
+    "https://karma-evolution.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
