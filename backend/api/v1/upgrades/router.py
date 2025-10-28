@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
-from ....core.deps import get_current_user, get_db
+from backend.api.deps import get_current_user
+from backend.core.database import get_database as get_db
 from ....services.upgrades import (
     TraitUpgrader, RobotUpgrader, OrnamentUpgrader, ChipUpgrader
 )
