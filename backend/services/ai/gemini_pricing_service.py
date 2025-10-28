@@ -1,6 +1,5 @@
 """Gemini AI-based pricing service for world items."""
 
-from typing import Dict, Optional
 import os
 import google.generativeai as genai
 import json

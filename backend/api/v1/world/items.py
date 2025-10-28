@@ -1,7 +1,7 @@
 """API routes for world items."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Dict, Optional
+from typing import Optional
 from backend.api.deps import get_current_user, get_database
 from backend.models.player.player import Player
 from backend.models.world.world_item import WorldItemPosition

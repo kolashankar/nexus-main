@@ -1,7 +1,7 @@
 """API routes for player item acquisitions."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Optional
+from typing import Optional
 from backend.api.deps import get_current_user, get_database
 from backend.models.player.player import Player
 from backend.models.player.item_acquisition import StartAcquisitionRequest, ClaimAcquisitionRequest

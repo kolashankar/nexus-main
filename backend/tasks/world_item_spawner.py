@@ -2,7 +2,6 @@
 
 import asyncio
 import random
-from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
 from backend.services.world.item_spawn_service import ItemSpawnService
 import os
