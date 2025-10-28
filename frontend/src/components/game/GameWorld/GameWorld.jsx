@@ -5,8 +5,8 @@ import TraitToggleIcon from '../../traits/TraitToggleIcon/TraitToggleIcon';
 import './GameWorld.css';
 
 /**
- * Main 3D Game World Component
- * Renders the game environment using Three.js with real GLB models
+ * Enhanced 3D Game World Component - Super City Edition
+ * Features: 40 buildings, roads, vehicles, running animations, AI NPCs
  */
 const GameWorld = ({ player }) => {
   const mountRef = useRef(null);
@@ -15,11 +15,14 @@ const GameWorld = ({ player }) => {
   const rendererRef = useRef(null);
   const characterRef = useRef(null);
   const npcsRef = useRef([]);
+  const mixerRef = useRef(null);
+  const currentAnimationRef = useRef(null);
+  const animationsRef = useRef({});
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [hoveredNPC, setHoveredNPC] = useState(null);
 
-  // Movement state
+  // Movement state with running support
   const keysPressed = useRef({
     w: false,
     a: false,
@@ -29,11 +32,16 @@ const GameWorld = ({ player }) => {
     ArrowDown: false,
     ArrowLeft: false,
     ArrowRight: false,
-    space: false
+    space: false,
+    shift: false,
+    control: false
   });
 
-  const playerPosition = useRef(new THREE.Vector3(0, 0, 0));
+  const playerPosition = useRef(new THREE.Vector3(0, 1, 0));
   const playerRotation = useRef(0);
+  const playerVelocity = useRef(new THREE.Vector3());
+  const isRunning = useRef(false);
+  const isJumping = useRef(false);
 
   // Helper function to load GLB models
   const loadModel = (path) => {
