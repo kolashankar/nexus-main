@@ -1,7 +1,7 @@
 """Model for trait ability cooldowns."""
 
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal, Optional
 from datetime import datetime
 from backend.models.base import BaseDBModel
 
