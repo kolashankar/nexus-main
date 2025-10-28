@@ -98,15 +98,23 @@ const GameWorld = ({ player }) => {
     const gridHelper = new THREE.GridHelper(100, 50, 0x00ff00, 0x404040);
     scene.add(gridHelper);
 
-    // Load character model - Use procedural model for better visuals
+    // Load character model - Try GLB first, fallback to procedural
     console.log('Loading character model...');
     const characterType = player?.gender === 'female' ? 'female_base' : 'male_base';
-    const character = ProceduralModels.createCharacter(characterType);
-    character.position.copy(playerPosition.current);
-    scene.add(character);
-    characterRef.current = character;
-    setIsLoaded(true);
-    console.log('✅ Character loaded successfully');
+    
+    // Use AssetLoader with automatic fallback
+    AssetLoader.loadCharacter(characterType)
+      .then(character => {
+        character.position.copy(playerPosition.current);
+        scene.add(character);
+        characterRef.current = character;
+        setIsLoaded(true);
+        console.log('✅ Character loaded successfully');
+      })
+      .catch(error => {
+        console.error('Failed to load character:', error);
+        setError('Failed to load character model');
+      });
 
     // Load environment - Use procedural buildings
     const buildings = [
