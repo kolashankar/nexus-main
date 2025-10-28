@@ -95,6 +95,26 @@ async def health():
 app.websocket("/ws")(websocket_endpoint)
 
 
+# Import spawner task
+from backend.tasks.world_item_spawner import start_spawner, stop_spawner
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Start background tasks on application startup."""
+    print("[Server] Starting world item spawner...")
+    await start_spawner()
+    print("[Server] World item spawner started")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Stop background tasks on application shutdown."""
+    print("[Server] Stopping world item spawner...")
+    await stop_spawner()
+    print("[Server] World item spawner stopped")
+
+
 if __name__ == "__main__":
     import uvicorn
     # Make sure your environment variables (like GEMINI_API_KEY) are set before running this.
