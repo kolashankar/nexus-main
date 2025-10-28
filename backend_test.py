@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Karma Nexus 2.0
-Tests authentication, task generation, marketplace APIs, UpgradeStation endpoints, and integration scenarios.
+Tests authentication, task generation, marketplace APIs, UpgradeStation endpoints, trait abilities, and integration scenarios.
 """
 
 import requests
