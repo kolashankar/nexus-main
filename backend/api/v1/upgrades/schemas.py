@@ -126,7 +126,7 @@ class UpgradeStatsResponse(BaseModel):
     total_upgrades: int
     upgrades_by_type: Dict[str, int]
     total_spent: Dict[str, int]
-    highest_level_items: Dict[str, Dict[str, any]]
+    highest_level_items: Dict[str, Dict[str, Any]]
     
     class Config:
         json_schema_extra = {
