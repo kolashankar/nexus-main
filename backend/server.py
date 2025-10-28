@@ -72,6 +72,7 @@ app.include_router(world_router, prefix="/api")
 app.include_router(seasonal_router, prefix="/api")
 app.include_router(tasks_router, prefix="/api")
 app.include_router(marketplace_router, prefix="/api")
+app.include_router(upgrades_router, prefix="/api")
 
 
 @app.get("/")
