@@ -936,7 +936,10 @@ class KarmaNexusAPITester:
         task_results = self.test_task_generation_api()
         marketplace_results = self.test_marketplace_api()
         
-        print("Phase 3: Integration scenarios")
+        print("Phase 3: UpgradeStation API")
+        upgrade_results = self.test_upgrade_station_api()
+        
+        print("Phase 4: Integration scenarios")
         integration_results = self.test_integration_scenarios()
         
         # Combine results
