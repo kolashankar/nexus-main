@@ -35,7 +35,7 @@ class TraitAbilitiesTester:
     async def setup_database(self):
         """Initialize database connection."""
         try:
-            self.db = await get_database()
+            self.db = get_database()
             print("✅ Database connection established")
             return True
         except Exception as e:
