@@ -1,6 +1,5 @@
-"""Marketplace services for ornament trading"""
+"""Marketplace Services Package"""
 
-from .ornament_shop import OrnamentShop
-from .bonus_calculator import BonusCalculator
+from .marketplace import MarketplaceService
 
-__all__ = ['OrnamentShop', 'BonusCalculator']
+__all__ = ['MarketplaceService']

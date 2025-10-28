@@ -1,6 +1,5 @@
-"""AI services for task generation and trait analysis"""
+"""AI Services Package"""
 
-from .task_generator import TaskGeneratorService
-from .trait_analyzer import TraitAnalyzer
+from .task_generator import TaskGenerator
 
-__all__ = ['TaskGeneratorService', 'TraitAnalyzer']
+__all__ = ['TaskGenerator']

@@ -1,6 +1,5 @@
-"""Task management services"""
+"""Tasks Services Package"""
 
 from .task_manager import TaskManager
-from .reward_distributor import RewardDistributor
 
-__all__ = ['TaskManager', 'RewardDistributor']
+__all__ = ['TaskManager']
