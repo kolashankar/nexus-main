@@ -23,10 +23,23 @@ import { useTraitAbilities } from '../../../hooks/useTraitAbilities';
 const GameHUD = ({ player }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [showTraitPanel, setShowTraitPanel] = useState(true);
+  const [showEffectsPanel, setShowEffectsPanel] = useState(true);
+
+  // Trait abilities hook
+  const { useAbility, isUsing } = useTraitAbilities(player);
 
   // Calculate percentages for progress bars
   const healthPercent = ((player?.stats?.health || 100) / (player?.stats?.max_health || 100)) * 100;
   const energyPercent = ((player?.stats?.energy || 100) / (player?.stats?.max_energy || 100)) * 100;
+
+  const handleUseAbility = async (abilityData) => {
+    try {
+      await useAbility(abilityData);
+    } catch (error) {
+      console.error('Failed to use ability:', error);
+    }
+  };
 
   return (
     <>
