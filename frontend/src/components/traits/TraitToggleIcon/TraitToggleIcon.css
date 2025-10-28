@@ -1,0 +1,203 @@
+.trait-toggle-container {
+  position: relative;
+  z-index: 100;
+}
+
+.trait-toggle-container.position-top {
+  margin-bottom: 0.5rem;
+}
+
+.trait-toggle-container.position-bottom {
+  margin-top: 0.5rem;
+}
+
+.trait-toggle-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(139, 92, 246, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
+}
+
+.trait-toggle-button:hover {
+  background: rgba(139, 92, 246, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.7);
+}
+
+.trait-count-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.traits-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+  width: 280px;
+  max-height: 400px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.traits-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(139, 92, 246, 0.2);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.traits-panel-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.traits-panel-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.traits-panel-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.traits-panel-content {
+  padding: 1rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.no-traits-message {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  padding: 1rem;
+}
+
+.trait-section {
+  margin-bottom: 1rem;
+}
+
+.trait-section:last-child {
+  margin-bottom: 0;
+}
+
+.trait-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trait-section-title.good {
+  color: #10b981;
+}
+
+.trait-section-title.bad {
+  color: #ef4444;
+}
+
+.trait-section-title.meta {
+  color: #f59e0b;
+}
+
+.trait-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.trait-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  border-left: 3px solid;
+  transition: background 0.2s;
+}
+
+.trait-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.trait-item.good {
+  border-left-color: #10b981;
+}
+
+.trait-item.bad {
+  border-left-color: #ef4444;
+}
+
+.trait-item.meta {
+  border-left-color: #f59e0b;
+}
+
+.trait-name {
+  font-size: 0.85rem;
+  color: white;
+  font-weight: 500;
+}
+
+.trait-level {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
