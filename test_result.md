@@ -612,3 +612,168 @@ import { cn } from '@/lib/utils';
 **Testing Conclusion:** The frontend has multiple critical issues preventing basic functionality. The missing utils library is blocking all UI components, making the application largely non-functional.
 
 ---
+
+---
+
+## 🎮 NEW FEATURE: SKILLS, SUPERPOWER TOOLS & META TRAITS DISCOVERY (Current Session)
+
+### Feature Overview
+
+Implemented a complete world item discovery and acquisition system where players can find and acquire Skills, Superpower Tools, and Meta Traits randomly spawned in the game world.
+
+### Implementation Summary
+
+#### Backend Implementation ✅ (9 files)
+
+**Models (2 files):**
+1. `/app/backend/models/world/world_item.py` ✅
+   - WorldItem model for items spawned in game world
+   - Position tracking, cost, rarity, status management
+   
+2. `/app/backend/models/player/item_acquisition.py` ✅
+   - ItemAcquisition model for tracking player acquisition progress
+   - Investment, timer, and claiming logic
+
+**Services (4 files):**
+3. `/app/backend/services/world/item_spawn_service.py` ✅
+   - Random spawning logic with configurable frequencies
+   - Skills: 2-5 min, Tools: 10-15 min, Meta: 30-60 min
+   - Item lifetime and cleanup management
+   
+4. `/app/backend/services/world/item_discovery_service.py` ✅
+   - Proximity detection (50 units radius)
+   - Player eligibility checking
+   - Distance calculation and nearby items
+   
+5. `/app/backend/services/player/item_acquisition_service.py` ✅
+   - Investment and waiting time management
+   - Skills: 30-60s, Tools: 2-5min, Meta: 5-10min
+   - Claiming and applying items to player profile
+   - One acquisition at a time per player
+   
+6. `/app/backend/services/ai/gemini_pricing_service.py` ✅
+   - Fixed cost calculation per level
+   - Skills: 100-500, Tools: 1000-3000, Meta: 5000-10000 credits
+   - Fallback pricing if AI unavailable
+
+**API Routes (2 files):**
+7. `/app/backend/api/v1/world/items.py` ✅
+   - GET /api/world/items/active - Get all active items
+   - POST /api/world/items/nearby - Get items near player
+   - GET /api/world/items/{item_id} - Item details
+   - POST /api/world/items/{item_id}/can-acquire - Check eligibility
+   - POST /api/world/items/admin/spawn/{type} - Admin spawn (testing)
+   
+8. `/app/backend/api/v1/player/acquisitions.py` ✅
+   - GET /api/player/acquisitions - Player's acquisitions
+   - GET /api/player/acquisitions/active - Active acquisition
+   - POST /api/player/acquisitions/start - Start acquisition
+   - POST /api/player/acquisitions/claim - Claim completed
+   - POST /api/player/acquisitions/{id}/cancel - Cancel (50% refund)
+
+**Background Tasks (1 file):**
+9. `/app/backend/tasks/world_item_spawner.py` ✅
+   - Automated spawning of items at configured intervals
+   - Separate coroutines for each item type
+   - Cleanup task for expired items
+   - Integrated with server startup/shutdown
+
+#### Frontend Implementation ✅ (5 files)
+
+**Services (2 files):**
+1. `/app/frontend/src/services/worldItemService.js` ✅
+   - API client for world items
+   - Active items, nearby items, item details
+   
+2. `/app/frontend/src/services/acquisitionService.js` ✅
+   - API client for acquisitions
+   - Start, claim, cancel operations
+
+**Hooks (1 file):**
+3. `/app/frontend/src/hooks/useWorldItems.js` ✅
+   - React hook for world items state management
+   - Auto-refresh nearby items (5s interval)
+   - Auto-refresh active acquisition (3s interval)
+   - Toast notifications for user feedback
+
+**Components (3 files):**
+4. `/app/frontend/src/components/game/WorldItems/WorldItemMarker.jsx` ✅
+   - 3D marker for items in game world
+   - Floating animation and glow effects
+   - Color-coded by type (Blue: Skills, Purple: Tools, Amber: Meta)
+   - Size varies by rarity
+   - Proximity-based labels
+   
+5. `/app/frontend/src/components/game/WorldItems/ItemDiscoveryModal.jsx` ✅
+   - Modal UI when player discovers item
+   - Item details, cost, level requirement
+   - Player eligibility checking
+   - Acquire/Cancel actions
+   
+6. `/app/frontend/src/components/game/WorldItems/AcquisitionTracker.jsx` ✅
+   - Fixed position tracker UI (bottom-right)
+   - Real-time progress bar and timer
+   - Claim button when completed
+   - Cancel option (50% refund penalty)
+
+### Feature Mechanics
+
+**Discovery:**
+- Both proximity detection AND clickable icons
+- Items visible as floating 3D objects in game world
+- Proximity radius: 50 units
+
+**Spawn Frequencies:**
+- Skills: Every 2-5 minutes (common)
+- Superpower Tools: Every 10-15 minutes (rare)
+- Meta Traits: Every 30-60 minutes (legendary)
+
+**Acquisition Times:**
+- Skills: 30-60 seconds wait
+- Superpower Tools: 2-5 minutes wait
+- Meta Traits: 5-10 minutes wait
+
+**Costs (Level-based):**
+- Skills: 100-500 credits
+- Superpower Tools: 1000-3000 credits
+- Meta Traits: 5000-10000 credits
+
+**Constraints:**
+- One acquisition at a time per player
+- Level requirements checked
+- Credit balance validated
+- Items expire after: Skills (10min), Tools (15min), Meta (20min)
+
+### Integration Status
+
+**Backend Integration:**
+- ✅ Routes added to world router
+- ✅ Routes added to player router  
+- ✅ Background spawner task integrated with server startup
+- ✅ All imports fixed and linted
+
+**Frontend Integration:**
+- ⏳ Pending: Integration with GameWorld component
+- ⏳ Pending: Add to GameHUD component
+- ⏳ Pending: WebSocket events for real-time updates
+
+### Files Created: 14 Total
+- Backend: 9 files ✅
+- Frontend: 5 files ✅
+
+### Dependencies Fixed
+- ✅ Pydantic upgraded to 2.12.3
+- ✅ Google AI dependencies installed
+- ✅ Import errors in upgrades router fixed
+- ✅ Backend running successfully
+
+### Next Steps
+1. Integrate WorldItemMarker into GameWorld component
+2. Add AcquisitionTracker to GameHUD
+3. Test backend API endpoints
+4. Test frontend components in game
+5. Add WebSocket support for real-time item spawns
+
+---
+
+*Last Updated: Current Development Session - Feature Implementation Complete (Backend ✅, Frontend Components ✅, Integration Pending)*
