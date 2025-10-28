@@ -401,7 +401,7 @@
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** deep_testing_backend_v2  
-**Backend URL:** https://game-karma-heroes.preview.emergentagent.com  
+**Backend URL:** https://trait-quest.preview.emergentagent.com  
 
 ### ✅ WORKING ENDPOINTS (6/8 tests passed - 75%)
 
@@ -520,7 +520,7 @@ The only "failures" are health endpoint external access issues caused by fronten
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** auto_frontend_testing_agent  
-**Frontend URL:** https://game-karma-heroes.preview.emergentagent.com  
+**Frontend URL:** https://trait-quest.preview.emergentagent.com  
 **Test Focus:** Dashboard loading, Play page, Navigation, and Error handling as requested in review
 
 ### ❌ CRITICAL FRONTEND ISSUES FOUND (Multiple Failures)
