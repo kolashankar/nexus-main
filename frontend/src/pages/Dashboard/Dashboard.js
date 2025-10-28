@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import useStore from '../../store';
 import Scene from '../../components/3d/Scene/Scene';
+import CharacterCustomizer from '../../components/character/CharacterCustomizer';
 const Dashboard = () => {
     const { player, fetchPlayer, isLoadingPlayer } = useStore();
     useEffect(() => {
