@@ -103,7 +103,11 @@ class PlayerProfileService:
             "visibility": player_dict["visibility"],
             "stats": player_dict["stats"],
             "online": player_dict["online"],
-            "last_login": player_dict.get("last_login")
+            "last_login": player_dict.get("last_login"),
+            "appearance": player_dict.get("appearance", {}),
+            "character_model": player_dict.get("character_model"),
+            "skin_tone": player_dict.get("skin_tone"),
+            "hair_color": player_dict.get("hair_color")
         }
 
     async def update_profile(self, player_id: str, update_data: any) -> Dict:
@@ -114,6 +118,32 @@ class PlayerProfileService:
             update_dict["economic_class"] = update_data.economic_class
         if hasattr(update_data, 'moral_class') and update_data.moral_class:
             update_dict["moral_class"] = update_data.moral_class
+        
+        # Handle appearance updates
+        if hasattr(update_data, 'character_model') and update_data.character_model:
+            update_dict["character_model"] = update_data.character_model
+        if hasattr(update_data, 'skin_tone') and update_data.skin_tone:
+            update_dict["skin_tone"] = update_data.skin_tone
+        if hasattr(update_data, 'hair_color') and update_data.hair_color:
+            update_dict["hair_color"] = update_data.hair_color
+        
+        # Handle appearance object
+        if hasattr(update_data, 'appearance') and update_data.appearance:
+            appearance_dict = {}
+            if update_data.appearance.model:
+                appearance_dict["model"] = update_data.appearance.model
+                update_dict["character_model"] = update_data.appearance.model
+            if update_data.appearance.skin_tone:
+                appearance_dict["skin_tone"] = update_data.appearance.skin_tone
+                update_dict["skin_tone"] = update_data.appearance.skin_tone
+            if update_data.appearance.hair_color:
+                appearance_dict["hair_color"] = update_data.appearance.hair_color
+                update_dict["hair_color"] = update_data.appearance.hair_color
+            if update_data.appearance.hair_style:
+                appearance_dict["hair_style"] = update_data.appearance.hair_style
+            
+            if appearance_dict:
+                update_dict["appearance"] = appearance_dict
 
         if not update_dict:
             raise HTTPException(
