@@ -24,6 +24,7 @@ import { Skills } from './pages/Skills/Skills';
 import SocialHub from './pages/SocialHub/SocialHub';
 import Territories from './pages/Territories/Territories';
 import World from './pages/World/WorldDashboard';
+import UpgradeStation from './pages/UpgradeStation/UpgradeStation';
 import AssetTest from './pages/AssetTest/AssetTest';
 import { Toaster } from './components/ui/sonner';
 
