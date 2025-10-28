@@ -1,215 +1,160 @@
-"""Gemini AI-powered task generator"""
+"""Gemini AI Task Generator Service
 
-import google.generativeai as genai
-from typing import Dict, List, Optional
-from datetime import datetime, timedelta
-import uuid
+Generates personalized tasks for players based on their traits using Gemini AI.
+"""
+
 import os
-import random
+import json
+import logging
+from typing import Dict, Any, Optional
+import google.generativeai as genai
+from datetime import datetime, timedelta
 
-from .trait_analyzer import TraitAnalyzer
-from backend.core.config import settings
+logger = logging.getLogger(__name__)
 
+# Configure Gemini AI
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyCrDnhg5VTo-XrfOK1eoamZD9R6wVlqYSM')
+genai.configure(api_key=GEMINI_API_KEY)
 
-class TaskGeneratorService:
-    """Generate dynamic tasks using Gemini AI based on player traits"""
-
+class TaskGenerator:
+    """Generate AI-powered tasks based on player traits"""
+    
     def __init__(self):
-        """Initialize Gemini AI client"""
-        api_key = settings.GEMINI_API_KEY or os.environ.get('GEMINI_API_KEY')
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment")
-        
-        genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel('gemini-pro')
-        self.trait_analyzer = TraitAnalyzer()
-
-    async def generate_task(self, player_data: Dict) -> Dict:
-        """
-        Generate a personalized task for the player based on their traits.
         
-        Args:
-            player_data: Dictionary containing player information including traits
-            
-        Returns:
-            Dictionary containing task details
-        """
-        # Analyze player traits
-        traits = player_data.get('traits', {})
-        analysis = self.trait_analyzer.analyze_player(traits)
-        
-        # Prepare prompt for Gemini
-        prompt = self._build_task_prompt(player_data, analysis)
-        
+    async def generate_task(self, player: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate a task for a player based on their traits"""
         try:
-            # Generate task using Gemini
+            # Determine task type based on player's moral class and traits
+            task_type = self._determine_task_type(player)
+            
+            # Get top traits
+            traits = player.get('traits', {})
+            virtues = {k: v for k, v in traits.items() if k in self._get_virtue_names() and v > 60}
+            vices = {k: v for k, v in traits.items() if k in self._get_vice_names() and v > 60}
+            
+            # Create prompt
+            prompt = self._create_task_prompt(player, task_type, virtues, vices)
+            
+            # Generate with Gemini
             response = self.model.generate_content(prompt)
-            task_description = response.text.strip()
+            task_data = json.loads(response.text)
             
-            # Parse and structure the task
-            task = self._structure_task(
-                description=task_description,
-                player_id=player_data.get('player_id'),
-                task_type=analysis['task_preference'],
-                alignment=analysis['alignment']
-            )
+            # Add metadata
+            task_data['task_type'] = task_type
+            task_data['player_id'] = player['_id']
+            task_data['generated_at'] = datetime.utcnow().isoformat()
+            task_data['expires_at'] = (datetime.utcnow() + timedelta(hours=2)).isoformat()
+            task_data['status'] = 'active'
             
-            return task
+            return task_data
             
         except Exception as e:
-            # Fallback to template-based task if AI fails
-            print(f"AI task generation failed: {e}. Using fallback.")
-            return self._generate_fallback_task(player_data, analysis)
-
-    def _build_task_prompt(self, player_data: Dict, analysis: Dict) -> str:
-        """
-        Build a detailed prompt for Gemini to generate contextual tasks.
+            logger.error(f"Error generating task: {e}")
+            # Fallback to simple task
+            return self._generate_fallback_task(player)
+    
+    def _determine_task_type(self, player: Dict[str, Any]) -> str:
+        """Determine if task should be good or bad based on player traits"""
+        traits = player.get('traits', {})
+        moral_class = player.get('moral_class', 'average')
         
-        Args:
-            player_data: Player information
-            analysis: Trait analysis results
-            
-        Returns:
-            Formatted prompt string
-        """
-        alignment = analysis['alignment']
-        task_type = analysis['task_preference']
-        top_virtues = [v[0] for v in analysis['top_virtues'][:3]]
-        top_vices = [v[0] for v in analysis['top_vices'][:3]]
-        top_skills = [s[0] for s in analysis['top_skills'][:3]]
+        # Calculate virtue vs vice balance
+        virtue_sum = sum(traits.get(v, 0) for v in self._get_virtue_names())
+        vice_sum = sum(traits.get(v, 0) for v in self._get_vice_names())
         
-        player_name = player_data.get('username', 'Player')
-        player_level = player_data.get('level', 1)
-        
-        # Build character description
-        virtue_str = ", ".join(top_virtues) if top_virtues else "balanced"
-        vice_str = ", ".join(top_vices) if top_vices else "controlled"
-        skill_str = ", ".join(top_skills) if top_skills else "developing"
-        
-        if task_type == "good":
-            task_direction = "a virtuous, helpful task that aligns with their noble character. The task should involve helping others, protecting the innocent, or contributing positively to society."
-        elif task_type == "bad":
-            task_direction = "a morally questionable task that aligns with their darker tendencies. The task might involve theft, deception, sabotage, or other illicit activities."
+        if moral_class == 'good' or virtue_sum > vice_sum:
+            return 'good'
+        elif moral_class == 'bad' or vice_sum > virtue_sum:
+            return 'bad'
         else:
-            task_direction = "a neutral task that tests their character. The task should be morally ambiguous or practical in nature."
+            return 'neutral'
+    
+    def _create_task_prompt(self, player: Dict[str, Any], task_type: str, virtues: Dict, vices: Dict) -> str:
+        """Create prompt for Gemini AI"""
+        username = player.get('username', 'Player')
+        level = player.get('level', 1)
         
-        prompt = f"""
-You are the AI task master in Karma Nexus, a futuristic RPG game. Generate a single, specific task for a player.
+        if task_type == 'good':
+            trait_info = f"Top Virtues: {', '.join([f'{k}: {v}%' for k, v in list(virtues.items())[:3]])}"
+            task_guidance = "a virtuous, helpful, or constructive task that helps others or improves the community"
+        elif task_type == 'bad':
+            trait_info = f"Top Vices: {', '.join([f'{k}: {v}%' for k, v in list(vices.items())[:3]])}"
+            task_guidance = "a mischievous, selfish, or morally questionable task that benefits the player at others' expense"
+        else:
+            trait_info = "Balanced traits"
+            task_guidance = "a neutral task that tests moral decision-making"
+        
+        prompt = f"""Generate a game task for player "{username}" (Level {level}).
 
 Player Profile:
-- Name: {player_name}
-- Level: {player_level}
-- Alignment: {alignment}
-- Top Virtues: {virtue_str}
-- Top Vices: {vice_str}
-- Top Skills: {skill_str}
+- Moral Alignment: {task_type.upper()}
+- {trait_info}
 
-Task Requirements:
-- Generate {task_direction}
-- The task should be specific and actionable (e.g., "Deliver medical supplies to the refugee camp in Sector 7")
-- Keep it concise (1-2 sentences, max 150 characters)
-- Make it fit the cyberpunk/futuristic setting
-- Include specific locations, NPCs, or items when relevant
-- Do NOT include rewards or completion instructions
-- Return ONLY the task description, nothing else
+Generate {task_guidance}.
 
-Example good task: "Help merchant Sarah repair her broken security drone in the Downtown Market."
-Example bad task: "Steal prototype tech from the Corporate Security vault in Tower 23."
-Example neutral task: "Collect 5 scrap metal pieces from the abandoned factory district."
+Requirements:
+1. Task should be engaging and fit the player's character
+2. Description should be 1-2 sentences, action-oriented
+3. Coin reward should be 50-200 based on difficulty
+4. Include clear success condition
 
-Generate task:
+Return ONLY valid JSON in this exact format:
+{{
+  "title": "Task Title",
+  "description": "Brief description of what player must do",
+  "coin_reward": 100,
+  "difficulty": "easy|medium|hard",
+  "success_condition": "What counts as completion"
+}}
 """
         return prompt
-
-    def _structure_task(self, description: str, player_id: str, task_type: str, alignment: str) -> Dict:
-        """
-        Structure the AI-generated task into a proper format.
+    
+    def _generate_fallback_task(self, player: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate simple fallback task if AI fails"""
+        task_type = self._determine_task_type(player)
         
-        Args:
-            description: Task description from AI
-            player_id: Player's ID
-            task_type: Type of task (good/bad/neutral)
-            alignment: Player alignment
-            
-        Returns:
-            Structured task dictionary
-        """
-        # Calculate reward based on task type
-        base_reward = random.randint(50, 200)
-        
-        # Adjust reward based on alignment match
-        if (task_type == "good" and alignment == "virtuous") or \
-           (task_type == "bad" and alignment == "corrupt"):
-            base_reward = int(base_reward * 1.2)  # 20% bonus for aligned tasks
-        
-        # Task expires in 30 minutes
-        expires_at = datetime.utcnow() + timedelta(minutes=30)
-        
-        task = {
-            "task_id": str(uuid.uuid4()),
-            "player_id": player_id,
-            "description": description[:200],  # Limit description length
-            "task_type": task_type,
-            "base_reward": base_reward,
-            "actual_reward": base_reward,  # Will be calculated with bonuses on completion
-            "status": "active",
-            "created_at": datetime.utcnow().isoformat(),
-            "expires_at": expires_at.isoformat()
-        }
-        
-        return task
-
-    def _generate_fallback_task(self, player_data: Dict, analysis: Dict) -> Dict:
-        """
-        Generate a template-based task as fallback when AI fails.
-        
-        Args:
-            player_data: Player information
-            analysis: Trait analysis results
-            
-        Returns:
-            Structured task dictionary
-        """
-        task_type = analysis['task_preference']
-        
-        # Template tasks for each type
-        good_tasks = [
-            "Help the local merchant repair their damaged storefront.",
-            "Deliver medical supplies to the clinic in the refugee district.",
-            "Escort a civilian safely through the dangerous sector.",
-            "Donate spare equipment to the community shelter.",
-            "Assist in repairing damaged infrastructure in the slums."
-        ]
-        
-        bad_tasks = [
-            "Steal valuable data from the corporate database.",
-            "Sabotage a rival gang's supply shipment.",
-            "Hack into the security system of a wealthy merchant.",
-            "Extort protection money from local shop owners.",
-            "Smuggle contraband through the checkpoint."
-        ]
-        
-        neutral_tasks = [
-            "Collect 10 scrap metal pieces from the junkyard.",
-            "Scout the abandoned factory for useful resources.",
-            "Test the new combat simulator in the training facility.",
-            "Explore the underground tunnels and map the route.",
-            "Gather information about the new trading post."
-        ]
-        
-        # Select appropriate task list
-        if task_type == "good":
-            task_list = good_tasks
-        elif task_type == "bad":
-            task_list = bad_tasks
+        if task_type == 'good':
+            tasks = [
+                {"title": "Help a Citizen", "description": "Assist an NPC with their daily tasks", "coin_reward": 100},
+                {"title": "Donate Resources", "description": "Share your resources with those in need", "coin_reward": 150},
+                {"title": "Protect the Weak", "description": "Defend NPCs from threats", "coin_reward": 200}
+            ]
         else:
-            task_list = neutral_tasks
+            tasks = [
+                {"title": "Steal Supplies", "description": "Take resources from an unguarded warehouse", "coin_reward": 120},
+                {"title": "Spread Rumors", "description": "Damage a rival's reputation", "coin_reward": 100},
+                {"title": "Sabotage Equipment", "description": "Disable a competitor's machinery", "coin_reward": 180}
+            ]
         
-        description = random.choice(task_list)
+        import random
+        task = random.choice(tasks)
         
-        return self._structure_task(
-            description=description,
-            player_id=player_data.get('player_id'),
-            task_type=task_type,
-            alignment=analysis['alignment']
-        )
+        return {
+            'task_type': task_type,
+            'player_id': player['_id'],
+            'title': task['title'],
+            'description': task['description'],
+            'coin_reward': task['coin_reward'],
+            'difficulty': 'medium',
+            'success_condition': 'Complete the task objective',
+            'generated_at': datetime.utcnow().isoformat(),
+            'expires_at': (datetime.utcnow() + timedelta(hours=2)).isoformat(),
+            'status': 'active'
+        }
+    
+    def _get_virtue_names(self) -> list:
+        return [
+            'empathy', 'integrity', 'discipline', 'creativity', 'resilience',
+            'curiosity', 'kindness', 'courage', 'patience', 'adaptability',
+            'wisdom', 'humility', 'vision', 'honesty', 'loyalty',
+            'generosity', 'self_awareness', 'gratitude', 'optimism', 'loveability'
+        ]
+    
+    def _get_vice_names(self) -> list:
+        return [
+            'greed', 'arrogance', 'deceit', 'cruelty', 'selfishness',
+            'envy', 'wrath', 'cowardice', 'laziness', 'gluttony',
+            'paranoia', 'impulsiveness', 'vengefulness', 'manipulation', 'prejudice',
+            'betrayal', 'stubbornness', 'pessimism', 'recklessness', 'vanity'
+        ]

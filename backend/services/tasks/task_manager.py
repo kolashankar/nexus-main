@@ -1,109 +1,121 @@
-"""Task lifecycle management"""
+"""Task Manager Service
 
-from typing import Dict, Optional
+Manages task lifecycle, completion, and rewards.
+"""
+
+import logging
+from typing import Dict, Any, Optional
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import uuid
 
+logger = logging.getLogger(__name__)
 
 class TaskManager:
-    """Manages task lifecycle, storage, and completion"""
-
+    """Manage player tasks"""
+    
     def __init__(self, db: AsyncIOMotorDatabase):
-        """Initialize with database connection"""
         self.db = db
-        self.tasks_collection = db['tasks']
-
-    async def save_task(self, task: Dict) -> Dict:
-        """
-        Save a new task to the database.
-        
-        Args:
-            task: Task dictionary
+        self.tasks_collection = db.tasks
+        self.players_collection = db.players
+    
+    async def create_task(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Create a new task"""
+        try:
+            task_data['_id'] = str(uuid.uuid4())
+            task_data['created_at'] = datetime.utcnow().isoformat()
             
-        Returns:
-            Saved task
-        """
-        await self.tasks_collection.insert_one(task)
-        return task
-
-    async def get_current_task(self, player_id: str) -> Optional[Dict]:
-        """
-        Get the current active task for a player.
-        
-        Args:
-            player_id: Player's ID
+            result = await self.tasks_collection.insert_one(task_data)
+            return task_data
+        except Exception as e:
+            logger.error(f"Error creating task: {e}")
+            raise
+    
+    async def get_current_task(self, player_id: str) -> Optional[Dict[str, Any]]:
+        """Get player's current active task"""
+        try:
+            task = await self.tasks_collection.find_one({
+                'player_id': player_id,
+                'status': 'active'
+            })
+            return task
+        except Exception as e:
+            logger.error(f"Error getting current task: {e}")
+            return None
+    
+    async def complete_task(self, task_id: str, player_id: str) -> Dict[str, Any]:
+        """Complete a task and distribute rewards"""
+        try:
+            # Get task
+            task = await self.tasks_collection.find_one({'_id': task_id, 'player_id': player_id})
+            if not task:
+                raise ValueError("Task not found")
             
-        Returns:
-            Task dictionary or None
-        """
-        task = await self.tasks_collection.find_one({
-            "player_id": player_id,
-            "status": "active"
-        })
-        
-        if task:
-            # Check if task expired
-            expires_at = datetime.fromisoformat(task['expires_at'])
-            if datetime.utcnow() > expires_at:
-                # Mark as expired
-                await self.expire_task(task['task_id'])
-                return None
-        
-        return task
-
-    async def complete_task(self, task_id: str, actual_reward: int) -> bool:
-        """
-        Mark a task as completed and update rewards.
-        
-        Args:
-            task_id: Task ID
-            actual_reward: Final reward with bonuses applied
+            if task['status'] != 'active':
+                raise ValueError("Task is not active")
             
-        Returns:
-            True if successful
-        """
-        result = await self.tasks_collection.update_one(
-            {"task_id": task_id},
-            {
-                "$set": {
-                    "status": "completed",
-                    "completed_at": datetime.utcnow().isoformat(),
-                    "actual_reward": actual_reward
+            # Get player
+            player = await self.players_collection.find_one({'_id': player_id})
+            if not player:
+                raise ValueError("Player not found")
+            
+            # Calculate reward with bonuses
+            base_reward = task.get('coin_reward', 100)
+            bonus_percentage = await self._calculate_bonus_percentage(player)
+            actual_reward = int(base_reward * (1 + bonus_percentage / 100))
+            
+            # Update player coins
+            new_balance = player.get('currencies', {}).get('credits', 0) + actual_reward
+            await self.players_collection.update_one(
+                {'_id': player_id},
+                {'$set': {'currencies.credits': new_balance}}
+            )
+            
+            # Mark task as completed
+            await self.tasks_collection.update_one(
+                {'_id': task_id},
+                {
+                    '$set': {
+                        'status': 'completed',
+                        'completed_at': datetime.utcnow().isoformat(),
+                        'actual_reward': actual_reward
+                    }
                 }
+            )
+            
+            return {
+                'success': True,
+                'base_reward': base_reward,
+                'bonus_percentage': bonus_percentage,
+                'actual_reward': actual_reward,
+                'new_balance': new_balance
             }
-        )
-        return result.modified_count > 0
-
-    async def expire_task(self, task_id: str) -> bool:
-        """
-        Mark a task as expired.
-        
-        Args:
-            task_id: Task ID
             
-        Returns:
-            True if successful
-        """
-        result = await self.tasks_collection.update_one(
-            {"task_id": task_id},
-            {"$set": {"status": "expired"}}
-        )
-        return result.modified_count > 0
-
-    async def get_task_history(self, player_id: str, limit: int = 10) -> list:
-        """
-        Get task history for a player.
+        except Exception as e:
+            logger.error(f"Error completing task: {e}")
+            raise
+    
+    async def _calculate_bonus_percentage(self, player: Dict[str, Any]) -> float:
+        """Calculate bonus percentage from ornaments"""
+        ornaments = player.get('ornaments', {})
+        chains = ornaments.get('chains', 0)
+        rings = ornaments.get('rings', 0)
         
-        Args:
-            player_id: Player's ID
-            limit: Maximum number of tasks to return
-            
-        Returns:
-            List of tasks
-        """
-        cursor = self.tasks_collection.find(
-            {"player_id": player_id}
-        ).sort("created_at", -1).limit(limit)
-        
-        return await cursor.to_list(length=limit)
+        # Each chain: +3%, Each ring: +7%
+        bonus = (chains * 3) + (rings * 7)
+        return bonus
+    
+    async def expire_old_tasks(self) -> int:
+        """Expire tasks past their expiration time"""
+        try:
+            result = await self.tasks_collection.update_many(
+                {
+                    'status': 'active',
+                    'expires_at': {'$lt': datetime.utcnow().isoformat()}
+                },
+                {'$set': {'status': 'expired'}}
+            )
+            return result.modified_count
+        except Exception as e:
+            logger.error(f"Error expiring tasks: {e}")
+            return 0
