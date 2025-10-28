@@ -7,7 +7,13 @@ from backend.api.v1.auth.router import get_current_user_dep
 from backend.models.player.player import Player, PlayerResponse
 from backend.services.player.profile import PlayerProfileService
 
+# Import acquisitions router
+from .acquisitions import router as acquisitions_router
+
 router = APIRouter(prefix="/player", tags=["player"])
+
+# Include acquisitions router
+router.include_router(acquisitions_router, prefix="", tags=["acquisitions"])
 
 @router.get("/profile", response_model=PlayerProfileResponse)
 async def get_my_profile(
