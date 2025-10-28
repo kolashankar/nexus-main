@@ -33,6 +33,7 @@ from backend.api.v1.seasonal.router import router as seasonal_router
 from backend.api.v1.tasks.router import router as tasks_router
 from backend.api.v1.marketplace.router import router as marketplace_router
 from backend.api.v1.upgrades.router import router as upgrades_router
+from backend.api.v1.traits.actions import router as trait_actions_router
 from backend.api.websocket.handlers import websocket_endpoint
 
 
