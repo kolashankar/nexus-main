@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ....core.deps import get_current_user, get_db
+from backend.api.deps import get_current_user
+from backend.core.database import get_database as get_db
 from ....services.upgrades import RobotUpgrader
 from ..upgrades.schemas import RobotUpgradeRequest, UpgradeResponse
 
