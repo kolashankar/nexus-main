@@ -44,14 +44,20 @@ const CharacterCustomizer = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      // Update both flat fields and appearance object for compatibility
       await updatePlayer({
         character_model: selectedCharacter,
         skin_tone: selectedSkin,
         hair_color: selectedHair,
+        appearance: {
+          model: selectedCharacter,
+          skin_tone: selectedSkin,
+          hair_color: selectedHair,
+        }
       });
-      console.log('Character customization saved!');
+      console.log('✅ Character customization saved!');
     } catch (error) {
-      console.error('Failed to save customization:', error);
+      console.error('❌ Failed to save customization:', error);
     } finally {
       setIsSaving(false);
     }
