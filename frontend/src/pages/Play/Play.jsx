@@ -1,18 +1,19 @@
 /**
- * Play/Game page - Full 3D game environment
+ * Play/Game page - Full 3D game environment with fullscreen mode
  */
 import React, { useEffect, useState } from 'react';
-import GameWorld from '../../components/game/GameWorld/GameWorld';
+import GameWorldEnhanced from '../../components/game/GameWorld/GameWorldEnhanced';
 import GameHUD from '../../components/game/GameHUD/GameHUD';
 import TaskPanel from '../../components/game/TaskPanel/TaskPanel';
 import Marketplace from '../../components/game/Marketplace/Marketplace';
 import useStore from '../../store';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Maximize2, Minimize2 } from 'lucide-react';
 
 const Play = () => {
   const { player, fetchPlayer, isLoadingPlayer } = useStore();
   const [gameReady, setGameReady] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     if (!player) {
@@ -37,6 +38,10 @@ const Play = () => {
     fetchPlayer();
   };
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   if (isLoadingPlayer || !player || !gameReady) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -52,17 +57,60 @@ const Play = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
       {/* 3D Game World */}
-      <GameWorld player={player} />
+      <GameWorldEnhanced player={player} isFullscreen={isFullscreen} />
       
-      {/* Game HUD Overlay */}
-      <GameHUD player={player} />
-      
-      {/* Task Panel - Right Side */}
-      <TaskPanel 
-        player={player} 
-        onTaskComplete={handleTaskComplete}
-      />
-      
+      {/* Fullscreen Toggle Button - Top Right */}
+      <button
+        className="absolute top-4 right-4 bg-purple-600/80 hover:bg-purple-700 text-white p-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg backdrop-blur-sm z-[100]"
+        onClick={toggleFullscreen}
+        title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+      >
+        {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+      </button>
+
+      {/* Hide UI elements in fullscreen mode */}
+      {!isFullscreen && (
+        <>
+          {/* Game HUD Overlay */}
+          <GameHUD player={player} />
+          
+          {/* Task Panel - Right Side */}
+          <TaskPanel 
+            player={player} 
+            onTaskComplete={handleTaskComplete}
+          />
+          
+          {/* Marketplace Button */}
+          <button
+            className="absolute bottom-20 right-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
+            onClick={() => setShowMarketplace(true)}
+            style={{ zIndex: 90 }}
+          >
+            🏪 Marketplace
+          </button>
+          
+          {/* Game Instructions */}
+          <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-sm">
+            <p className="font-semibold mb-2 text-cyan-400">Controls:</p>
+            <div className="space-y-1 text-xs">
+              <p><span className="text-green-400">↑↓←→ or WASD</span> - Walk</p>
+              <p><span className="text-yellow-400">Shift + Arrows</span> - Run</p>
+              <p><span className="text-blue-400">Ctrl + L / Ctrl + R</span> - Rotate View</p>
+              <p><span className="text-purple-400">Space</span> - Jump</p>
+              <p><span className="text-pink-400">E</span> - Interact</p>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Fullscreen Mode Instructions */}
+      {isFullscreen && (
+        <div className="absolute bottom-4 left-4 bg-black/80 text-white px-4 py-2 rounded-lg text-xs backdrop-blur-sm">
+          <p className="text-cyan-400 font-semibold">Fullscreen Mode</p>
+          <p className="text-gray-300">Press <span className="text-green-400">ESC</span> or click <span className="text-purple-400">⊟</span> to exit</p>
+        </div>
+      )}
+
       {/* Marketplace Modal */}
       <Marketplace
         player={player}
@@ -70,21 +118,6 @@ const Play = () => {
         onClose={() => setShowMarketplace(false)}
         onPurchase={handlePurchase}
       />
-      
-      {/* Marketplace Button */}
-      <button
-        className="absolute bottom-20 right-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
-        onClick={() => setShowMarketplace(true)}
-        style={{ zIndex: 90 }}
-      >
-        🏪 Marketplace
-      </button>
-      
-      {/* Game Instructions (can be toggled) */}
-      <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg text-sm">
-        <p className="font-semibold mb-1">Controls:</p>
-        <p>WASD/Arrows - Move | Mouse - Look | Space - Jump | E - Interact</p>
-      </div>
     </div>
   );
 };
