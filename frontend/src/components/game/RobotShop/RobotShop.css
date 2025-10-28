@@ -1,0 +1,406 @@
+.robot-shop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.robot-shop-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #00ffff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.robot-shop-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.robot-shop-header h2 {
+  flex: 1;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.robot-shop-header .close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff4444;
+  font-size: 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.robot-shop-header .close-btn:hover {
+  background: rgba(255, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+
+.balance-display {
+  display: flex;
+  gap: 24px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.balance-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.robot-shop-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+}
+
+.robot-shop-tabs .tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.robot-shop-tabs .tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.robot-shop-tabs .tab.active {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 200, 255, 0.2));
+  border-color: #00ffff;
+  color: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.robot-shop-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.robots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.robot-card {
+  background: linear-gradient(135deg, rgba(30, 30, 50, 0.8), rgba(20, 20, 40, 0.8));
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.robot-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.5;
+}
+
+.robot-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.robot-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  background: rgba(0, 255, 255, 0.1);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+}
+
+.robot-card h3 {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  margin: 0;
+}
+
+.robot-description {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin: 0;
+}
+
+.robot-level {
+  font-size: 14px;
+  color: #00ffff;
+  text-align: center;
+  font-weight: 600;
+  margin: 0;
+}
+
+.robot-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.robot-stats .stat {
+  display: grid;
+  grid-template-columns: 60px 1fr 40px 24px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stat-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-fill {
+  height: 100%;
+  background: #00ffff;
+  border-radius: 4px;
+  transition: width 0.3s;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.robot-uses {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+}
+
+.robot-uses strong {
+  color: #00ffff;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.robot-uses p {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.robot-price {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #4CAF50;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+}
+
+.robot-price.sell {
+  color: #FFC107;
+  background: rgba(255, 193, 7, 0.1);
+  flex-direction: column;
+  gap: 4px;
+}
+
+.robot-price.sell .sell-note {
+  font-size: 11px;
+  opacity: 0.7;
+  font-weight: normal;
+}
+
+.robot-price.upgrade-cost {
+  color: #FFD700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.upgrade-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #4CAF50;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.buy-button, .sell-button, .upgrade-button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.buy-button {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.buy-button:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transform: translateY(-2px);
+}
+
+.sell-button {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+}
+
+.sell-button:hover {
+  background: linear-gradient(135deg, #d32f2f, #c62828);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+  transform: translateY(-2px);
+}
+
+.upgrade-button {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #000;
+}
+
+.upgrade-button:hover {
+  background: linear-gradient(135deg, #FFA500, #FF8C00);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.max-level-button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(100, 100, 100, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-state p {
+  font-size: 18px;
+  margin: 0;
+}
+
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Scrollbar styling */
+.robot-shop-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.robot-shop-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.robot-shop-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.robot-shop-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .robot-shop-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .robots-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .robot-shop-tabs {
+    flex-direction: column;
+  }
+  
+  .balance-display {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
