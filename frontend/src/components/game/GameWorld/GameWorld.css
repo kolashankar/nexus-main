@@ -69,3 +69,15 @@
 .controls-hint strong {
   color: #00ff00;
 }
+
+.player-trait-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 200;
+}
+
+.loading-overlay p.text-sm {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
