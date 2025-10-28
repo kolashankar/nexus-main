@@ -36,6 +36,10 @@ class PlayerProfileResponse(BaseModel):
     stats: Dict
     online: bool
     last_login: Optional[datetime] = None
+    appearance: Optional[Dict] = None
+    character_model: Optional[str] = None
+    skin_tone: Optional[str] = None
+    hair_color: Optional[str] = None
 
 class PlayerStatsResponse(BaseModel):
     """Player statistics response."""
