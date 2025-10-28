@@ -4,14 +4,16 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Sparkles, TrendingUp, Coins } from 'lucide-react';
 import './Marketplace.css';
 
-const Marketplace = ({ player, onClose }) => {
+const Marketplace = ({ player, isOpen, onClose, onPurchase }) => {
   const [marketInfo, setMarketInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(null);
 
   useEffect(() => {
-    fetchMarketplaceInfo();
-  }, []);
+    if (isOpen) {
+      fetchMarketplaceInfo();
+    }
+  }, [isOpen]);
 
   const fetchMarketplaceInfo = async () => {
     try {
