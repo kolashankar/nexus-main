@@ -107,33 +107,30 @@ const GameWorld = ({ player }) => {
     setIsLoaded(true);
     console.log('✅ Character loaded successfully');
 
-    // Load environment
-    loader.load(
-      '/models/environment/buildings/tower.glb',
-      (gltf) => {
-        const building = gltf.scene;
-        building.position.set(10, 0, -10);
-        building.scale.set(2, 2, 2);
-        building.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-        });
-        scene.add(building);
-      },
-      undefined,
-      (err) => {
-        console.warn('Building model not found, using placeholder');
-        const geometry = new THREE.BoxGeometry(3, 8, 3);
-        const material = new THREE.MeshStandardMaterial({ color: 0x404040 });
-        const building = new THREE.Mesh(geometry, material);
-        building.position.set(10, 4, -10);
-        building.castShadow = true;
-        building.receiveShadow = true;
-        scene.add(building);
-      }
-    );
+    // Load environment - Use procedural buildings
+    const buildings = [
+      { type: 'tower', position: { x: 10, y: 0, z: -10 } },
+      { type: 'shop', position: { x: -8, y: 0, z: -8 } },
+      { type: 'warehouse', position: { x: 15, y: 0, z: 5 } },
+      { type: 'headquarters', position: { x: -12, y: 0, z: 10 } }
+    ];
+    
+    buildings.forEach(buildingConfig => {
+      const building = ProceduralModels.createBuilding(buildingConfig.type);
+      building.position.set(buildingConfig.position.x, buildingConfig.position.y, buildingConfig.position.z);
+      scene.add(building);
+    });
+    
+    // Add some props
+    const container = ProceduralModels.createProp('container');
+    container.position.set(5, 1.25, 5);
+    scene.add(container);
+    
+    const vehicle = ProceduralModels.createProp('vehicle');
+    vehicle.position.set(-5, 0, 8);
+    scene.add(vehicle);
+    
+    console.log('✅ Environment loaded successfully');
 
     // Keyboard event listeners
     const handleKeyDown = (e) => {
