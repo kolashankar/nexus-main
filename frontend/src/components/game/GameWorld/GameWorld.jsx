@@ -44,7 +44,7 @@ const GameWorld = ({ player }) => {
   const isJumping = useRef(false);
 
   // Helper function to load GLB models
-  const loadModel = (path) => {
+  const loadModel = (path, includeAnimations = false) => {
     const loader = new GLTFLoader();
     return new Promise((resolve, reject) => {
       loader.load(
@@ -57,12 +57,49 @@ const GameWorld = ({ player }) => {
               child.receiveShadow = true;
             }
           });
-          resolve(model);
+          if (includeAnimations && gltf.animations && gltf.animations.length > 0) {
+            resolve({ model, animations: gltf.animations });
+          } else {
+            resolve(model);
+          }
         },
         undefined,
         reject
       );
     });
+  };
+
+  // Load all character animations
+  const loadAnimations = async () => {
+    const animationTypes = ['idle', 'walk', 'run', 'jump', 'attack', 'defend', 'victory', 'defeat'];
+    const loadedAnims = {};
+    
+    for (const type of animationTypes) {
+      try {
+        const result = await loadModel(`/models/animations/${type}.glb`, true);
+        if (result.animations) {
+          loadedAnims[type] = result.animations[0];
+          console.log(`✅ Animation loaded: ${type}`);
+        }
+      } catch (error) {
+        console.warn(`⚠️ Failed to load animation: ${type}`);
+      }
+    }
+    
+    return loadedAnims;
+  };
+
+  // Play animation on character
+  const playAnimation = (animName) => {
+    if (!mixerRef.current || !animationsRef.current[animName]) return;
+    
+    if (currentAnimationRef.current) {
+      currentAnimationRef.current.fadeOut(0.3);
+    }
+    
+    const action = mixerRef.current.clipAction(animationsRef.current[animName]);
+    action.reset().fadeIn(0.3).play();
+    currentAnimationRef.current = action;
   };
 
   useEffect(() => {
