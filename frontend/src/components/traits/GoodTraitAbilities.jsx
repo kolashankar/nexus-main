@@ -1,5 +1,5 @@
 import React from 'react';
-import { api } from '../../services/api';
+import { apiClient as api } from '../../services/api/client';
 
 const GoodTraitAbilities = ({ player, onAbilityUsed }) => {
   const useEmpathyAbility = async (abilityName, targetId) => {
