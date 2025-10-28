@@ -16,6 +16,9 @@ import {
   Settings
 } from 'lucide-react';
 import { Card } from '../../ui/card';
+import TraitActionPanel from '../traits/TraitActionPanel';
+import TraitEffectsDisplay from '../traits/TraitEffectsDisplay';
+import { useTraitAbilities } from '../../../hooks/useTraitAbilities';
 
 const GameHUD = ({ player }) => {
   const [showMenu, setShowMenu] = useState(false);
