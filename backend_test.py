@@ -1409,7 +1409,10 @@ class KarmaNexusAPITester:
         print("Phase 3: UpgradeStation API")
         upgrade_results = self.test_upgrade_station_api()
         
-        print("Phase 4: Integration scenarios")
+        print("Phase 4: Trait Abilities API")
+        trait_results = self.test_trait_abilities_api()
+        
+        print("Phase 5: Integration scenarios")
         integration_results = self.test_integration_scenarios()
         
         # Combine results
