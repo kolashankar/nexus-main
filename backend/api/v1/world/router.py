@@ -15,7 +15,13 @@ from .schemas import (
     EventResponseRequest
 )
 
+# Import item routes
+from .items import router as items_router
+
 router = APIRouter(prefix="/world", tags=["world"])
+
+# Include items router
+router.include_router(items_router, prefix="", tags=["world-items"])
 
 
 @router.get("/state", response_model=WorldStateResponse)
