@@ -1,0 +1,140 @@
+.trait-effects-display {
+  position: fixed;
+  left: 20px;
+  top: 100px;
+  width: 280px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: rgba(17, 24, 39, 0.95);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.effects-section {
+  margin-bottom: 16px;
+}
+
+.effects-section:last-child {
+  margin-bottom: 0;
+}
+
+.effects-title {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #60a5fa;
+}
+
+.buffs-section .effects-title {
+  color: #10b981;
+}
+
+.debuffs-section .effects-title {
+  color: #ef4444;
+}
+
+.effects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.effect-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(31, 41, 55, 0.8);
+  border: 2px solid;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.buff-item {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.debuff-item {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.effect-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.effect-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.effect-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.effect-value {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.effect-timer {
+  font-size: 11px;
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.no-effects {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+}
+
+.no-effects p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Scrollbar styling */
+.trait-effects-display::-webkit-scrollbar {
+  width: 6px;
+}
+
+.trait-effects-display::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 3px;
+}
+
+.trait-effects-display::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 3px;
+}
+
+.trait-effects-display::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* Animation for new effects */
+@keyframes effectAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.effect-item {
+  animation: effectAppear 0.3s ease;
+}
