@@ -6,8 +6,9 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import useStore from '../../store';
-import Scene from '../../components/3d/Scene/Scene';
+import CharacterPreview3D from '../../components/3d/CharacterPreview3D/CharacterPreview3D';
 import CharacterCustomizer from '../../components/character/CharacterCustomizer';
+import TraitToggleIcon from '../../components/traits/TraitToggleIcon/TraitToggleIcon';
 const Dashboard = () => {
     const { player, fetchPlayer, isLoadingPlayer } = useStore();
     useEffect(() => {
