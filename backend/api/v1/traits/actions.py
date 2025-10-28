@@ -640,3 +640,375 @@ async def get_active_cooldowns(
         "cooldowns": cooldowns,
         "total": len(cooldowns)
     }
+
+
+# ===== NEW TRAIT ABILITIES ROUTES =====
+
+# Negotiation (Skill)
+@router.post("/skills/negotiation/use")
+async def use_negotiation_ability(
+    ability_name: str,
+    targets: Optional[List[str]] = None,
+    target_id: Optional[str] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Negotiation skill abilities."""
+    negotiation = NegotiationAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "persuade":
+            if not target_id:
+                raise HTTPException(400, "Target ID required for persuade")
+            result = await negotiation.persuade(player_id, target_id, trait_level)
+        elif ability_name == "broker_deal":
+            if not targets:
+                raise HTTPException(400, "Targets required for broker_deal")
+            result = await negotiation.broker_deal(player_id, targets, trait_level)
+        elif ability_name == "resolve_conflict":
+            if not targets:
+                raise HTTPException(400, "Targets required for resolve_conflict")
+            result = await negotiation.resolve_conflict(player_id, targets, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown negotiation ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Telekinesis (Superpower Tool)
+@router.post("/superpowers/telekinesis/use")
+async def use_telekinesis_ability(
+    ability_name: str,
+    targets: Optional[List[str]] = None,
+    params: Optional[Dict] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Telekinesis superpower abilities."""
+    telekinesis = TelekinesisAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "force_push":
+            if not targets:
+                raise HTTPException(400, "Targets required for force_push")
+            result = await telekinesis.force_push(player_id, targets, trait_level)
+        elif ability_name == "force_field":
+            result = await telekinesis.force_field(player_id, trait_level)
+        elif ability_name == "object_manipulation":
+            object_type = params.get("object_type", "medium") if params else "medium"
+            result = await telekinesis.object_manipulation(player_id, object_type, trait_level)
+        elif ability_name == "levitate":
+            result = await telekinesis.levitate(player_id, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown telekinesis ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Pyrokinesis (Superpower Tool)
+@router.post("/superpowers/pyrokinesis/use")
+async def use_pyrokinesis_ability(
+    ability_name: str,
+    targets: Optional[List[str]] = None,
+    params: Optional[Dict] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Pyrokinesis superpower abilities."""
+    pyrokinesis = PyrokinesisAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "flame_burst":
+            if not targets:
+                raise HTTPException(400, "Targets required for flame_burst")
+            result = await pyrokinesis.flame_burst(player_id, targets, trait_level)
+        elif ability_name == "inferno_shield":
+            result = await pyrokinesis.inferno_shield(player_id, trait_level)
+        elif ability_name == "pyroclasm":
+            position = params.get("position", {"x": 0, "y": 0, "z": 0}) if params else {"x": 0, "y": 0, "z": 0}
+            result = await pyrokinesis.pyroclasm(player_id, position, trait_level)
+        elif ability_name == "heat_generation":
+            result = await pyrokinesis.heat_generation(player_id, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown pyrokinesis ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Cryokinesis (Superpower Tool)
+@router.post("/superpowers/cryokinesis/use")
+async def use_cryokinesis_ability(
+    ability_name: str,
+    targets: Optional[List[str]] = None,
+    target_id: Optional[str] = None,
+    params: Optional[Dict] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Cryokinesis superpower abilities."""
+    cryokinesis = CryokinesisAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "ice_blast":
+            if not targets:
+                raise HTTPException(400, "Targets required for ice_blast")
+            result = await cryokinesis.ice_blast(player_id, targets, trait_level)
+        elif ability_name == "frozen_armor":
+            result = await cryokinesis.frozen_armor(player_id, trait_level)
+        elif ability_name == "deep_freeze":
+            if not target_id:
+                raise HTTPException(400, "Target ID required for deep_freeze")
+            result = await cryokinesis.deep_freeze(player_id, target_id, trait_level)
+        elif ability_name == "ice_construct":
+            construct_type = params.get("construct_type", "wall") if params else "wall"
+            result = await cryokinesis.ice_construct(player_id, construct_type, trait_level)
+        elif ability_name == "blizzard":
+            position = params.get("position", {"x": 0, "y": 0, "z": 0}) if params else {"x": 0, "y": 0, "z": 0}
+            result = await cryokinesis.blizzard(player_id, position, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown cryokinesis ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Compassion (Good Trait)
+@router.post("/good/compassion/use")
+async def use_compassion_ability(
+    target_id: str,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Compassion healing_touch ability."""
+    compassion = CompassionAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        result = await compassion.healing_touch(player_id, target_id, trait_level)
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Honesty (Good Trait)
+@router.post("/good/honesty/use")
+async def use_honesty_ability(
+    target_id: str,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Honesty truth_reveal ability."""
+    honesty = HonestyAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        result = await honesty.truth_reveal(player_id, target_id, trait_level)
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Envy (Bad Trait)
+@router.post("/bad/envy/use")
+async def use_envy_ability(
+    target_id: str,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Envy stat_drain ability."""
+    envy = EnvyAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        result = await envy.stat_drain(player_id, target_id, trait_level)
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Wrath (Bad Trait)
+@router.post("/bad/wrath/use")
+async def use_wrath_ability(
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Wrath berserker_rage ability."""
+    wrath = WrathAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        result = await wrath.berserker_rage(player_id, trait_level)
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Sloth (Bad Trait)
+@router.post("/bad/sloth/use")
+async def use_sloth_ability(
+    ability_name: str,
+    target_id: Optional[str] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Sloth abilities."""
+    sloth = SlothAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "energy_siphon":
+            if not target_id:
+                raise HTTPException(400, "Target ID required for energy_siphon")
+            result = await sloth.energy_siphon(player_id, target_id, trait_level)
+        elif ability_name == "lazy_dodge":
+            result = await sloth.lazy_dodge(player_id, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown sloth ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Pride (Bad Trait)
+@router.post("/bad/pride/use")
+async def use_pride_ability(
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Pride superior_presence ability."""
+    pride = PrideAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        result = await pride.superior_presence(player_id, trait_level)
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Luck (Meta Trait)
+@router.post("/meta/luck/use")
+async def use_luck_ability(
+    ability_name: str,
+    params: Optional[Dict] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Luck abilities."""
+    luck = LuckAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "fortunes_favor":
+            result = await luck.fortunes_favor(player_id, trait_level)
+        elif ability_name == "lucky_escape":
+            damage = params.get("damage", 100) if params else 100
+            result = await luck.lucky_escape(player_id, damage, trait_level)
+        elif ability_name == "treasure_sense":
+            result = await luck.treasure_sense(player_id, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown luck ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Resilience (Meta Trait)
+@router.post("/meta/resilience/use")
+async def use_resilience_ability(
+    ability_name: str,
+    params: Optional[Dict] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Resilience abilities."""
+    resilience = ResilienceAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "unbreakable_will":
+            result = await resilience.unbreakable_will(player_id, trait_level)
+        elif ability_name == "damage_threshold":
+            incoming_damage = params.get("damage", 100) if params else 100
+            result = await resilience.damage_threshold(player_id, incoming_damage, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown resilience ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Wisdom (Meta Trait)
+@router.post("/meta/wisdom/use")
+async def use_wisdom_ability(
+    ability_name: str,
+    params: Optional[Dict] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Wisdom abilities."""
+    wisdom = WisdomAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "sage_insight":
+            situation = params.get("situation", "combat") if params else "combat"
+            result = await wisdom.sage_insight(player_id, situation, trait_level)
+        elif ability_name == "learning_acceleration":
+            skill_type = params.get("skill_type", "general") if params else "general"
+            result = await wisdom.learning_acceleration(player_id, skill_type, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown wisdom ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+# Adaptability (Meta Trait)
+@router.post("/meta/adaptability/use")
+async def use_adaptability_ability(
+    ability_name: str,
+    params: Optional[Dict] = None,
+    target_id: Optional[str] = None,
+    trait_level: int = 1,
+    current_player: dict = Depends(get_current_player),
+    db = Depends(get_database)
+):
+    """Use Adaptability abilities."""
+    adaptability = AdaptabilityAbility(db)
+    player_id = str(current_player["id"])
+    
+    try:
+        if ability_name == "quick_adaptation":
+            situation = params.get("situation", "combat") if params else "combat"
+            result = await adaptability.quick_adaptation(player_id, situation, trait_level)
+        elif ability_name == "environment_mastery":
+            environment = params.get("environment", "normal") if params else "normal"
+            result = await adaptability.environment_mastery(player_id, environment, trait_level)
+        elif ability_name == "copy_ability":
+            if not target_id:
+                raise HTTPException(400, "Target ID required for copy_ability")
+            ability_to_copy = params.get("ability_name", "strength") if params else "strength"
+            result = await adaptability.copy_ability(player_id, target_id, ability_to_copy, trait_level)
+        else:
+            raise HTTPException(400, f"Unknown adaptability ability: {ability_name}")
+        
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
