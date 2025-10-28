@@ -131,6 +131,22 @@ const GameWorld = ({ player }) => {
     scene.add(vehicle);
     
     console.log('✅ Environment loaded successfully');
+    
+    // Add NPC robots
+    const npcs = [
+      { type: 'scout', position: { x: 3, y: 0, z: 3 } },
+      { type: 'trader', position: { x: -3, y: 0, z: -3 } },
+      { type: 'medic', position: { x: 7, y: 0, z: 0 } },
+      { type: 'combat', position: { x: -6, y: 0, z: 4 } }
+    ];
+    
+    npcs.forEach(npcConfig => {
+      const robot = ProceduralModels.createRobot(npcConfig.type);
+      robot.position.set(npcConfig.position.x, npcConfig.position.y, npcConfig.position.z);
+      scene.add(robot);
+    });
+    
+    console.log('✅ NPCs loaded successfully');
 
     // Keyboard event listeners
     const handleKeyDown = (e) => {
