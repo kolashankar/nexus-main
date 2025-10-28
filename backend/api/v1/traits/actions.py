@@ -1,16 +1,32 @@
 """API endpoints for trait actions and abilities."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from pydantic import BaseModel, Field
 from backend.core.deps import get_current_player, get_database
 from backend.services.player.trait_ability_service import TraitAbilityService
+
+# Import all trait abilities
 from backend.services.traits.hacking_ability import HackingAbility
-from backend.services.traits.meditation_ability import MeditationAbility
+from backend.services.traits.negotiation_ability import NegotiationAbility
 from backend.services.traits.stealth_ability import StealthAbility
 from backend.services.traits.leadership_ability import LeadershipAbility
+from backend.services.traits.meditation_ability import MeditationAbility
+from backend.services.traits.telekinesis_ability import TelekinesisAbility
+from backend.services.traits.pyrokinesis_ability import PyrokinesisAbility
+from backend.services.traits.cryokinesis_ability import CryokinesisAbility
 from backend.services.traits.empathy_ability import EmpathyAbility
 from backend.services.traits.integrity_ability import IntegrityAbility
+from backend.services.traits.compassion_ability import CompassionAbility
+from backend.services.traits.honesty_ability import HonestyAbility
+from backend.services.traits.envy_ability import EnvyAbility
+from backend.services.traits.wrath_ability import WrathAbility
+from backend.services.traits.sloth_ability import SlothAbility
+from backend.services.traits.pride_ability import PrideAbility
+from backend.services.traits.luck_ability import LuckAbility
+from backend.services.traits.resilience_ability import ResilienceAbility
+from backend.services.traits.wisdom_ability import WisdomAbility
+from backend.services.traits.adaptability_ability import AdaptabilityAbility
 from backend.services.traits.greed_ability import GreedAbility
 from backend.services.traits.arrogance_ability import ArroganceAbility
 
