@@ -1,6 +1,6 @@
 # Authentication Errors Fix Guide
 
-## Errors You're Seeing
+### Errors You're Seeing
 
 ```
 POST http://localhost:3000/api/auth/register [HTTP/1.1 500 Internal Server Error 5181ms]
