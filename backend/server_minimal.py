@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://adventure-rewards-1.preview.emergentagent.com"
+    "https://techfable.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
