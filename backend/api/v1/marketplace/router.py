@@ -1,137 +1,43 @@
-"""Marketplace API endpoints"""
+"""Marketplace API Router"""
 
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Dict
 from pydantic import BaseModel
 
 from backend.core.database import get_database
-from backend.core.security import get_current_user
-from backend.services.marketplace.ornament_shop import OrnamentShop
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from backend.api.deps import get_current_user
+from backend.services.marketplace.marketplace import MarketplaceService
 
-router = APIRouter(prefix="/api/marketplace", tags=["marketplace"])
-
+router = APIRouter()
 
 class PurchaseRequest(BaseModel):
-    """Request model for ornament purchase"""
-    item_type: str  # "chain" or "ring"
+    item_type: str  # 'chain' or 'ring'
 
-
-@router.get("/inventory")
-async def get_inventory(
+@router.get('/info')
+async def get_marketplace_info(
     current_user: Dict = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    db = Depends(get_database)
 ):
-    """
-    Get player's ornament inventory.
-    
-    Returns:
-        Inventory with chains, rings, and bonus percentage
-    """
+    """Get marketplace information for player"""
     try:
-        player_id = current_user.get('player_id')
-        shop = OrnamentShop(db)
-        inventory = await shop.get_inventory(player_id)
-        
-        return {
-            "success": True,
-            "inventory": inventory
-        }
-        
+        marketplace = MarketplaceService(db)
+        info = await marketplace.get_marketplace_info(current_user['_id'])
+        return info
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve inventory: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-
-@router.get("/prices")
-async def get_prices(
-    current_user: Dict = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """
-    Get current prices for ornaments based on player's ownership.
-    
-    Returns:
-        Current prices for chain and ring
-    """
-    try:
-        player_id = current_user.get('player_id')
-        shop = OrnamentShop(db)
-        
-        chain_price = await shop.get_current_price(player_id, "chain")
-        ring_price = await shop.get_current_price(player_id, "ring")
-        
-        return {
-            "success": True,
-            "prices": {
-                "chain": chain_price,
-                "ring": ring_price
-            },
-            "bonuses": {
-                "chain": "3% per chain",
-                "ring": "7% per ring"
-            }
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve prices: {str(e)}")
-
-
-@router.post("/purchase")
+@router.post('/purchase')
 async def purchase_ornament(
     request: PurchaseRequest,
     current_user: Dict = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    db = Depends(get_database)
 ):
-    """
-    Purchase an ornament (chain or ring).
-    
-    Args:
-        request: Purchase request with item_type
-        
-    Returns:
-        Purchase result with new balance and next price
-    """
+    """Purchase an ornament (chain or ring)"""
     try:
-        player_id = current_user.get('player_id')
-        shop = OrnamentShop(db)
-        
-        result = await shop.purchase_ornament(player_id, request.item_type)
-        
-        if not result['success']:
-            raise HTTPException(status_code=400, detail=result.get('error', 'Purchase failed'))
-        
+        marketplace = MarketplaceService(db)
+        result = await marketplace.purchase_ornament(current_user['_id'], request.item_type)
         return result
-        
-    except HTTPException:
-        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Purchase failed: {str(e)}")
-
-
-@router.get("/history")
-async def get_purchase_history(
-    limit: int = 20,
-    current_user: Dict = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """
-    Get purchase history for the player.
-    
-    Args:
-        limit: Maximum number of records
-        
-    Returns:
-        List of purchases
-    """
-    try:
-        player_id = current_user.get('player_id')
-        shop = OrnamentShop(db)
-        history = await shop.get_purchase_history(player_id, limit)
-        
-        return {
-            "success": True,
-            "history": history
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve history: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
