@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: str = "*"
-    ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:3000", "http://localhost:8001", "https://techfable.preview.emergentagent.com"]
+    ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:3000", "http://localhost:8001", "https://game-karma-heroes.preview.emergentagent.com"]
     
     @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
