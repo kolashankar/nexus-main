@@ -949,6 +949,7 @@ class KarmaNexusAPITester:
         all_results.update(additional_results)
         all_results.update(task_results)
         all_results.update(marketplace_results)
+        all_results.update(upgrade_results)
         all_results.update(integration_results)
         
         # Print summary
