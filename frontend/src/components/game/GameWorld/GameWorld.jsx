@@ -97,39 +97,15 @@ const GameWorld = ({ player }) => {
     const gridHelper = new THREE.GridHelper(100, 50, 0x00ff00, 0x404040);
     scene.add(gridHelper);
 
-    // Load character model
-    const loader = new GLTFLoader();
-    loader.load(
-      '/models/characters/base/male.glb',
-      (gltf) => {
-        const character = gltf.scene;
-        character.position.copy(playerPosition.current);
-        character.scale.set(1, 1, 1);
-        character.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-        });
-        scene.add(character);
-        characterRef.current = character;
-        setIsLoaded(true);
-      },
-      undefined,
-      (err) => {
-        console.warn('Character model not found, using placeholder');
-        // Create placeholder character
-        const geometry = new THREE.CapsuleGeometry(0.5, 1, 4, 8);
-        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-        const character = new THREE.Mesh(geometry, material);
-        character.position.copy(playerPosition.current);
-        character.castShadow = true;
-        character.receiveShadow = true;
-        scene.add(character);
-        characterRef.current = character;
-        setIsLoaded(true);
-      }
-    );
+    // Load character model - Use procedural model for better visuals
+    console.log('Loading character model...');
+    const characterType = player?.gender === 'female' ? 'female_base' : 'male_base';
+    const character = ProceduralModels.createCharacter(characterType);
+    character.position.copy(playerPosition.current);
+    scene.add(character);
+    characterRef.current = character;
+    setIsLoaded(true);
+    console.log('✅ Character loaded successfully');
 
     // Load environment
     loader.load(
