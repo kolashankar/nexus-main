@@ -23,6 +23,12 @@ const GameWorld = ({ player }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [hoveredNPC, setHoveredNPC] = useState(null);
+  
+  // Road detection and NavMesh
+  const roadDetectorRef = useRef(null);
+  const navMeshRef = useRef(null);
+  const debugVisualsRef = useRef({ roads: null, navMesh: null });
+  const [showDebugVisuals, setShowDebugVisuals] = useState(true);
 
   // Movement state with running support
   const keysPressed = useRef({
