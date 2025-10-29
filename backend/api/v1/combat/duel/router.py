@@ -36,6 +36,32 @@ async def challenge_to_duel(
         )
 
 
+@router.post("/start")
+async def start_duel(
+    request: DuelChallengeRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Start a duel immediately (for testing/NPCs)."""
+    try:
+        # Create battle directly without challenge process
+        battle_id = await combat_engine.start_battle(
+            player1_id=current_user["_id"],
+            player2_id=request.target_id,
+            battle_type="duel"
+        )
+        return {
+            "battle_id": str(battle_id),
+            "status": "active",
+            "message": "Duel started!",
+            "battle_type": "duel"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+
 @router.get("/pending")
 async def get_pending_duels(
     current_user: Dict[str, Any] = Depends(get_current_user)
