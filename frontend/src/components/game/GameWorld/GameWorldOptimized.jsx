@@ -975,6 +975,46 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
+    // === MOUSE CLICK FOR WORLD ITEMS ===
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    
+    const handleMouseClick = (event) => {
+      if (!sceneRef.current || !cameraRef.current || isMobile) return;
+      
+      // Calculate mouse position in normalized device coordinates
+      const rect = mountRef.current.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      // Update raycaster
+      raycaster.setFromCamera(mouse, cameraRef.current);
+      
+      // Check for intersections with world items
+      const itemMeshes = [];
+      worldItemMeshesRef.current.forEach((itemGroup) => {
+        if (itemGroup.userData.isWorldItem) {
+          itemMeshes.push(itemGroup);
+        }
+      });
+      
+      const intersects = raycaster.intersectObjects(itemMeshes, true);
+      
+      if (intersects.length > 0) {
+        // Find the item group from the intersected object
+        let itemGroup = intersects[0].object;
+        while (itemGroup.parent && !itemGroup.userData.isWorldItem) {
+          itemGroup = itemGroup.parent;
+        }
+        
+        if (itemGroup.userData.isWorldItem && itemGroup.userData.item) {
+          handleItemInteract(itemGroup.userData.item);
+        }
+      }
+    };
+    
+    mountRef.current.addEventListener('click', handleMouseClick);
+
     // === ANIMATION LOOP ===
     let animationFrameId;
     const animate = () => {
