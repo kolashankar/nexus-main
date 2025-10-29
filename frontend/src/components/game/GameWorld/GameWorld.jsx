@@ -226,25 +226,6 @@ const GameWorld = ({ player }) => {
       }
     };
 
-    // Initialize all assets
-    const initializeWorld = async () => {
-      await loadCityModel();
-      await loadPlayerCharacter();
-      await loadNPCRobots();
-      setIsLoaded(true);
-      console.log('✅ Game world fully loaded');
-    };
-
-    // City boundaries (to be calculated after loading city model)
-    const cityBounds = useRef({
-      minX: -50,
-      maxX: 50,
-      minZ: -50,
-      maxZ: 50,
-      minY: 0,
-      maxY: 20
-    });
-
     // Load city model
     const loadCityModel = async () => {
       try {
