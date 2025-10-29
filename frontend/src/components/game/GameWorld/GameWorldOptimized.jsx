@@ -1006,6 +1006,20 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
         }
       });
       
+      // Update world item animations (floating and rotating)
+      worldItemMeshesRef.current.forEach((itemGroup) => {
+        if (itemGroup.userData.isWorldItem) {
+          itemGroup.position.y = itemGroup.userData.baseY + Math.sin(Date.now() * 0.001) * 0.3;
+          itemGroup.rotation.y += 0.01;
+          
+          // Update glow intensity based on hover (simplified, no raycasting for performance)
+          const mesh = itemGroup.children[0];
+          if (mesh && mesh.material) {
+            mesh.material.emissiveIntensity = 0.3 + Math.sin(Date.now() * 0.003) * 0.1;
+          }
+        }
+      });
+      
       // Render
       renderer.render(scene, camera);
     };
