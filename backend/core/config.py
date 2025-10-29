@@ -31,6 +31,7 @@ class Settings(BaseSettings):
         "https://nexus-main-git-main-kolashankar423-gmailcoms-projects.vercel.app",
         "https://nexus-main-o96kcy4o2-kolashankar423-gmailcoms-projects.vercel.app",
         "https://karma-nexus-backend.onrender.com"
+        "https://nexus-main-tau.vercel.app"
     ]
         
     @field_validator('ALLOWED_ORIGINS', mode='before')
