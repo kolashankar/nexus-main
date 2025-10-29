@@ -386,7 +386,95 @@ class KarmaNexusAPITester:
         print()
         return results
 
-    def test_task_generation_api(self) -> Dict[str, bool]:
+    def test_cors_configuration(self) -> Dict[str, bool]:
+        """Test CORS configuration and headers."""
+        results = {}
+        
+        print("🌐 TESTING CORS CONFIGURATION")
+        print("-" * 40)
+        
+        # Test CORS headers on health endpoint
+        try:
+            response = self.session.options(f"{self.base_url}/health", timeout=10)
+            cors_headers = {
+                'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+                'access-control-allow-headers': response.headers.get('access-control-allow-headers'),
+                'access-control-expose-headers': response.headers.get('access-control-expose-headers')
+            }
+            
+            print(f"✅ CORS preflight (/health) - Status: {response.status_code}")
+            print(f"   Allow-Origin: {cors_headers['access-control-allow-origin']}")
+            print(f"   Allow-Methods: {cors_headers['access-control-allow-methods']}")
+            print(f"   Allow-Headers: {cors_headers['access-control-allow-headers']}")
+            
+            # Check if CORS allows all origins (should be "*" for external access)
+            if cors_headers['access-control-allow-origin'] == '*':
+                results['cors_allow_origin'] = True
+            else:
+                print(f"⚠️  CORS Allow-Origin is not '*' - may restrict external access")
+                results['cors_allow_origin'] = False
+                
+        except Exception as e:
+            print(f"❌ CORS preflight test - Error: {str(e)}")
+            results['cors_allow_origin'] = False
+
+        # Test CORS headers on API endpoint
+        try:
+            response = self.session.options(f"{self.api_url}/health", timeout=10)
+            cors_headers = {
+                'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+                'access-control-allow-headers': response.headers.get('access-control-allow-headers')
+            }
+            
+            print(f"✅ CORS preflight (/api/health) - Status: {response.status_code}")
+            print(f"   Allow-Origin: {cors_headers['access-control-allow-origin']}")
+            print(f"   Allow-Methods: {cors_headers['access-control-allow-methods']}")
+            
+            # Check if methods include required HTTP methods
+            allowed_methods = cors_headers.get('access-control-allow-methods', '').upper()
+            required_methods = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+            
+            if all(method in allowed_methods for method in required_methods):
+                results['cors_methods'] = True
+            else:
+                print(f"⚠️  CORS methods may not include all required methods")
+                results['cors_methods'] = False
+                
+        except Exception as e:
+            print(f"❌ CORS API preflight test - Error: {str(e)}")
+            results['cors_methods'] = False
+
+        # Test actual cross-origin request
+        try:
+            headers = {
+                'Origin': 'https://example.com',
+                'Access-Control-Request-Method': 'GET',
+                'Access-Control-Request-Headers': 'authorization,content-type'
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/health",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                cors_origin = response.headers.get('access-control-allow-origin')
+                print(f"✅ Cross-origin request test - Status: {response.status_code}")
+                print(f"   CORS Origin header: {cors_origin}")
+                results['cors_external_access'] = True
+            else:
+                print(f"❌ Cross-origin request test - Status: {response.status_code}")
+                results['cors_external_access'] = False
+                
+        except Exception as e:
+            print(f"❌ Cross-origin request test - Error: {str(e)}")
+            results['cors_external_access'] = False
+
+        print()
+        return results
         """Test task generation API endpoints."""
         results = {}
         
