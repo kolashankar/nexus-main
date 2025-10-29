@@ -621,33 +621,64 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
 
       // Player movement
       if (characterRef.current) {
-        const speed = movement.current.run ? RUN_SPEED : WALK_SPEED;
+        const speed = (movement.current.run || isRunning) ? RUN_SPEED : WALK_SPEED;
         const state = playerState.current;
         const bounds = cityBounds.current;
         let isMoving = false;
 
-        // Forward/Backward
-        if (movement.current.forward) {
-          state.position.x += Math.sin(state.rotation) * speed;
-          state.position.z += Math.cos(state.rotation) * speed;
+        // Handle joystick input (mobile) or keyboard input (desktop)
+        if (isMobile && (movement.current.joystickX !== 0 || movement.current.joystickY !== 0)) {
+          // Joystick-based movement
+          const joyX = movement.current.joystickX;
+          const joyY = -movement.current.joystickY; // Invert Y for natural forward movement
+          
+          // Calculate movement direction based on current rotation
+          const moveX = joyX * Math.cos(state.rotation) - joyY * Math.sin(state.rotation);
+          const moveZ = joyX * Math.sin(state.rotation) + joyY * Math.cos(state.rotation);
+          
+          state.position.x += moveX * speed;
+          state.position.z += moveZ * speed;
+          
+          // Auto-rotate character to face movement direction if moving significantly
+          if (Math.abs(joyX) > 0.3 || Math.abs(joyY) > 0.3) {
+            const targetRotation = Math.atan2(joyX, joyY) + state.rotation;
+            state.rotation = THREE.MathUtils.lerp(state.rotation, targetRotation, 0.15);
+          }
+          
           isMoving = true;
-        }
-        if (movement.current.backward) {
-          state.position.x -= Math.sin(state.rotation) * speed;
-          state.position.z -= Math.cos(state.rotation) * speed;
-          isMoving = true;
-        }
+        } else {
+          // Keyboard-based movement
+          // Forward/Backward
+          if (movement.current.forward) {
+            state.position.x += Math.sin(state.rotation) * speed;
+            state.position.z += Math.cos(state.rotation) * speed;
+            isMoving = true;
+          }
+          if (movement.current.backward) {
+            state.position.x -= Math.sin(state.rotation) * speed;
+            state.position.z -= Math.cos(state.rotation) * speed;
+            isMoving = true;
+          }
 
-        // Strafe
-        if (movement.current.left) {
-          state.position.x -= Math.cos(state.rotation) * speed;
-          state.position.z += Math.sin(state.rotation) * speed;
-          isMoving = true;
-        }
-        if (movement.current.right) {
-          state.position.x += Math.cos(state.rotation) * speed;
-          state.position.z -= Math.sin(state.rotation) * speed;
-          isMoving = true;
+          // Strafe
+          if (movement.current.left) {
+            state.position.x -= Math.cos(state.rotation) * speed;
+            state.position.z += Math.sin(state.rotation) * speed;
+            isMoving = true;
+          }
+          if (movement.current.right) {
+            state.position.x += Math.cos(state.rotation) * speed;
+            state.position.z -= Math.sin(state.rotation) * speed;
+            isMoving = true;
+          }
+
+          // Rotation (Ctrl+L / Ctrl+R or Arrow keys)
+          if (movement.current.rotateLeft) {
+            state.rotation += ROTATION_SPEED;
+          }
+          if (movement.current.rotateRight) {
+            state.rotation -= ROTATION_SPEED;
+          }
         }
 
         // Apply boundary constraints
