@@ -91,8 +91,8 @@ const Play = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
-      {/* 3D Game World */}
-      <GameWorldEnhanced player={player} isFullscreen={isFullscreen} />
+      {/* 3D Game World - Optimized Version */}
+      <GameWorldOptimized player={player} isFullscreen={isFullscreen} />
       
       {/* Mobile Menu - Only on mobile */}
       {isMobile && !isFullscreen && (
