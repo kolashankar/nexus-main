@@ -75,8 +75,14 @@ const Play = () => {
       case 'tasks':
         setShowTaskPanel(!showTaskPanel);
         break;
-      case 'inventory':
       case 'quests':
+        setShowQuestLog(true);
+        break;
+      case 'combat':
+        // This would show combat options or initiate combat
+        console.log('Combat menu clicked');
+        break;
+      case 'inventory':
       case 'map':
       case 'social':
       case 'achievements':
@@ -87,6 +93,34 @@ const Play = () => {
       default:
         break;
     }
+  };
+
+  // Combat handlers
+  const handleInitiateCombat = async (opponentId) => {
+    try {
+      const response = await fetch('/api/combat/duel/start', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ opponent_id: opponentId })
+      });
+      
+      const data = await response.json();
+      if (data.battle_id) {
+        setCurrentBattleId(data.battle_id);
+        setShowCombat(true);
+      }
+    } catch (error) {
+      console.error('Failed to initiate combat:', error);
+    }
+  };
+
+  const handleCombatEnd = () => {
+    setShowCombat(false);
+    setCurrentBattleId(null);
+    fetchPlayer(); // Refresh player data after combat
   };
 
   if (isLoadingPlayer || !player || !gameReady) {
