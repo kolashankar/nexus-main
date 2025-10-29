@@ -10,7 +10,7 @@ from backend.services.world.item_spawn_service import ItemSpawnService
 from backend.services.world.item_discovery_service import ItemDiscoveryService
 from pydantic import BaseModel
 
-router = APIRouter(prefix="/world/items", tags=["world-items"])
+router = APIRouter(prefix="/items", tags=["world-items"])
 
 class PlayerPositionRequest(BaseModel):
     """Request with player position."""
