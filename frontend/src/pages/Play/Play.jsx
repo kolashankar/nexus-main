@@ -21,12 +21,6 @@ const Play = () => {
   const [showTaskPanel, setShowTaskPanel] = useState(false);
   const [currentMobileTab, setCurrentMobileTab] = useState(null);
 
-const Play = () => {
-  const { player, fetchPlayer, isLoadingPlayer } = useStore();
-  const [gameReady, setGameReady] = useState(false);
-  const [showMarketplace, setShowMarketplace] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
   useEffect(() => {
     if (!player) {
       fetchPlayer();
