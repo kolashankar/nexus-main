@@ -28,6 +28,12 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [cameraView, setCameraView] = useState('third-person'); // Camera view mode
 
+  // Road detection and NavMesh
+  const roadDetectorRef = useRef(null);
+  const navMeshRef = useRef(null);
+  const debugVisualsRef = useRef({ roads: null, navMesh: null });
+  const [showDebugVisuals, setShowDebugVisuals] = useState(true);
+
   // Touch/swipe state for camera rotation
   const swipeState = useRef({
     isSwiping: false,
