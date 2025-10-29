@@ -165,6 +165,13 @@ const Play = () => {
             <GameHUD player={player} />
           </div>
           
+          {/* Quest Tracker Overlay - Always visible unless in fullscreen */}
+          {showQuestTracker && (
+            <div className="absolute top-20 right-4 z-[80]">
+              <QuestTracker />
+            </div>
+          )}
+          
           {/* Task Panel - Desktop or Mobile Toggle */}
           {!isMobile ? (
             <TaskPanel 
@@ -186,15 +193,41 @@ const Play = () => {
             </div>
           )}
           
-          {/* Marketplace Button - Desktop only (mobile uses hamburger menu) */}
+          {/* Action Buttons - Desktop */}
           {!isMobile && (
-            <button
-              className="absolute bottom-20 right-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
-              onClick={() => setShowMarketplace(true)}
-              style={{ zIndex: 90 }}
-            >
-              🏪 Marketplace
-            </button>
+            <div className="absolute bottom-20 right-4 flex flex-col gap-2" style={{ zIndex: 90 }}>
+              {/* Quest Log Button */}
+              <button
+                className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg flex items-center gap-2"
+                onClick={() => setShowQuestLog(true)}
+                title="Open Quest Log"
+              >
+                <Scroll className="w-5 h-5" />
+                Quests
+              </button>
+              
+              {/* Combat Button */}
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg flex items-center gap-2"
+                onClick={() => {
+                  // For demo, initiate combat with a test opponent
+                  // In production, this would be triggered by clicking NPCs
+                  alert('Click on NPCs in the world to initiate combat!');
+                }}
+                title="Combat"
+              >
+                <Swords className="w-5 h-5" />
+                Combat
+              </button>
+              
+              {/* Marketplace Button */}
+              <button
+                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
+                onClick={() => setShowMarketplace(true)}
+              >
+                🏪 Marketplace
+              </button>
+            </div>
           )}
           
           {/* Game Instructions - Responsive */}
