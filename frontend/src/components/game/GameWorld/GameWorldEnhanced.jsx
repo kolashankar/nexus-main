@@ -747,7 +747,28 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
       }
       renderer.dispose();
     };
-  }, [player]);
+  }, [player, isMobile, isRunning]);
+
+  // === MOBILE CONTROL HANDLERS ===
+  const handleJoystickMove = ({ x, y }) => {
+    movement.current.joystickX = x;
+    movement.current.joystickY = y;
+  };
+
+  const handleJump = (pressed) => {
+    movement.current.jump = pressed;
+  };
+
+  const handleRunToggle = () => {
+    setIsRunning(!isRunning);
+  };
+
+  const handleInteract = (pressed) => {
+    if (pressed) {
+      console.log('Interact button pressed');
+      // Trigger interaction logic here (e.g., talk to NPC, open door, etc.)
+    }
+  };
 
   return (
     <div 
