@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://camera-view-toggle.preview.emergentagent.com"
+    "https://game-ui-mobile.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
