@@ -43,6 +43,16 @@ const GameWorld = ({ player }) => {
   const isRunning = useRef(false);
   const isJumping = useRef(false);
 
+  // City boundaries (to be calculated after loading city model)
+  const cityBounds = useRef({
+    minX: -50,
+    maxX: 50,
+    minZ: -50,
+    maxZ: 50,
+    minY: 0,
+    maxY: 20
+  });
+
   // Helper function to load GLB models
   const loadModel = (path, includeAnimations = false) => {
     const loader = new GLTFLoader();
