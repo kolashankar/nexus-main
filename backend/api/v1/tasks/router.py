@@ -11,6 +11,7 @@ from backend.services.tasks.task_manager import TaskManager
 from backend.api.v1.tasks.initial import router as initial_tasks_router
 from backend.api.v1.tasks.advanced import router as advanced_tasks_router
 from backend.api.v1.tasks.multiplayer import router as multiplayer_tasks_router
+from backend.api.v1.tasks.analytics import router as analytics_tasks_router
 
 router = APIRouter()
 
@@ -20,6 +21,8 @@ router.include_router(initial_tasks_router)
 router.include_router(advanced_tasks_router)
 # Include multiplayer tasks router
 router.include_router(multiplayer_tasks_router)
+# Include analytics tasks router
+router.include_router(analytics_tasks_router)
 
 class TaskCompleteRequest(BaseModel):
     task_id: str
