@@ -24,6 +24,14 @@ const Play = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showTaskPanel, setShowTaskPanel] = useState(false);
   const [currentMobileTab, setCurrentMobileTab] = useState(null);
+  
+  // Quest System State
+  const [showQuestLog, setShowQuestLog] = useState(false);
+  const [showQuestTracker, setShowQuestTracker] = useState(true);
+  
+  // Combat System State
+  const [showCombat, setShowCombat] = useState(false);
+  const [currentBattleId, setCurrentBattleId] = useState(null);
 
   useEffect(() => {
     if (!player) {
