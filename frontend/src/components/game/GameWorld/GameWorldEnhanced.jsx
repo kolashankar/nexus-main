@@ -535,6 +535,27 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
 
     // === KEYBOARD CONTROLS ===
     const handleKeyDown = (e) => {
+      // Toggle debug visuals with 'V' key
+      if (e.key.toLowerCase() === 'v') {
+        setShowDebugVisuals(prev => {
+          const newValue = !prev;
+          console.log(`🔧 Debug visuals: ${newValue ? 'ON' : 'OFF'}`);
+          
+          // Update visibility of debug meshes
+          if (debugVisualsRef.current.roads) {
+            debugVisualsRef.current.roads.forEach(mesh => {
+              mesh.visible = newValue;
+            });
+          }
+          if (debugVisualsRef.current.navMesh) {
+            debugVisualsRef.current.navMesh.visible = newValue;
+          }
+          
+          return newValue;
+        });
+        return;
+      }
+      
       switch (e.key.toLowerCase()) {
         case 'w':
         case 'arrowup':
