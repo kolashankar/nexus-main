@@ -2,7 +2,7 @@
  * Play/Game page - Full 3D game environment with fullscreen mode and mobile support
  */
 import React, { useEffect, useState } from 'react';
-import GameWorldEnhanced from '../../components/game/GameWorld/GameWorldEnhanced';
+import GameWorldOptimized from '../../components/game/GameWorld/GameWorldOptimized';
 import GameHUD from '../../components/game/GameHUD/GameHUD';
 import TaskPanel from '../../components/game/TaskPanel/TaskPanel';
 import Marketplace from '../../components/game/Marketplace/Marketplace';
