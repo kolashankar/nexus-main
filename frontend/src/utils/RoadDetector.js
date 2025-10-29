@@ -286,21 +286,13 @@ export class RoadDetector {
     });
     
     // Merge all geometries
-    const mergedGeometry = THREE.BufferGeometryUtils 
-      ? THREE.BufferGeometryUtils.mergeGeometries(geometries)
-      : this.mergeGeometriesManually(geometries);
-    
-    return mergedGeometry;
-  }
-
-  /**
-   * Manual geometry merging fallback
-   */
-  mergeGeometriesManually(geometries) {
-    // Simple merge - just use the first geometry for now
-    // In production, you'd want to properly merge all vertices
-    console.warn('⚠️ Using simplified geometry merging');
-    return geometries[0];
+    try {
+      const mergedGeometry = mergeGeometries(geometries);
+      return mergedGeometry;
+    } catch (error) {
+      console.warn('⚠️ Error merging geometries:', error);
+      return geometries[0]; // Fallback to first geometry
+    }
   }
 
   /**
