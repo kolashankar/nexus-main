@@ -45,7 +45,7 @@ const CharacterCustomizer = () => {
     setIsSaving(true);
     try {
       // Update both flat fields and appearance object for compatibility
-      await updatePlayer({
+      const updateData = {
         character_model: selectedCharacter,
         skin_tone: selectedSkin,
         hair_color: selectedHair,
@@ -54,9 +54,12 @@ const CharacterCustomizer = () => {
           skin_tone: selectedSkin,
           hair_color: selectedHair,
         }
-      });
-      console.log('✅ Character customization saved!');
-      alert('✅ Character saved successfully!');
+      };
+      
+      console.log('🔄 Saving character customization:', updateData);
+      const result = await updatePlayer(updateData);
+      console.log('✅ Character customization saved successfully!', result);
+      alert('✅ Character saved successfully! Changes will appear in the game.');
     } catch (error) {
       console.error('❌ Failed to save customization:', error);
       alert('❌ Failed to save character. Please try again.');
