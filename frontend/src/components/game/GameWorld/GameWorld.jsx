@@ -522,7 +522,7 @@ const GameWorld = ({ player }) => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // NPC AI: Random movement behavior with boundary awareness
+    // NPC AI: Random movement behavior with boundary awareness and NavMesh constraints
     const updateNPCBehavior = (npc, deltaTime) => {
       const userData = npc.userData;
       const bounds = cityBounds.current;
@@ -546,7 +546,19 @@ const GameWorld = ({ player }) => {
           targetX = Math.max(bounds.minX + 2, Math.min(bounds.maxX - 2, targetX));
           targetZ = Math.max(bounds.minZ + 2, Math.min(bounds.maxZ - 2, targetZ));
           
-          userData.targetPosition.set(targetX, userData.basePosition.y, targetZ);
+          // === NEW: Snap target to nearest road if NavMesh exists ===
+          if (navMeshRef.current) {
+            const nearestRoadPoint = navMeshRef.current.getNearestPoint(targetX, targetZ, 10);
+            if (nearestRoadPoint) {
+              targetX = nearestRoadPoint.x;
+              targetZ = nearestRoadPoint.z;
+              userData.targetPosition.set(targetX, nearestRoadPoint.y, targetZ);
+            } else {
+              userData.targetPosition.set(targetX, userData.basePosition.y, targetZ);
+            }
+          } else {
+            userData.targetPosition.set(targetX, userData.basePosition.y, targetZ);
+          }
         }
       } else {
         // Moving state
@@ -557,23 +569,46 @@ const GameWorld = ({ player }) => {
         // Calculate new position
         const newPosition = npc.position.clone().add(direction.multiplyScalar(userData.moveSpeed));
         
-        // Check boundaries
-        if (newPosition.x >= bounds.minX && newPosition.x <= bounds.maxX &&
-            newPosition.z >= bounds.minZ && newPosition.z <= bounds.maxZ) {
-          npc.position.copy(newPosition);
+        // === NEW: Check NavMesh constraints ===
+        let canMove = true;
+        if (navMeshRef.current) {
+          const nearestRoadPoint = navMeshRef.current.getNearestPoint(
+            newPosition.x,
+            newPosition.z,
+            2.0
+          );
+          
+          if (nearestRoadPoint) {
+            // Snap to road
+            newPosition.x = nearestRoadPoint.x;
+            newPosition.z = nearestRoadPoint.z;
+            newPosition.y = nearestRoadPoint.y;
+          } else {
+            // Off road, stop moving
+            canMove = false;
+            userData.isMoving = false;
+          }
         } else {
-          // Hit boundary, stop moving and find new target
-          userData.isMoving = false;
+          // Check boundaries (fallback)
+          if (newPosition.x < bounds.minX || newPosition.x > bounds.maxX ||
+              newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
+            canMove = false;
+            userData.isMoving = false;
+          }
         }
         
-        // Rotate to face movement direction
-        const targetRotation = Math.atan2(direction.x, direction.z);
-        npc.rotation.y = THREE.MathUtils.lerp(npc.rotation.y, targetRotation, userData.rotationSpeed);
-        
-        // Check if reached target
-        const distance = npc.position.distanceTo(userData.targetPosition);
-        if (distance < 0.5) {
-          userData.isMoving = false;
+        if (canMove) {
+          npc.position.copy(newPosition);
+          
+          // Rotate to face movement direction
+          const targetRotation = Math.atan2(direction.x, direction.z);
+          npc.rotation.y = THREE.MathUtils.lerp(npc.rotation.y, targetRotation, userData.rotationSpeed);
+          
+          // Check if reached target
+          const distance = npc.position.distanceTo(userData.targetPosition);
+          if (distance < 0.5) {
+            userData.isMoving = false;
+          }
         }
       }
     };
