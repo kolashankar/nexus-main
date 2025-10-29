@@ -8,7 +8,7 @@ from backend.core.database import get_database
 from backend.api.deps import get_current_user
 from backend.services.marketplace.marketplace import MarketplaceService
 
-router = APIRouter()
+router = APIRouter(prefix="/marketplace", tags=["marketplace"])
 
 class PurchaseRequest(BaseModel):
     item_type: str  # 'chain' or 'ring'
