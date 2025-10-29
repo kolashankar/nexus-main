@@ -41,6 +41,11 @@ from backend.api.v1.tasks.router import router as tasks_router
 from backend.api.v1.marketplace.router import router as marketplace_router
 from backend.api.v1.upgrades.router import router as upgrades_router
 from backend.api.v1.traits.actions import router as trait_actions_router
+from backend.api.v1.tutorial.router import router as tutorial_router
+from backend.api.v1.crafting.router import router as crafting_router
+from backend.api.v1.health.router import router as health_router
+from backend.api.v1.investments.router import router as investments_router
+from backend.api.v1.real_estate.router import router as real_estate_router
 from backend.api.websocket.handlers import websocket_endpoint
 
 
