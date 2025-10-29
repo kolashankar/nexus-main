@@ -298,9 +298,24 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         const spawnPos = getRandomSpawnPosition();
         playerState.current.position.copy(spawnPos);
         character.position.copy(playerState.current.position);
-        character.scale.set(1, 1, 1);
+        
+        // Ensure proper scale for visibility (increase if model seems small)
+        character.scale.set(1.5, 1.5, 1.5);
+        
+        // Ensure character is visible and properly lit
+        character.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            // Ensure materials are visible
+            if (child.material) {
+              child.material.needsUpdate = true;
+            }
+          }
+        });
         
         console.log(`👤 Player character "${characterModel}" spawned at (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
+        console.log(`📐 Character scale: ${character.scale.x}, Position: (${character.position.x}, ${character.position.y}, ${character.position.z})`);
         
         scene.add(character);
         characterRef.current = character;
@@ -308,13 +323,15 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         // Setup animation mixer
         if (result.animations.length > 0) {
           mixerRef.current = new THREE.AnimationMixer(character);
+          console.log(`🎬 Animation mixer created with ${result.animations.length} animations`);
         }
 
         console.log('✅ Player character loaded successfully');
       } catch (error) {
         console.error('❌ Failed to load player character:', error);
         console.error('Error details:', error.message);
-        // Fallback capsule (more visible than cube)
+        console.error('Stack trace:', error.stack);
+        // Fallback capsule (more visible than small circle)
         const geometry = new THREE.CapsuleGeometry(0.5, 1.5);
         const material = new THREE.MeshStandardMaterial({ 
           color: 0xff6b6b,
@@ -327,7 +344,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         fallback.receiveShadow = true;
         scene.add(fallback);
         characterRef.current = fallback;
-        console.log('⚠️ Using fallback character capsule');
+        console.log('⚠️ Using fallback character capsule - this is visible as a red pill shape, not the actual character model');
       }
     };
 
