@@ -264,8 +264,14 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         const result = await loadModel(`/models/characters/${characterModel}.glb`);
         const character = result.model;
 
+        // Set random spawn position
+        const spawnPos = getRandomSpawnPosition();
+        playerState.current.position.copy(spawnPos);
         character.position.copy(playerState.current.position);
         character.scale.set(1, 1, 1);
+        
+        console.log(`👤 Player spawned at (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
+        
         scene.add(character);
         characterRef.current = character;
 
