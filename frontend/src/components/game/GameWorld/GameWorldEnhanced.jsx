@@ -39,6 +39,16 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     currentAnimation: 'idle'
   });
 
+  // City boundaries (to be calculated after loading city model)
+  const cityBounds = useRef({
+    minX: -50,
+    maxX: 50,
+    minZ: -50,
+    maxZ: 50,
+    minY: 0,
+    maxY: 20
+  });
+
   // Constants
   const WALK_SPEED = 0.1;
   const RUN_SPEED = 0.25;
