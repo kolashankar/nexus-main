@@ -56,8 +56,10 @@ const CharacterCustomizer = () => {
         }
       });
       console.log('✅ Character customization saved!');
+      alert('✅ Character saved successfully!');
     } catch (error) {
       console.error('❌ Failed to save customization:', error);
+      alert('❌ Failed to save character. Please try again.');
     } finally {
       setIsSaving(false);
     }
