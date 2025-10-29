@@ -61,6 +61,11 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+# Register exception handlers
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(Exception, general_exception_handler)
+
 # Include routers using the explicitly imported and renamed variables
 app.include_router(auth_router, prefix="/api")
 app.include_router(player_router, prefix="/api")
