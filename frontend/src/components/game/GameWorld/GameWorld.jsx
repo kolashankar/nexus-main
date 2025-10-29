@@ -224,9 +224,6 @@ const GameWorld = ({ player }) => {
       setIsLoaded(true);
       console.log('✅ Game world fully loaded');
     };
-        characterRef.current = cube;
-      }
-    };
 
     // City boundaries (to be calculated after loading city model)
     const cityBounds = useRef({
