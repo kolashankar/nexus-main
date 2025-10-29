@@ -92,6 +92,12 @@ app.include_router(tasks_router, prefix="/api")
 app.include_router(marketplace_router, prefix="/api")
 app.include_router(upgrades_router, prefix="/api")
 app.include_router(trait_actions_router, prefix="/api/traits")
+# Newly connected routers with existing backend code
+app.include_router(tutorial_router, prefix="/api")
+app.include_router(crafting_router, prefix="/api")
+app.include_router(health_router, prefix="/api")
+app.include_router(investments_router, prefix="/api")
+app.include_router(real_estate_router, prefix="/api")
 
 
 @app.get("/")
