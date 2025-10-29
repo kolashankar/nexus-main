@@ -49,6 +49,13 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [cameraView, setCameraView] = useState('third-person');
   const [performanceMode, setPerformanceMode] = useState('balanced'); // 'quality', 'balanced', 'performance'
+  
+  // World Items state
+  const [worldItems, setWorldItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [activeAcquisition, setActiveAcquisition] = useState(null);
+  const worldItemsRef = useRef([]);
 
   // Movement state
   const movement = useRef({
