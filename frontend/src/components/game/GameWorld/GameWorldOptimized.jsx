@@ -426,6 +426,114 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     state.currentAnimation = isMoving ? (mov.run ? 'run' : 'walk') : 'idle';
   };
 
+  /**
+   * Fetch active world items from backend
+   */
+  const fetchWorldItems = async () => {
+    try {
+      const response = await getActiveWorldItems();
+      if (response && response.items) {
+        setWorldItems(response.items);
+        worldItemsRef.current = response.items;
+        console.log(`🌍 Loaded ${response.items.length} world items`);
+      }
+    } catch (error) {
+      console.error('Failed to fetch world items:', error);
+    }
+  };
+
+  /**
+   * Fetch active acquisitions
+   */
+  const fetchActiveAcquisition = async () => {
+    try {
+      const response = await getActiveAcquisitions();
+      if (response && response.acquisitions && response.acquisitions.length > 0) {
+        setActiveAcquisition(response.acquisitions[0]); // Show first active acquisition
+      } else {
+        setActiveAcquisition(null);
+      }
+    } catch (error) {
+      console.error('Failed to fetch active acquisitions:', error);
+    }
+  };
+
+  /**
+   * Handle item interaction (click on item)
+   */
+  const handleItemInteract = async (item) => {
+    try {
+      setSelectedItem(item);
+      setShowItemModal(true);
+    } catch (error) {
+      console.error('Failed to interact with item:', error);
+    }
+  };
+
+  /**
+   * Handle item acquisition
+   */
+  const handleItemAcquire = async (item) => {
+    try {
+      const response = await startItemAcquisition(item.id);
+      setShowItemModal(false);
+      setSelectedItem(null);
+      
+      // Refresh world items
+      await fetchWorldItems();
+      await fetchActiveAcquisition();
+      
+      console.log('✅ Item acquisition started:', response);
+    } catch (error) {
+      console.error('Failed to acquire item:', error);
+      alert(error.response?.data?.message || 'Failed to acquire item');
+    }
+  };
+
+  /**
+   * Handle acquisition claim
+   */
+  const handleAcquisitionClaim = async (acquisitionId) => {
+    try {
+      const response = await claimAcquisition(acquisitionId);
+      await fetchActiveAcquisition();
+      
+      console.log('✅ Item claimed:', response);
+      alert(`Item claimed successfully! Added to your inventory.`);
+    } catch (error) {
+      console.error('Failed to claim acquisition:', error);
+      alert(error.response?.data?.message || 'Failed to claim item');
+    }
+  };
+
+  /**
+   * Handle acquisition cancel
+   */
+  const handleAcquisitionCancel = async (acquisitionId) => {
+    try {
+      const response = await cancelAcquisition(acquisitionId);
+      await fetchActiveAcquisition();
+      await fetchWorldItems();
+      
+      console.log('✅ Acquisition canceled:', response);
+      alert(`Acquisition canceled. Refunded ${response.refund_amount} credits.`);
+    } catch (error) {
+      console.error('Failed to cancel acquisition:', error);
+      alert(error.response?.data?.message || 'Failed to cancel acquisition');
+    }
+  };
+
+  /**
+   * Calculate distance between player and item
+   */
+  const calculateDistance = (itemPos) => {
+    if (!playerState.current) return null;
+    
+    const dx = itemPos.x - playerState.current.position.x;
+    const dz = itemPos.z - playerState.current.position.z;
+    return Math.sqrt(dx * dx + dz * dz);
+  };
+
   // Detect mobile device on mount
   useEffect(() => {
     const mobile = isMobileDevice() || isTouchDevice();
