@@ -162,14 +162,8 @@ const GameWorld = ({ player }) => {
     ground.visible = false; // Hidden by default, city model has ground
     scene.add(ground);
 
-    // Initialize all assets
-    const initializeWorld = async () => {
-      await loadCityModel();
-      await loadPlayerCharacter();
-      await loadNPCRobots();
-      setIsLoaded(true);
-      console.log('✅ Game world fully loaded');
-    };
+    // Load player character model
+    const loadPlayerCharacter = async () => {
       try {
         const characterModel = player?.appearance?.model || player?.character_model || 'male_base';
         console.log(`🔄 Loading player character: ${characterModel}`);
@@ -218,6 +212,18 @@ const GameWorld = ({ player }) => {
         const cube = new THREE.Mesh(geometry, material);
         cube.position.copy(playerPosition.current);
         scene.add(cube);
+        characterRef.current = cube;
+      }
+    };
+
+    // Initialize all assets
+    const initializeWorld = async () => {
+      await loadCityModel();
+      await loadPlayerCharacter();
+      await loadNPCRobots();
+      setIsLoaded(true);
+      console.log('✅ Game world fully loaded');
+    };
         characterRef.current = cube;
       }
     };
