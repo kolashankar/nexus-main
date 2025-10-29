@@ -718,12 +718,44 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           // Play animation if available
         }
 
-        // Camera follow with boundary constraints
-        const cameraOffset = new THREE.Vector3(
-          -Math.sin(state.rotation) * 10,
-          8,
-          -Math.cos(state.rotation) * 10
-        );
+        // Camera follow with different view modes
+        let cameraOffset;
+        
+        switch (cameraView) {
+          case 'top-down':
+            // Top-down bird's eye view
+            cameraOffset = new THREE.Vector3(0, 20, 0);
+            break;
+          
+          case 'front':
+            // Front view facing character
+            cameraOffset = new THREE.Vector3(
+              Math.sin(state.rotation) * 8,
+              5,
+              Math.cos(state.rotation) * 8
+            );
+            break;
+          
+          case 'side':
+            // Side view (perpendicular to character facing)
+            cameraOffset = new THREE.Vector3(
+              -Math.cos(state.rotation) * 8,
+              5,
+              Math.sin(state.rotation) * 8
+            );
+            break;
+          
+          case 'third-person':
+          default:
+            // Third-person behind character
+            cameraOffset = new THREE.Vector3(
+              -Math.sin(state.rotation) * 10,
+              8,
+              -Math.cos(state.rotation) * 10
+            );
+            break;
+        }
+        
         const cameraPos = state.position.clone().add(cameraOffset);
         
         // Constrain camera position
@@ -731,7 +763,22 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         cameraPos.z = Math.max(bounds.minZ - 5, Math.min(bounds.maxZ + 5, cameraPos.z));
         
         cameraRef.current.position.copy(cameraPos);
-        cameraRef.current.lookAt(state.position);
+        
+        // Adjust camera look-at based on view
+        if (cameraView === 'top-down') {
+          cameraRef.current.lookAt(state.position);
+        } else {
+          // For other views, look slightly ahead
+          const lookAtPos = state.position.clone();
+          if (cameraView !== 'front') {
+            lookAtPos.add(new THREE.Vector3(
+              Math.sin(state.rotation) * 2,
+              0,
+              Math.cos(state.rotation) * 2
+            ));
+          }
+          cameraRef.current.lookAt(lookAtPos);
+        }
       }
 
       renderer.render(scene, camera);
