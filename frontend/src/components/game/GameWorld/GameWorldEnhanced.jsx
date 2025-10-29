@@ -273,6 +273,9 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         // Create invisible boundary walls
         createBoundaryWalls();
         
+        // === NEW: Detect roads and generate NavMesh ===
+        await detectRoadsAndGenerateNavMesh(cityModel);
+        
         return { size, center };
       } catch (error) {
         console.error('❌ Failed to load city model:', error);
