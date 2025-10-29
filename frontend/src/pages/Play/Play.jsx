@@ -1,5 +1,6 @@
 /**
  * Play/Game page - Full 3D game environment with fullscreen mode and mobile support
+ * Enhanced with Quest System, Combat System, and World Items
  */
 import React, { useEffect, useState } from 'react';
 import GameWorldOptimized from '../../components/game/GameWorld/GameWorldOptimized';
@@ -7,9 +8,12 @@ import GameHUD from '../../components/game/GameHUD/GameHUD';
 import TaskPanel from '../../components/game/TaskPanel/TaskPanel';
 import Marketplace from '../../components/game/Marketplace/Marketplace';
 import MobileMenu from '../../components/mobile/MobileMenu';
+import { QuestLog } from '../../components/quests/QuestLog';
+import { QuestTracker } from '../../components/quests/QuestTracker';
+import CombatArena from '../../components/combat/CombatArena/CombatArena';
 import { isMobileDevice } from '../../utils/mobileDetection';
 import useStore from '../../store';
-import { Loader2, Maximize2, Minimize2 } from 'lucide-react';
+import { Loader2, Maximize2, Minimize2, Scroll, Swords } from 'lucide-react';
 import './PlayMobile.css';
 
 const Play = () => {
