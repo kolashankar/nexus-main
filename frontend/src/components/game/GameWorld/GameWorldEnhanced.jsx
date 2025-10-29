@@ -283,7 +283,14 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     // === LOAD PLAYER CHARACTER ===
     const loadPlayerCharacter = async () => {
       try {
-        const characterModel = player?.character_model || 'male_base';
+        // Check both appearance.model and character_model for compatibility
+        const characterModel = player?.appearance?.model || player?.character_model || 'male_base';
+        console.log(`🎮 Loading player character: ${characterModel}`);
+        console.log('Player data:', { 
+          appearance: player?.appearance, 
+          character_model: player?.character_model 
+        });
+        
         const result = await loadModel(`/models/characters/${characterModel}.glb`);
         const character = result.model;
 
@@ -293,7 +300,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         character.position.copy(playerState.current.position);
         character.scale.set(1, 1, 1);
         
-        console.log(`👤 Player spawned at (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
+        console.log(`👤 Player character "${characterModel}" spawned at (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
         
         scene.add(character);
         characterRef.current = character;
@@ -303,16 +310,24 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           mixerRef.current = new THREE.AnimationMixer(character);
         }
 
-        console.log('✅ Player character loaded');
+        console.log('✅ Player character loaded successfully');
       } catch (error) {
         console.error('❌ Failed to load player character:', error);
-        // Fallback cube
+        console.error('Error details:', error.message);
+        // Fallback capsule (more visible than cube)
         const geometry = new THREE.CapsuleGeometry(0.5, 1.5);
-        const material = new THREE.MeshStandardMaterial({ color: 0x00ff88 });
+        const material = new THREE.MeshStandardMaterial({ 
+          color: 0xff6b6b,
+          emissive: 0xff0000,
+          emissiveIntensity: 0.3
+        });
         const fallback = new THREE.Mesh(geometry, material);
         fallback.position.copy(playerState.current.position);
+        fallback.castShadow = true;
+        fallback.receiveShadow = true;
         scene.add(fallback);
         characterRef.current = fallback;
+        console.log('⚠️ Using fallback character capsule');
       }
     };
 
