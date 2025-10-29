@@ -9,11 +9,14 @@ from backend.api.deps import get_current_user
 from backend.services.ai.task_generator import TaskGenerator
 from backend.services.tasks.task_manager import TaskManager
 from backend.api.v1.tasks.initial import router as initial_tasks_router
+from backend.api.v1.tasks.advanced import router as advanced_tasks_router
 
 router = APIRouter()
 
 # Include initial tasks router
 router.include_router(initial_tasks_router)
+# Include advanced tasks router
+router.include_router(advanced_tasks_router)
 
 class TaskCompleteRequest(BaseModel):
     task_id: str
