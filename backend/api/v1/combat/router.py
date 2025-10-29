@@ -15,7 +15,17 @@ from .schemas import (
     FleeRequest
 )
 
+# Import sub-routers
+from .duel.router import router as duel_router
+from .arena.router import router as arena_router
+from .abilities.router import router as abilities_router
+
 router = APIRouter(prefix="/combat", tags=["combat"])
+
+# Include sub-routers
+router.include_router(duel_router, tags=["combat-duel"])
+router.include_router(arena_router, tags=["combat-arena"])
+router.include_router(abilities_router, tags=["combat-abilities"])
 
 def get_combat_engine():
     """Dependency to get combat engine instance."""
