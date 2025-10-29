@@ -402,8 +402,8 @@ const GameWorld = ({ player }) => {
 
     // Initialize all assets
     const initializeWorld = async () => {
+      await loadCityModel();
       await loadPlayerCharacter();
-      await loadBuildings();
       await loadNPCRobots();
       setIsLoaded(true);
       console.log('✅ Game world fully loaded');
