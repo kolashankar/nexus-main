@@ -24,7 +24,7 @@ def event_loop() -> Generator:
 @pytest.fixture(scope="session")
 async def test_db_client() -> AsyncGenerator:
     """Create test database client"""
-    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb+srv://pricecomparision057_db_user:aJHuxLkFGKkVVX9j@cluster0.2sx9gjg.mongodb.net/game_db?appName=Cluster0')
     client = AsyncIOMotorClient(mongo_url)
     yield client
 

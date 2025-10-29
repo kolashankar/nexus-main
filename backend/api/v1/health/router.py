@@ -11,7 +11,7 @@ router = APIRouter(prefix="/health", tags=["health"])
 
 # Initialize health checker
 health_checker = HealthChecker(
-    mongo_url=os.environ.get('MONGO_URL', 'mongodb://localhost:27017'),
+    mongo_url=os.environ.get('MONGO_URL', 'mongodb+srv://pricecomparision057_db_user:aJHuxLkFGKkVVX9j@cluster0.2sx9gjg.mongodb.net/game_db?appName=Cluster0'),
     redis_url=os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 )
 

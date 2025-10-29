@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
 
     # Database
-    MONGO_URL: str = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    MONGO_URL: str = os.environ.get('MONGO_URL', 'mongodb+srv://pricecomparision057_db_user:aJHuxLkFGKkVVX9j@cluster0.2sx9gjg.mongodb.net/game_db?appName=Cluster0')
     DB_NAME: str = os.environ.get('DB_NAME', 'karma_nexus')
 
     # Security

@@ -11,7 +11,7 @@ class WorldItemSpawnerTask:
     
     def __init__(self):
         # Get MongoDB connection
-        mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+        mongo_url = os.getenv("MONGO_URL", "mongodb+srv://pricecomparision057_db_user:aJHuxLkFGKkVVX9j@cluster0.2sx9gjg.mongodb.net/game_db?appName=Cluster0")
         self.client = AsyncIOMotorClient(mongo_url)
         self.db = self.client.karma_nexus
         self.spawn_service = ItemSpawnService(self.db)
