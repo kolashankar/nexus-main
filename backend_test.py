@@ -174,20 +174,20 @@ class KarmaNexusAPITester:
         print()
         return results
 
-    def test_protected_endpoints(self) -> Dict[str, bool]:
-        """Test protected endpoints that require authentication."""
+    def test_player_profile_endpoints(self) -> Dict[str, bool]:
+        """Test player profile and character customization endpoints."""
         results = {}
         
-        print("🔒 TESTING PROTECTED ENDPOINTS")
+        print("👤 TESTING PLAYER PROFILE & CHARACTER ENDPOINTS")
         print("-" * 40)
         
         if not self.auth_token:
-            print("❌ No auth token available - skipping protected endpoint tests")
-            return {'profile_endpoint': False}
+            print("❌ No auth token available - skipping player profile tests")
+            return {'player_profile_tests': False}
 
         headers = {"Authorization": f"Bearer {self.auth_token}"}
 
-        # Test player profile endpoint
+        # Test GET /api/player/profile
         try:
             response = self.session.get(
                 f"{self.api_url}/player/profile",
@@ -197,38 +197,87 @@ class KarmaNexusAPITester:
             
             if response.status_code == 200:
                 data = response.json()
-                print(f"✅ Player Profile (/api/player/profile) - Status: {response.status_code}")
-                print(f"   Username: {data.get('username', 'Unknown')}")
-                print(f"   Level: {data.get('level', 'Unknown')}")
-                results['profile_endpoint'] = True
+                required_fields = ["id", "username", "level", "currencies", "traits"]
+                if all(field in data for field in required_fields):
+                    print(f"✅ GET Player Profile (/api/player/profile) - Status: {response.status_code}")
+                    print(f"   Username: {data.get('username', 'Unknown')}")
+                    print(f"   Level: {data.get('level', 'Unknown')}")
+                    print(f"   Character Model: {data.get('character_model', 'Not set')}")
+                    print(f"   Skin Tone: {data.get('skin_tone', 'Not set')}")
+                    print(f"   Hair Color: {data.get('hair_color', 'Not set')}")
+                    results['get_player_profile'] = True
+                else:
+                    print(f"❌ GET Player Profile - Missing required fields")
+                    print(f"   Response: {data}")
+                    results['get_player_profile'] = False
             else:
-                print(f"❌ Player Profile (/api/player/profile) - Status: {response.status_code}")
+                print(f"❌ GET Player Profile (/api/player/profile) - Status: {response.status_code}")
                 print(f"   Response: {response.text}")
-                results['profile_endpoint'] = False
+                results['get_player_profile'] = False
         except Exception as e:
-            print(f"❌ Player Profile (/api/player/profile) - Error: {str(e)}")
-            results['profile_endpoint'] = False
+            print(f"❌ GET Player Profile (/api/player/profile) - Error: {str(e)}")
+            results['get_player_profile'] = False
 
-        # Test auth/me endpoint
+        # Test PUT /api/player/profile with character customization
         try:
-            response = self.session.get(
-                f"{self.api_url}/auth/me",
+            character_update_data = {
+                "character_model": "male_athletic",
+                "skin_tone": "medium",
+                "hair_color": "brown",
+                "appearance": {
+                    "model": "male_athletic",
+                    "skin_tone": "medium",
+                    "hair_color": "brown"
+                }
+            }
+            
+            response = self.session.put(
+                f"{self.api_url}/player/profile",
+                json=character_update_data,
                 headers=headers,
-                timeout=10
+                timeout=15
             )
             
             if response.status_code == 200:
                 data = response.json()
-                print(f"✅ Auth Me (/api/auth/me) - Status: {response.status_code}")
-                print(f"   Username: {data.get('username', 'Unknown')}")
-                results['auth_me'] = True
+                print(f"✅ PUT Player Profile (/api/player/profile) - Status: {response.status_code}")
+                print(f"   Character Model: {data.get('character_model', 'Not updated')}")
+                print(f"   Skin Tone: {data.get('skin_tone', 'Not updated')}")
+                print(f"   Hair Color: {data.get('hair_color', 'Not updated')}")
+                results['put_player_profile'] = True
+                
+                # Verify the update persisted by getting profile again
+                verify_response = self.session.get(
+                    f"{self.api_url}/player/profile",
+                    headers=headers,
+                    timeout=10
+                )
+                
+                if verify_response.status_code == 200:
+                    verify_data = verify_response.json()
+                    if (verify_data.get('character_model') == 'male_athletic' and
+                        verify_data.get('skin_tone') == 'medium' and
+                        verify_data.get('hair_color') == 'brown'):
+                        print(f"✅ Character customization persisted correctly")
+                        results['character_persistence'] = True
+                    else:
+                        print(f"❌ Character customization did not persist")
+                        print(f"   Expected: male_athletic, medium, brown")
+                        print(f"   Got: {verify_data.get('character_model')}, {verify_data.get('skin_tone')}, {verify_data.get('hair_color')}")
+                        results['character_persistence'] = False
+                else:
+                    print(f"❌ Failed to verify character persistence - Status: {verify_response.status_code}")
+                    results['character_persistence'] = False
+                    
             else:
-                print(f"❌ Auth Me (/api/auth/me) - Status: {response.status_code}")
+                print(f"❌ PUT Player Profile (/api/player/profile) - Status: {response.status_code}")
                 print(f"   Response: {response.text}")
-                results['auth_me'] = False
+                results['put_player_profile'] = False
+                results['character_persistence'] = False
         except Exception as e:
-            print(f"❌ Auth Me (/api/auth/me) - Error: {str(e)}")
-            results['auth_me'] = False
+            print(f"❌ PUT Player Profile (/api/player/profile) - Error: {str(e)}")
+            results['put_player_profile'] = False
+            results['character_persistence'] = False
 
         print()
         return results
