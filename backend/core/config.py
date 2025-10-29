@@ -30,8 +30,10 @@ class Settings(BaseSettings):
         "http://localhost:8001",
         "https://nexus-main-git-main-kolashankar423-gmailcoms-projects.vercel.app",
         "https://nexus-main-o96kcy4o2-kolashankar423-gmailcoms-projects.vercel.app",
-        "https://karma-nexus-backend.onrender.com"
-        "https://nexus-main-tau.vercel.app"
+        "https://karma-nexus-backend.onrender.com",
+        "https://karma-nexus-backend-ydkt.onrender.com",
+        "https://nexus-main-tau.vercel.app",
+        "*"  # Allow all origins for development
     ]
         
     @field_validator('ALLOWED_ORIGINS', mode='before')
