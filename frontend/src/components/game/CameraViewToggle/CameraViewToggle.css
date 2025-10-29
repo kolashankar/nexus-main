@@ -1,0 +1,150 @@
+/* Camera View Toggle Styles */
+
+.camera-view-toggle {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.camera-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(139, 92, 246, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(167, 139, 250, 0.5);
+  border-radius: 0.75rem;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  min-width: 120px;
+}
+
+.camera-toggle-btn:hover {
+  background: rgba(124, 58, 237, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4);
+  border-color: rgba(196, 181, 253, 0.7);
+}
+
+.camera-toggle-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.camera-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.camera-label {
+  flex: 1;
+  text-align: left;
+}
+
+.camera-hint {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* View indicator dots */
+.view-indicator {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+}
+
+.view-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.view-dot.active {
+  background: rgba(139, 92, 246, 1);
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.8);
+  width: 8px;
+  height: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .camera-view-toggle {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .camera-toggle-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    min-width: 100px;
+  }
+
+  .camera-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .camera-hint {
+    font-size: 0.875rem;
+  }
+}
+
+/* Touch-friendly on mobile */
+@media (max-width: 768px) and (hover: none) {
+  .camera-toggle-btn {
+    min-height: 44px; /* iOS recommended touch target */
+    padding: 0.625rem 0.875rem;
+  }
+
+  .camera-toggle-btn:active {
+    background: rgba(109, 40, 217, 0.95);
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .camera-view-toggle {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .camera-toggle-btn {
+    min-width: 90px;
+    padding: 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .camera-label {
+    font-size: 0.7rem;
+  }
+
+  .view-indicator {
+    padding: 0.2rem 0.4rem;
+  }
+
+  .view-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .view-dot.active {
+    width: 7px;
+    height: 7px;
+  }
+}
