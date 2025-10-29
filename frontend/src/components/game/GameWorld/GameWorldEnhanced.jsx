@@ -373,14 +373,10 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     // === INITIALIZE WORLD ===
     const initWorld = async () => {
       setLoadingProgress(10);
-      await loadBuildings();
-      setLoadingProgress(30);
-      await loadVehicles();
-      setLoadingProgress(45);
-      await loadProps();
-      setLoadingProgress(60);
+      await loadCityModel();
+      setLoadingProgress(40);
       await loadPlayerCharacter();
-      setLoadingProgress(75);
+      setLoadingProgress(70);
       await loadNPCCharacters();
       setLoadingProgress(90);
       await loadRobotNPCs();
