@@ -172,8 +172,14 @@ const GameWorld = ({ player }) => {
         console.log(`🔄 Loading player character: ${characterModel}`);
         
         const character = await loadModel(`/models/characters/${characterModel}.glb`);
+        
+        // Set random spawn position
+        const spawnPos = getRandomSpawnPosition();
+        playerPosition.current.copy(spawnPos);
         character.position.copy(playerPosition.current);
         character.scale.set(1, 1, 1);
+        
+        console.log(`👤 Player spawned at (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
         
         // Apply customizations
         const skinTone = player?.appearance?.skin_tone || player?.skin_tone || 'default';
@@ -200,7 +206,10 @@ const GameWorld = ({ player }) => {
         console.log('✅ Player character loaded');
       } catch (error) {
         console.error('❌ Failed to load player character:', error);
-        // Fallback to simple cube
+        // Fallback to simple cube at random spawn
+        const spawnPos = getRandomSpawnPosition();
+        playerPosition.current.copy(spawnPos);
+        
         const geometry = new THREE.BoxGeometry(1, 2, 1);
         const material = new THREE.MeshStandardMaterial({ color: 0x00ff88 });
         const cube = new THREE.Mesh(geometry, material);
