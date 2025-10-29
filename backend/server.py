@@ -9,7 +9,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from backend.core.config import settings
+from backend.middleware.error_handler import (
+    http_exception_handler,
+    validation_exception_handler,
+    general_exception_handler
+)
 
 # Explicitly import all routers from their respective router files.
 # This approach helps prevent common import errors, including circular dependencies,
