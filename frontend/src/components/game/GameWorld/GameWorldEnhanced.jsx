@@ -5,6 +5,8 @@ import VirtualJoystick from '../../mobile/VirtualJoystick';
 import MobileControls from '../../mobile/MobileControls';
 import CameraViewToggle from '../CameraViewToggle/CameraViewToggle';
 import { isMobileDevice, isTouchDevice } from '../../../utils/mobileDetection';
+import { RoadDetector } from '../../../utils/RoadDetector';
+import { NavMesh } from '../../../utils/NavMesh';
 import './GameWorld.css';
 
 /**
