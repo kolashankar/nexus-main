@@ -1077,6 +1077,26 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           onViewChange={setCameraView}
         />
       )}
+      
+      {/* NavMesh status indicator */}
+      {isLoaded && navMeshRef.current && (
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          background: 'rgba(0, 0, 0, 0.7)',
+          color: '#00ff00',
+          padding: '10px',
+          borderRadius: '5px',
+          fontSize: '12px',
+          fontFamily: 'monospace',
+          zIndex: 1000
+        }}>
+          <div>🛣️ Road Detection: Active</div>
+          <div>🗺️ NavMesh: {navMeshRef.current.getWalkablePoints().length} points</div>
+          <div>👁️ Debug View: {showDebugVisuals ? 'ON' : 'OFF'} (Press V)</div>
+        </div>
+      )}
     </div>
   );
 };
