@@ -238,6 +238,86 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
       console.log('✅ Boundary walls created');
     };
 
+    // === NEW: Detect roads and generate navigation mesh ===
+    const detectRoadsAndGenerateNavMesh = async (cityModel) => {
+      try {
+        console.log('🛣️ Starting road detection and NavMesh generation...');
+        
+        // Phase 1: Detect roads
+        const detector = new RoadDetector(cityModel, {
+          debug: true,
+          roadColorMin: 0x1a1a1a,
+          roadColorMax: 0x606060,
+          minFlatness: 0.8,
+          minHeight: -2,
+          maxHeight: 2
+        });
+        
+        const roadMeshes = detector.detectRoads();
+        roadDetectorRef.current = detector;
+        
+        if (roadMeshes.length === 0) {
+          console.warn('⚠️ No roads detected! Movement will not be constrained.');
+          return;
+        }
+        
+        // Phase 2: Generate NavMesh
+        const navMesh = new NavMesh(roadMeshes, {
+          gridSize: 0.5,
+          debug: true
+        });
+        
+        const success = navMesh.generate();
+        if (success) {
+          navMeshRef.current = navMesh;
+          console.log('✅ NavMesh successfully generated');
+          
+          // Phase 3: Create debug visualizations
+          createDebugVisualizations(roadMeshes, navMesh);
+        } else {
+          console.error('❌ Failed to generate NavMesh');
+        }
+      } catch (error) {
+        console.error('❌ Error in road detection:', error);
+      }
+    };
+
+    // Create debug visualizations for roads and NavMesh
+    const createDebugVisualizations = (roadMeshes, navMesh) => {
+      // Visualize detected roads with green wireframe
+      roadMeshes.forEach(roadMesh => {
+        const wireframe = new THREE.LineSegments(
+          new THREE.WireframeGeometry(roadMesh.geometry),
+          new THREE.LineBasicMaterial({ 
+            color: 0x00ff00,  // Green
+            transparent: true,
+            opacity: 0.3
+          })
+        );
+        wireframe.position.copy(roadMesh.position);
+        wireframe.rotation.copy(roadMesh.rotation);
+        wireframe.scale.copy(roadMesh.scale);
+        wireframe.applyMatrix4(roadMesh.matrixWorld);
+        wireframe.visible = showDebugVisuals;
+        scene.add(wireframe);
+        
+        if (!debugVisualsRef.current.roads) {
+          debugVisualsRef.current.roads = [];
+        }
+        debugVisualsRef.current.roads.push(wireframe);
+      });
+      
+      // Visualize NavMesh points
+      const navMeshPoints = navMesh.createDebugVisualization();
+      if (navMeshPoints) {
+        navMeshPoints.visible = showDebugVisuals;
+        scene.add(navMeshPoints);
+        debugVisualsRef.current.navMesh = navMeshPoints;
+      }
+      
+      console.log('✅ Debug visualizations created (Press V to toggle)');
+    };
+
     // Load city model
     const loadCityModel = async () => {
       try {
