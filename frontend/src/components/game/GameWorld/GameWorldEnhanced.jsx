@@ -685,14 +685,6 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
         state.position.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, state.position.x));
         state.position.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, state.position.z));
 
-        // Rotation (Ctrl+L / Ctrl+R or Arrow keys)
-        if (movement.current.rotateLeft) {
-          state.rotation += ROTATION_SPEED;
-        }
-        if (movement.current.rotateRight) {
-          state.rotation -= ROTATION_SPEED;
-        }
-
         // Jump
         if (movement.current.jump && state.isGrounded) {
           state.velocity.y = JUMP_FORCE;
@@ -717,7 +709,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
 
         // Update animation state
         const newAnim = !state.isGrounded ? 'jump' 
-          : isMoving ? (movement.current.run ? 'run' : 'walk')
+          : isMoving ? ((movement.current.run || isRunning) ? 'run' : 'walk')
           : 'idle';
 
         if (newAnim !== state.currentAnimation) {
