@@ -797,6 +797,7 @@ const GameWorld = ({ player }) => {
         <p>S/↓: Move Backward</p>
         <p>A/←: Rotate Left</p>
         <p>D/→: Rotate Right</p>
+        <p>V: Toggle Road Debug View</p>
       </div>
 
       {/* Trait toggle for player */}
