@@ -499,6 +499,10 @@ const GameWorld = ({ player }) => {
       if (characterRef.current) {
         const speed = 0.1;
         const rotationSpeed = 0.05;
+        const bounds = cityBounds.current;
+
+        // Store previous position for boundary checking
+        const prevPosition = playerPosition.current.clone();
 
         // WASD + Arrow key movement
         if (keysPressed.current.w || keysPressed.current.ArrowUp) {
@@ -518,14 +522,25 @@ const GameWorld = ({ player }) => {
           playerRotation.current -= rotationSpeed;
         }
 
+        // Apply boundary constraints
+        playerPosition.current.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, playerPosition.current.x));
+        playerPosition.current.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, playerPosition.current.z));
+        playerPosition.current.y = Math.max(bounds.minY + 1, Math.min(bounds.maxY, playerPosition.current.y));
+
         // Apply rotation and position
         characterRef.current.rotation.y = playerRotation.current;
         characterRef.current.position.copy(playerPosition.current);
 
-        // Camera follow
+        // Camera follow with boundary constraints
         const cameraOffset = new THREE.Vector3(0, 5, 10);
         cameraOffset.applyAxisAngle(new THREE.Vector3(0, 1, 0), playerRotation.current);
-        camera.position.copy(playerPosition.current).add(cameraOffset);
+        const cameraTarget = playerPosition.current.clone().add(cameraOffset);
+        
+        // Constrain camera position to stay within expanded bounds
+        cameraTarget.x = Math.max(bounds.minX - 5, Math.min(bounds.maxX + 5, cameraTarget.x));
+        cameraTarget.z = Math.max(bounds.minZ - 5, Math.min(bounds.maxZ + 5, cameraTarget.z));
+        
+        camera.position.copy(cameraTarget);
         camera.lookAt(playerPosition.current);
       }
 
