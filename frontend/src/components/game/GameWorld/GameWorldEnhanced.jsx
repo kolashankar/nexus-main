@@ -788,6 +788,23 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           </div>
         </div>
       )}
+
+      {/* Mobile Controls - Only show on touch devices */}
+      {isMobile && isLoaded && (
+        <>
+          <VirtualJoystick 
+            onMove={handleJoystickMove}
+            size={120}
+            maxDistance={50}
+          />
+          <MobileControls
+            onJump={handleJump}
+            onRunToggle={handleRunToggle}
+            onInteract={handleInteract}
+            isRunning={isRunning}
+          />
+        </>
+      )}
     </div>
   );
 };
