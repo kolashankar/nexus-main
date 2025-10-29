@@ -613,10 +613,47 @@ const GameWorld = ({ player }) => {
           playerRotation.current -= rotationSpeed;
         }
 
-        // Apply boundary constraints
-        playerPosition.current.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, playerPosition.current.x));
-        playerPosition.current.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, playerPosition.current.z));
-        playerPosition.current.y = Math.max(bounds.minY + 1, Math.min(bounds.maxY, playerPosition.current.y));
+        // === NEW: NavMesh constraint - slide back to road if off-road ===
+        if (navMeshRef.current) {
+          const nearestRoadPoint = navMeshRef.current.getNearestPoint(
+            playerPosition.current.x,
+            playerPosition.current.z,
+            2.0  // Max distance to search for road
+          );
+          
+          if (nearestRoadPoint) {
+            // Check if player is too far from road
+            const dx = playerPosition.current.x - nearestRoadPoint.x;
+            const dz = playerPosition.current.z - nearestRoadPoint.z;
+            const distanceFromRoad = Math.sqrt(dx * dx + dz * dz);
+            
+            if (distanceFromRoad > 0.5) {
+              // Slide back towards road (smooth correction)
+              const slideSpeed = 0.15;
+              playerPosition.current.x = THREE.MathUtils.lerp(
+                playerPosition.current.x,
+                nearestRoadPoint.x,
+                slideSpeed
+              );
+              playerPosition.current.z = THREE.MathUtils.lerp(
+                playerPosition.current.z,
+                nearestRoadPoint.z,
+                slideSpeed
+              );
+            }
+            
+            // Update Y position to match road height
+            playerPosition.current.y = nearestRoadPoint.y + 1; // Character height offset
+          } else {
+            // No road found nearby, revert to previous position
+            playerPosition.current.copy(prevPosition);
+          }
+        } else {
+          // No NavMesh, use regular boundary constraints
+          playerPosition.current.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, playerPosition.current.x));
+          playerPosition.current.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, playerPosition.current.z));
+          playerPosition.current.y = Math.max(bounds.minY + 1, Math.min(bounds.maxY, playerPosition.current.y));
+        }
 
         // Apply rotation and position
         characterRef.current.rotation.y = playerRotation.current;
