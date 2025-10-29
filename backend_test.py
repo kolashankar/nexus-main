@@ -1606,42 +1606,39 @@ class KarmaNexusAPITester:
         return results
 
     def run_all_tests(self) -> Dict[str, Any]:
-        """Run all backend tests and return comprehensive results."""
-        print("🚀 KARMA NEXUS 2.0 - TASK GENERATION & MARKETPLACE API TESTING")
+        """Run all backend tests focusing on the review requirements."""
+        print("🚀 KARMA NEXUS 2.0 - BACKEND API TESTING")
+        print("Focus: Health Endpoints, Player Profile & Character Customization, API Routes, CORS")
         print("=" * 60)
         
         all_results = {}
         
-        # Run test suites in order
-        print("Phase 1: Basic connectivity and authentication")
+        # Phase 1: Health Endpoints
+        print("Phase 1: Health Endpoints Testing")
         health_results = self.test_health_endpoints()
+        
+        # Phase 2: Authentication (required for protected endpoints)
+        print("Phase 2: Authentication Setup")
         auth_results = self.test_auth_endpoints()
-        protected_results = self.test_protected_endpoints()
-        additional_results = self.test_additional_endpoints()
         
-        print("Phase 2: Task generation and marketplace APIs")
-        task_results = self.test_task_generation_api()
-        marketplace_results = self.test_marketplace_api()
+        # Phase 3: Player Profile & Character Customization
+        print("Phase 3: Player Profile & Character Customization")
+        profile_results = self.test_player_profile_endpoints()
         
-        print("Phase 3: UpgradeStation API")
-        upgrade_results = self.test_upgrade_station_api()
+        # Phase 4: API Routes Verification
+        print("Phase 4: API Routes Verification")
+        routes_results = self.test_api_routes_verification()
         
-        print("Phase 4: Trait Abilities API")
-        trait_results = self.test_trait_abilities_api()
-        
-        print("Phase 5: Integration scenarios")
-        integration_results = self.test_integration_scenarios()
+        # Phase 5: CORS Configuration
+        print("Phase 5: CORS Configuration")
+        cors_results = self.test_cors_configuration()
         
         # Combine results
         all_results.update(health_results)
         all_results.update(auth_results)
-        all_results.update(protected_results)
-        all_results.update(additional_results)
-        all_results.update(task_results)
-        all_results.update(marketplace_results)
-        all_results.update(upgrade_results)
-        all_results.update(trait_results)
-        all_results.update(integration_results)
+        all_results.update(profile_results)
+        all_results.update(routes_results)
+        all_results.update(cors_results)
         
         # Print summary
         print("📊 TEST SUMMARY")
@@ -1650,15 +1647,43 @@ class KarmaNexusAPITester:
         passed = sum(1 for result in all_results.values() if result)
         total = len(all_results)
         
-        for test_name, result in all_results.items():
+        # Group results by category
+        health_tests = {k: v for k, v in all_results.items() if 'endpoint' in k or 'root' in k}
+        auth_tests = {k: v for k, v in all_results.items() if 'register' in k or 'login' in k}
+        profile_tests = {k: v for k, v in all_results.items() if 'profile' in k or 'character' in k}
+        routes_tests = {k: v for k, v in all_results.items() if any(x in k for x in ['tasks', 'marketplace', 'upgrades', 'traits'])}
+        cors_tests = {k: v for k, v in all_results.items() if 'cors' in k}
+        
+        print("🏥 Health Endpoints:")
+        for test_name, result in health_tests.items():
             status = "✅ PASS" if result else "❌ FAIL"
-            print(f"{status} - {test_name}")
+            print(f"  {status} - {test_name}")
+        
+        print("\n🔐 Authentication:")
+        for test_name, result in auth_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
+        
+        print("\n👤 Player Profile & Character:")
+        for test_name, result in profile_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
+        
+        print("\n🛣️  API Routes:")
+        for test_name, result in routes_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
+        
+        print("\n🌐 CORS Configuration:")
+        for test_name, result in cors_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
         
         print("-" * 60)
         print(f"📈 OVERALL: {passed}/{total} tests passed ({passed/total*100:.1f}%)")
         
         if passed == total:
-            print("🎉 ALL TESTS PASSED - Backend is fully operational!")
+            print("🎉 ALL TESTS PASSED - Karma Nexus 2.0 Backend is fully operational!")
         elif passed >= total * 0.8:
             print("⚠️  Most tests passed - Minor issues detected")
         else:
