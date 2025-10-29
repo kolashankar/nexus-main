@@ -1,13 +1,24 @@
 /**
- * Play/Game page - Full 3D game environment with fullscreen mode
+ * Play/Game page - Full 3D game environment with fullscreen mode and mobile support
  */
 import React, { useEffect, useState } from 'react';
 import GameWorldEnhanced from '../../components/game/GameWorld/GameWorldEnhanced';
 import GameHUD from '../../components/game/GameHUD/GameHUD';
 import TaskPanel from '../../components/game/TaskPanel/TaskPanel';
 import Marketplace from '../../components/game/Marketplace/Marketplace';
+import MobileMenu from '../../components/mobile/MobileMenu';
+import { isMobileDevice } from '../../utils/mobileDetection';
 import useStore from '../../store';
 import { Loader2, Maximize2, Minimize2 } from 'lucide-react';
+
+const Play = () => {
+  const { player, fetchPlayer, isLoadingPlayer } = useStore();
+  const [gameReady, setGameReady] = useState(false);
+  const [showMarketplace, setShowMarketplace] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showTaskPanel, setShowTaskPanel] = useState(false);
+  const [currentMobileTab, setCurrentMobileTab] = useState(null);
 
 const Play = () => {
   const { player, fetchPlayer, isLoadingPlayer } = useStore();
