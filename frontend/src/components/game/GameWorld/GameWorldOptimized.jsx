@@ -1127,6 +1127,13 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     };
   }, [player, isMobile]);
 
+  // Update world item meshes when items change
+  useEffect(() => {
+    if (sceneRef.current && isLoaded) {
+      updateWorldItemMeshes();
+    }
+  }, [worldItems, isLoaded]);
+
   // === MOBILE JOYSTICK HANDLERS ===
   const handleJoystickMove = (x, y) => {
     movement.current.joystickX = x;
