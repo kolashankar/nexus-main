@@ -12,7 +12,7 @@ export const playerSlice = (set, get) => ({
   fetchPlayer: async () => {
     set({ isLoadingPlayer: true, playerError: null });
     try {
-      const response = await apiClient.get('/player/profile');
+      const response = await apiClient.get('/api/player/profile');
       set({
         player: response.data,
         isLoadingPlayer: false,

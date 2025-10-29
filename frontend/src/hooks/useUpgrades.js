@@ -1,13 +1,13 @@
 import { useState, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import api from '@/services/api';
+import { useAuth } from '@/hooks/useAuth';
+import api from '@/services/api/client';
 
 /**
  * useUpgrades Hook
  * Manages upgrade-related state and API calls
  */
 export const useUpgrades = () => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [player, setPlayer] = useState(null);
   const [currencies, setCurrencies] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,7 +15,7 @@ export const useUpgrades = () => {
 
   // Fetch player data including upgrades
   const refreshPlayer = useCallback(async () => {
-    if (!user) {
+    if (!isAuthenticated) {
       setLoading(false);
       return;
     }
