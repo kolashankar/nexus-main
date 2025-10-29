@@ -271,6 +271,44 @@ const Play = () => {
         onClose={() => setShowMarketplace(false)}
         onPurchase={handlePurchase}
       />
+      
+      {/* Quest Log Modal */}
+      {showQuestLog && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[200]">
+          <div className="bg-slate-900 rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-white">Quest Log</h2>
+              <button
+                className="text-white hover:text-red-500 text-2xl"
+                onClick={() => setShowQuestLog(false)}
+              >
+                ×
+              </button>
+            </div>
+            <QuestLog />
+          </div>
+        </div>
+      )}
+      
+      {/* Combat Arena Modal */}
+      {showCombat && currentBattleId && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[200]">
+          <div className="w-full max-w-6xl h-full max-h-[95vh] overflow-y-auto m-4">
+            <div className="relative">
+              <button
+                className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg z-10"
+                onClick={handleCombatEnd}
+              >
+                Exit Combat
+              </button>
+              <CombatArena 
+                battleId={currentBattleId} 
+                playerId={player.player_id}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
