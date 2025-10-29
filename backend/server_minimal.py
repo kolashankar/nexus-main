@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://pensive-rubin.preview.emergentagent.com"
+    "https://responsive-game-1.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
