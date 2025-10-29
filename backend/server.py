@@ -124,7 +124,7 @@ async def startup_event():
     print("Connecting to MongoDB...")
     from backend.core.database import get_database
     try:
-        db = await get_database().__anext__()
+        db = get_database()
         # Test database connection
         await db.command('ping')
         print("MongoDB connected successfully!")
