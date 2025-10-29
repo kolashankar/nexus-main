@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import VirtualJoystick from '../../mobile/VirtualJoystick';
+import MobileControls from '../../mobile/MobileControls';
+import { isMobileDevice, isTouchDevice } from '../../../utils/mobileDetection';
 import './GameWorld.css';
 
 /**
  * Enhanced 3D Game World - Super City with 40+ Buildings
- * Features: Running animations, roads, vehicles, AI NPCs, Ctrl+L/R controls
+ * Features: Running animations, roads, vehicles, AI NPCs, Ctrl+L/R controls, Mobile support
  */
 const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
   const mountRef = useRef(null);
@@ -18,6 +21,16 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
   const clockRef = useRef(new THREE.Clock());
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+
+  // Touch/swipe state for camera rotation
+  const swipeState = useRef({
+    isSwiping: false,
+    startX: 0,
+    startY: 0,
+    touchId: null
+  });
 
   // Movement state
   const movement = useRef({
@@ -28,7 +41,10 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     jump: false,
     run: false,
     rotateLeft: false,
-    rotateRight: false
+    rotateRight: false,
+    // Mobile joystick values
+    joystickX: 0,
+    joystickY: 0
   });
 
   const playerState = useRef({
