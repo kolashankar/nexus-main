@@ -1,0 +1,60 @@
+.virtual-joystick-container {
+  position: fixed;
+  bottom: 80px;
+  left: 40px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.joystick-base {
+  position: relative;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  pointer-events: all;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.joystick-base.active {
+  background: rgba(138, 43, 226, 0.25);
+  border-color: rgba(138, 43, 226, 0.5);
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+}
+
+.joystick-stick {
+  width: 45%;
+  height: 45%;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #a855f7, #7c3aed);
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.5);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .virtual-joystick-container {
+    bottom: 60px;
+    left: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .virtual-joystick-container {
+    bottom: 40px;
+    left: 20px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .virtual-joystick-container {
+    bottom: 20px;
+    left: 20px;
+  }
+}
