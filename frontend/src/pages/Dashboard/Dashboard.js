@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import useStore from '../../store';
 import CharacterCustomizer from '../../components/character/CharacterCustomizer';
-import CharacterPreview3D from '../../components/character/CharacterPreview3D';
+import CharacterPreview3D from '../../components/3d/CharacterPreview3D/CharacterPreview3D';
 import TraitToggleIcon from '../../components/traits/TraitToggleIcon/TraitToggleIcon';
 import InitialTasksModal from '../../components/tasks/InitialTasksModal/InitialTasksModal';
 import { getAllTraitsArray, isNewPlayer } from '../../utils/traitsHelper';
