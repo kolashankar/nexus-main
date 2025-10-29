@@ -1220,6 +1220,28 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
           <p>WASD/Arrows: Move | Shift: Run | Space: Jump | Ctrl+P: Performance Monitor</p>
         </div>
       )}
+
+      {/* World Items UI */}
+      {showItemModal && selectedItem && (
+        <ItemDiscoveryModal
+          item={selectedItem}
+          onClose={() => {
+            setShowItemModal(false);
+            setSelectedItem(null);
+          }}
+          onAcquire={handleItemAcquire}
+          playerLevel={player?.level || 1}
+          playerCredits={player?.currencies?.credits || 0}
+        />
+      )}
+
+      {activeAcquisition && (
+        <AcquisitionTracker
+          acquisition={activeAcquisition}
+          onClaim={handleAcquisitionClaim}
+          onCancel={handleAcquisitionCancel}
+        />
+      )}
     </div>
   );
 };
