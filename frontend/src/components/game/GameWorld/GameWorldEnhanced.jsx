@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import VirtualJoystick from '../../mobile/VirtualJoystick';
 import MobileControls from '../../mobile/MobileControls';
+import CameraViewToggle from '../CameraViewToggle/CameraViewToggle';
 import { isMobileDevice, isTouchDevice } from '../../../utils/mobileDetection';
 import './GameWorld.css';
 
