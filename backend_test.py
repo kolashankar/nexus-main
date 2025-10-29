@@ -2678,88 +2678,99 @@ class KarmaNexusAPITester:
         return results
 
     def run_all_tests(self) -> Dict[str, Any]:
-        """Run all backend tests focusing on the review requirements."""
-        print("🚀 KARMA NEXUS 2.0 - BACKEND API TESTING")
-        print("Focus: Health Endpoints, Player Profile & Character Customization, API Routes, CORS")
-        print("=" * 60)
+        """Run comprehensive backend API tests as requested in review."""
+        print("🚀 KARMA NEXUS 2.0 - COMPREHENSIVE BACKEND API TESTING")
+        print("Focus: Quest System, Combat System, World Items, New Routers, Auth & Error Handling")
+        print("=" * 80)
         
         all_results = {}
         
-        # Phase 1: Health Endpoints
-        print("Phase 1: Health Endpoints Testing")
-        health_results = self.test_health_endpoints()
+        # Phase 1: Core System Tests
+        print("Phase 1: Health & Authentication")
+        all_results.update(self.test_health_endpoints())
+        all_results.update(self.test_auth_endpoints())
+        all_results.update(self.test_player_profile_endpoints())
         
-        # Phase 2: Authentication (required for protected endpoints)
-        print("Phase 2: Authentication Setup")
-        auth_results = self.test_auth_endpoints()
+        # Phase 2: NEW COMPREHENSIVE TESTS AS REQUESTED IN REVIEW
+        print("\nPhase 2: Quest System APIs")
+        all_results.update(self.test_quest_system_apis())
         
-        # Phase 3: Player Profile & Character Customization
-        print("Phase 3: Player Profile & Character Customization")
-        profile_results = self.test_player_profile_endpoints()
+        print("\nPhase 3: Combat System APIs")
+        all_results.update(self.test_combat_system_apis())
         
-        # Phase 4: API Routes Verification
-        print("Phase 4: API Routes Verification")
-        routes_results = self.test_api_routes_verification()
+        print("\nPhase 4: World Items APIs")
+        all_results.update(self.test_world_items_apis())
         
-        # Phase 5: CORS Configuration
-        print("Phase 5: CORS Configuration")
-        cors_results = self.test_cors_configuration()
+        print("\nPhase 5: Newly Registered Routers")
+        all_results.update(self.test_newly_registered_routers())
         
-        # Combine results
-        all_results.update(health_results)
-        all_results.update(auth_results)
-        all_results.update(profile_results)
-        all_results.update(routes_results)
-        all_results.update(cors_results)
+        print("\nPhase 6: Authentication & Error Handling")
+        all_results.update(self.test_authentication_and_error_handling())
         
-        # Print summary
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("\nPhase 7: Player Data Integration")
+        all_results.update(self.test_player_data_integration())
+        
+        # Phase 3: Additional Tests
+        print("\nPhase 8: Additional API Routes & CORS")
+        all_results.update(self.test_api_routes_verification())
+        all_results.update(self.test_cors_configuration())
+        
+        # Print comprehensive summary
+        print("\n📊 COMPREHENSIVE TEST RESULTS SUMMARY")
+        print("=" * 80)
         
         passed = sum(1 for result in all_results.values() if result)
         total = len(all_results)
         
-        # Group results by category
-        health_tests = {k: v for k, v in all_results.items() if 'endpoint' in k or 'root' in k}
-        auth_tests = {k: v for k, v in all_results.items() if 'register' in k or 'login' in k}
-        profile_tests = {k: v for k, v in all_results.items() if 'profile' in k or 'character' in k}
-        routes_tests = {k: v for k, v in all_results.items() if any(x in k for x in ['tasks', 'marketplace', 'upgrades', 'traits'])}
-        cors_tests = {k: v for k, v in all_results.items() if 'cors' in k}
+        # Group results by test category
+        quest_tests = {k: v for k, v in all_results.items() if 'quest' in k}
+        combat_tests = {k: v for k, v in all_results.items() if 'combat' in k or 'duel' in k or 'battle' in k}
+        world_tests = {k: v for k, v in all_results.items() if 'world' in k or 'item' in k or 'spawn' in k}
+        router_tests = {k: v for k, v in all_results.items() if any(x in k for x in ['tutorial', 'crafting', 'health_status', 'investment', 'real_estate'])}
+        auth_tests = {k: v for k, v in all_results.items() if any(x in k for x in ['register', 'login', 'token', 'auth'])}
+        player_tests = {k: v for k, v in all_results.items() if 'profile' in k or 'player' in k or 'persistence' in k or 'mongodb' in k}
         
-        print("🏥 Health Endpoints:")
-        for test_name, result in health_tests.items():
+        print("🎯 Quest System APIs:")
+        for test_name, result in quest_tests.items():
             status = "✅ PASS" if result else "❌ FAIL"
             print(f"  {status} - {test_name}")
         
-        print("\n🔐 Authentication:")
+        print("\n⚔️  Combat System APIs:")
+        for test_name, result in combat_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
+        
+        print("\n🌍 World Items APIs:")
+        for test_name, result in world_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
+        
+        print("\n🔗 Newly Registered Routers:")
+        for test_name, result in router_tests.items():
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"  {status} - {test_name}")
+        
+        print("\n🔐 Authentication & Error Handling:")
         for test_name, result in auth_tests.items():
             status = "✅ PASS" if result else "❌ FAIL"
             print(f"  {status} - {test_name}")
         
-        print("\n👤 Player Profile & Character:")
-        for test_name, result in profile_tests.items():
+        print("\n👤 Player Data Integration:")
+        for test_name, result in player_tests.items():
             status = "✅ PASS" if result else "❌ FAIL"
             print(f"  {status} - {test_name}")
         
-        print("\n🛣️  API Routes:")
-        for test_name, result in routes_tests.items():
-            status = "✅ PASS" if result else "❌ FAIL"
-            print(f"  {status} - {test_name}")
-        
-        print("\n🌐 CORS Configuration:")
-        for test_name, result in cors_tests.items():
-            status = "✅ PASS" if result else "❌ FAIL"
-            print(f"  {status} - {test_name}")
-        
-        print("-" * 60)
-        print(f"📈 OVERALL: {passed}/{total} tests passed ({passed/total*100:.1f}%)")
+        print("-" * 80)
+        print(f"📈 OVERALL RESULTS: {passed}/{total} tests passed ({passed/total*100:.1f}%)")
         
         if passed == total:
-            print("🎉 ALL TESTS PASSED - Karma Nexus 2.0 Backend is fully operational!")
-        elif passed >= total * 0.8:
-            print("⚠️  Most tests passed - Minor issues detected")
+            print("🎉 ALL TESTS PASSED - Karma Nexus 2.0 Backend APIs are fully operational!")
+        elif passed >= total * 0.85:
+            print("✅ Excellent - Most critical APIs working correctly")
+        elif passed >= total * 0.70:
+            print("⚠️  Good - Some issues detected but core functionality working")
         else:
-            print("❌ Multiple failures detected - Backend needs attention")
+            print("❌ Multiple critical failures detected - Backend needs immediate attention")
         
         return all_results
 
