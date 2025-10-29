@@ -605,13 +605,19 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           // Play animation if available
         }
 
-        // Camera follow
+        // Camera follow with boundary constraints
         const cameraOffset = new THREE.Vector3(
           -Math.sin(state.rotation) * 10,
           8,
           -Math.cos(state.rotation) * 10
         );
-        cameraRef.current.position.copy(state.position).add(cameraOffset);
+        const cameraPos = state.position.clone().add(cameraOffset);
+        
+        // Constrain camera position
+        cameraPos.x = Math.max(bounds.minX - 5, Math.min(bounds.maxX + 5, cameraPos.x));
+        cameraPos.z = Math.max(bounds.minZ - 5, Math.min(bounds.maxZ + 5, cameraPos.z));
+        
+        cameraRef.current.position.copy(cameraPos);
         cameraRef.current.lookAt(state.position);
       }
 
