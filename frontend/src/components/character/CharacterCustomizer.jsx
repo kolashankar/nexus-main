@@ -15,6 +15,15 @@ const CharacterCustomizer = () => {
   const [selectedHair, setSelectedHair] = useState(player?.hair_color || 'brown');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Update local state when player data changes
+  useEffect(() => {
+    if (player) {
+      setSelectedCharacter(player.appearance?.model || player.character_model || 'male_base');
+      setSelectedSkin(player.appearance?.skin_tone || player.skin_tone || 'default');
+      setSelectedHair(player.appearance?.hair_color || player.hair_color || 'brown');
+    }
+  }, [player]);
+
   // Character options
   const characters = [
     { id: 'male_base', label: 'Male Base', gender: 'male' },
