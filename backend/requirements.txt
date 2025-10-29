@@ -3,7 +3,6 @@ fastapi==0.109.0
 uvicorn[standard]==0.27.0
 pydantic==2.5.3
 pydantic-settings==2.1.0
-pylint==4.0.2
 
 # Database
 motor==3.3.2
@@ -12,9 +11,10 @@ pymongo==4.6.1
 # Authentication
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-bcrypt<4.0.0  # Pin to 3.x for passlib compatibility
+bcrypt==4.0.1
 python-multipart==0.0.6
-PyJWT==2.10.1
+PyJWT==2.8.0
+cryptography==41.0.7
 
 # HTTP Client
 httpx==0.26.0
@@ -22,7 +22,7 @@ aiohttp==3.9.1
 
 # WebSocket
 python-socketio==5.10.0
-websockets>=13.0
+websockets==12.0
 
 # AI Integration
 google-generativeai==0.7.2
@@ -59,4 +59,3 @@ python-dotenv==1.0.0
 # Utilities
 python-dateutil==2.8.2
 pytz==2023.3.post1
-google-generativeai>=0.3.0
