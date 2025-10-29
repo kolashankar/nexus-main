@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import TraitToggleIcon from '../../traits/TraitToggleIcon/TraitToggleIcon';
+import { RoadDetector } from '../../../utils/RoadDetector';
+import { NavMesh } from '../../../utils/NavMesh';
 import './GameWorld.css';
 
 /**
