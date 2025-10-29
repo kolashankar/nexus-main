@@ -103,10 +103,43 @@ from backend.tasks.world_item_spawner import start_spawner, stop_spawner
 
 @app.on_event("startup")
 async def startup_event():
-    """Start background tasks on application startup."""
-    print("[Server] Starting world item spawner...")
-    await start_spawner()
-    print("[Server] World item spawner started")
+    """Start background tasks and services on application startup."""
+    print("\n" + "="*60)
+    print("\ud83c\udf89 KARMA NEXUS 2.0 - BACKEND STARTING")
+    print("="*60)
+    
+    # Database connection
+    print("\ud83d\udcbe Connecting to MongoDB...")
+    from backend.core.database import get_database
+    try:
+        db = await get_database().__anext__()
+        # Test database connection
+        await db.command('ping')
+        print("\u2705 MongoDB connected successfully!")
+    except Exception as e:
+        print(f"\u274c MongoDB connection failed: {e}")
+    
+    # Gemini AI initialization
+    print("\ud83e\udd16 Initializing Gemini AI Task Generator...")
+    try:
+        from backend.services.ai.task_generator import TaskGenerator
+        task_gen = TaskGenerator()
+        print("\u2705 Gemini AI initialized successfully!")
+    except Exception as e:
+        print(f"\u26a0\ufe0f Gemini AI initialization warning: {e}")
+    
+    # World item spawner
+    print("\ud83c\udf0e Starting world item spawner...")
+    try:
+        await start_spawner()
+        print("\u2705 World item spawner started successfully!")
+    except Exception as e:
+        print(f"\u26a0\ufe0f World spawner warning: {e}")
+    
+    print("\n\u2728 BACKEND READY!")
+    print(f"\ud83d\ude80 API available at: http://0.0.0.0:8001")
+    print(f"\ud83d\udcda API Docs: http://0.0.0.0:8001/docs")
+    print("="*60 + "\n")
 
 
 @app.on_event("shutdown")
