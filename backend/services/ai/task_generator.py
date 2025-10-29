@@ -180,13 +180,16 @@ Important:
         personality_traits = []
         if virtues:
             top_virtues = sorted(virtues.items(), key=lambda x: x[1], reverse=True)[:3]
-            personality_traits.append(f"Virtues: {', '.join([f'{k.replace('_', ' ')}: {v:.0f}' for k, v in top_virtues])}")
+            virtues_str = ', '.join([f"{k.replace('_', ' ')}: {v:.0f}" for k, v in top_virtues])
+            personality_traits.append(f"Virtues: {virtues_str}")
         if vices:
             top_vices = sorted(vices.items(), key=lambda x: x[1], reverse=True)[:3]
-            personality_traits.append(f"Vices: {', '.join([f'{k.replace('_', ' ')}: {v:.0f}' for k, v in top_vices])}")
+            vices_str = ', '.join([f"{k.replace('_', ' ')}: {v:.0f}" for k, v in top_vices])
+            personality_traits.append(f"Vices: {vices_str}")
         if skills:
             top_skills = sorted(skills.items(), key=lambda x: x[1], reverse=True)[:3]
-            personality_traits.append(f"Skills: {', '.join([f'{k.replace('_', ' ')}: {v:.0f}' for k, v in top_skills])}")
+            skills_str = ', '.join([f"{k.replace('_', ' ')}: {v:.0f}" for k, v in top_skills])
+            personality_traits.append(f"Skills: {skills_str}")
         
         personality_info = "\n".join(personality_traits) if personality_traits else "Balanced personality"
         
