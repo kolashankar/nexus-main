@@ -494,6 +494,61 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
+    // === MOBILE TOUCH CONTROLS FOR CAMERA ROTATION ===
+    const handleTouchStart = (e) => {
+      // Only handle single touch for camera rotation (ignore joystick touches)
+      if (e.touches.length === 1 && !swipeState.current.isSwiping) {
+        const touch = e.touches[0];
+        // Only capture touches in the center/top area (not on joystick/buttons)
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const touchX = touch.clientX;
+        const touchY = touch.clientY;
+        
+        // Exclude bottom 200px and left/right 150px where controls are
+        if (touchY < screenHeight - 200 && 
+            touchX > 150 && touchX < screenWidth - 150) {
+          swipeState.current = {
+            isSwiping: true,
+            startX: touchX,
+            startY: touchY,
+            touchId: touch.identifier
+          };
+        }
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (!swipeState.current.isSwiping) return;
+      
+      const touch = Array.from(e.touches).find(t => t.identifier === swipeState.current.touchId);
+      if (!touch) return;
+
+      const deltaX = touch.clientX - swipeState.current.startX;
+      
+      // Rotate camera based on horizontal swipe
+      if (Math.abs(deltaX) > 5) {
+        const rotationAmount = deltaX * 0.001;
+        playerState.current.rotation -= rotationAmount;
+        swipeState.current.startX = touch.clientX;
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      const stillTouching = Array.from(e.touches).some(t => t.identifier === swipeState.current.touchId);
+      if (!stillTouching) {
+        swipeState.current.isSwiping = false;
+      }
+    };
+
+    if (isMobileDevice() || isTouchDevice()) {
+      const canvas = renderer.domElement;
+      canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+      canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+      canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+      canvas.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    }
+
     // === NPC AI MOVEMENT ===
     const updateNPCMovement = (npc, deltaTime) => {
       if (!npc.userData || npc.userData.type === 'building') return;
