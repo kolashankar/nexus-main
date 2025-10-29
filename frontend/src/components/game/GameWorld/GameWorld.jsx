@@ -419,11 +419,25 @@ const GameWorld = ({ player }) => {
       console.log('✅ Debug visualizations created (Press V to toggle)');
     };
 
-    // Get random spawn position within city bounds
+    // Get random spawn position within city bounds (preferably on roads)
     const getRandomSpawnPosition = () => {
       const bounds = cityBounds.current;
       const margin = 10; // Keep away from edges
       
+      // If NavMesh exists, try to spawn on a road
+      if (navMeshRef.current && navMeshRef.current.getWalkablePoints().length > 0) {
+        const walkablePoints = navMeshRef.current.getWalkablePoints();
+        const randomIndex = Math.floor(Math.random() * walkablePoints.length);
+        const roadPoint = walkablePoints[randomIndex];
+        
+        return new THREE.Vector3(
+          roadPoint.x,
+          roadPoint.y + 1, // Character height offset
+          roadPoint.z
+        );
+      }
+      
+      // Fallback to random position within bounds
       return new THREE.Vector3(
         bounds.minX + margin + Math.random() * (bounds.maxX - bounds.minX - margin * 2),
         1, // Ground level with character height offset
