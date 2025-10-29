@@ -25,8 +25,12 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: str = "*"
-    ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:3000", "http://localhost:8001", "https://cybercity-quest.preview.emergentagent.com"]
-    
+    ALLOWED_ORIGINS: Union[List[str], str] = [
+        "http://localhost:3000",
+        "http://localhost:8001",
+        "https://karma-nexus-backend.onrender.com",
+        "https://nexus-main-tau.vercel.app/"
+    ]    
     @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
     def parse_allowed_origins(cls, v):

@@ -33,3 +33,7 @@ services:
         value: 30
       - key: REFRESH_TOKEN_EXPIRE_DAYS
         value: 7
+      - key: ALLOWED_ORIGINS
+        value: http://localhost:3000,http://localhost:8001,https://nexus-main-tau.vercel.app,https://karma-nexus-backend.onrender.com
+      - key: GEMINI_API_KEY
+        sync: false
