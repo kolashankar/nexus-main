@@ -13,7 +13,7 @@ from backend.api.v1.tasks.advanced import router as advanced_tasks_router
 from backend.api.v1.tasks.multiplayer import router as multiplayer_tasks_router
 from backend.api.v1.tasks.analytics import router as analytics_tasks_router
 
-router = APIRouter()
+router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 # Include initial tasks router
 router.include_router(initial_tasks_router)
