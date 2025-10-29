@@ -23,6 +23,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [cameraView, setCameraView] = useState('third-person'); // Camera view mode
 
   // Touch/swipe state for camera rotation
   const swipeState = useRef({
