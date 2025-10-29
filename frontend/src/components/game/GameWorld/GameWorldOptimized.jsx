@@ -549,6 +549,24 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     });
   }, []);
 
+  // Fetch world items periodically
+  useEffect(() => {
+    // Initial fetch
+    fetchWorldItems();
+    fetchActiveAcquisition();
+    
+    // Poll for new items every 30 seconds
+    const itemsInterval = setInterval(fetchWorldItems, 30000);
+    
+    // Poll for acquisition updates every 5 seconds
+    const acquisitionInterval = setInterval(fetchActiveAcquisition, 5000);
+    
+    return () => {
+      clearInterval(itemsInterval);
+      clearInterval(acquisitionInterval);
+    };
+  }, []);
+
   useEffect(() => {
     if (!mountRef.current) return;
 
