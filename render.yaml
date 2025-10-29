@@ -1,12 +1,21 @@
 services:
-  # Backend API Service
   - type: web
     name: karma-nexus-backend
     env: python
     region: oregon
     plan: free
-    buildCommand: pip install --upgrade pip && pip install --only-binary=:all: -r backend/requirements.txt || (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source $HOME/.cargo/env && pip install -r backend/requirements.txt)
-    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port 10000
+    buildCommand: |
+      pip install --upgrade pip
+      export CARGO_HOME=/tmp/cargo
+      export RUSTUP_HOME=/tmp/rustup
+      pip install --only-binary=:all: -r backend/requirements.txt || (
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        source $HOME/.cargo/env
+        pip install -r backend/requirements.txt
+      )
+    startCommand: |
+      cd backend
+      uvicorn server:app --host 0.0.0.0 --port 10000
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.3
