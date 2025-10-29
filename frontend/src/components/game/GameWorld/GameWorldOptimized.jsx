@@ -535,6 +535,100 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     return Math.sqrt(dx * dx + dz * dz);
   };
 
+  /**
+   * Create world item mesh for Three.js scene
+   */
+  const createWorldItemMesh = (item) => {
+    const getItemColor = () => {
+      switch (item.item_type) {
+        case 'skill': return 0x3b82f6; // Blue
+        case 'superpower_tool': return 0x8b5cf6; // Purple
+        case 'meta_trait': return 0xf59e0b; // Amber
+        default: return 0x6b7280; // Gray
+      }
+    };
+
+    const getItemSize = () => {
+      switch (item.rarity) {
+        case 'common': return 1.0;
+        case 'uncommon': return 1.2;
+        case 'rare': return 1.5;
+        case 'epic': return 1.8;
+        case 'legendary': return 2.0;
+        default: return 1.0;
+      }
+    };
+
+    const size = getItemSize();
+    const color = getItemColor();
+    
+    // Create octahedron mesh
+    const geometry = new THREE.OctahedronGeometry(size);
+    const material = new THREE.MeshStandardMaterial({
+      color: color,
+      emissive: color,
+      emissiveIntensity: 0.3,
+      transparent: true,
+      opacity: 0.9
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    
+    // Create glow effect
+    const glowGeometry = new THREE.SphereGeometry(size * 1.3, 16, 16);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.15,
+      side: THREE.BackSide
+    });
+    const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+    
+    // Create group
+    const group = new THREE.Group();
+    group.add(mesh);
+    group.add(glowMesh);
+    group.position.set(item.position.x, item.position.y, item.position.z);
+    group.userData = {
+      isWorldItem: true,
+      item: item,
+      baseY: item.position.y,
+      size: size,
+      color: color
+    };
+    
+    return group;
+  };
+
+  /**
+   * Update world item meshes in the scene
+   */
+  const updateWorldItemMeshes = () => {
+    if (!sceneRef.current) return;
+    
+    const currentItemIds = new Set(worldItems.map(item => item.id));
+    
+    // Remove meshes for items that no longer exist
+    worldItemMeshesRef.current.forEach((mesh, itemId) => {
+      if (!currentItemIds.has(itemId)) {
+        sceneRef.current.remove(mesh);
+        mesh.traverse((child) => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+        });
+        worldItemMeshesRef.current.delete(itemId);
+      }
+    });
+    
+    // Add meshes for new items
+    worldItems.forEach((item) => {
+      if (!worldItemMeshesRef.current.has(item.id)) {
+        const mesh = createWorldItemMesh(item);
+        sceneRef.current.add(mesh);
+        worldItemMeshesRef.current.set(item.id, mesh);
+      }
+    });
+  };
+
   // Detect mobile device on mount
   useEffect(() => {
     const mobile = isMobileDevice() || isTouchDevice();
