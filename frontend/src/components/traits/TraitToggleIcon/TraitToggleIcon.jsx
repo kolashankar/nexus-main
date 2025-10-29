@@ -5,6 +5,7 @@ import './TraitToggleIcon.css';
 /**
  * Trait Toggle Icon Component
  * Displays a floating icon above characters that shows their traits when clicked
+ * Now properly handles array of trait objects
  */
 const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,10 +14,14 @@ const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' 
     setIsOpen(!isOpen);
   };
 
+  // Ensure traits is an array
+  const traitsArray = Array.isArray(traits) ? traits : [];
+
   // Categorize traits
-  const goodTraits = traits.filter(t => t.type === 'virtue' || t.category === 'good');
-  const badTraits = traits.filter(t => t.type === 'vice' || t.category === 'bad');
-  const metaTraits = traits.filter(t => t.type === 'meta' || t.category === 'meta');
+  const goodTraits = traitsArray.filter(t => t.type === 'virtue' || t.category === 'good');
+  const badTraits = traitsArray.filter(t => t.type === 'vice' || t.category === 'bad');
+  const metaTraits = traitsArray.filter(t => t.type === 'meta' || t.category === 'meta');
+  const skillTraits = traitsArray.filter(t => t.type === 'skill' || t.category === 'skill');
 
   return (
     <div className={`trait-toggle-container position-${position}`}>
@@ -27,8 +32,8 @@ const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' 
         title={`View ${playerName}'s traits`}
       >
         <Info className="w-4 h-4" />
-        {traits.length > 0 && (
-          <span className="trait-count-badge">{traits.length}</span>
+        {traitsArray.length > 0 && (
+          <span className="trait-count-badge">{traitsArray.length}</span>
         )}
       </button>
 
@@ -47,8 +52,13 @@ const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' 
           </div>
 
           <div className="traits-panel-content">
-            {traits.length === 0 ? (
-              <p className="no-traits-message">No traits yet</p>
+            {traitsArray.length === 0 ? (
+              <div className="no-traits-message">
+                <p>No distinctive traits yet</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Complete tasks and actions to develop your character's traits.
+                </p>
+              </div>
             ) : (
               <>
                 {/* Good Traits */}
@@ -59,7 +69,7 @@ const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' 
                       {goodTraits.map((trait, index) => (
                         <div key={index} className="trait-item good">
                           <span className="trait-name">{trait.name}</span>
-                          <span className="trait-level">Lv.{trait.level || 1}</span>
+                          <span className="trait-level">Lv.{trait.level || 50}</span>
                         </div>
                       ))}
                     </div>
@@ -74,7 +84,22 @@ const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' 
                       {badTraits.map((trait, index) => (
                         <div key={index} className="trait-item bad">
                           <span className="trait-name">{trait.name}</span>
-                          <span className="trait-level">Lv.{trait.level || 1}</span>
+                          <span className="trait-level">Lv.{trait.level || 50}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Skills */}
+                {skillTraits.length > 0 && (
+                  <div className="trait-section">
+                    <h4 className="trait-section-title skill">Skills</h4>
+                    <div className="trait-list">
+                      {skillTraits.map((trait, index) => (
+                        <div key={index} className="trait-item skill">
+                          <span className="trait-name">{trait.name}</span>
+                          <span className="trait-level">Lv.{trait.level || 50}</span>
                         </div>
                       ))}
                     </div>
@@ -89,7 +114,7 @@ const TraitToggleIcon = ({ traits = [], playerName = 'Player', position = 'top' 
                       {metaTraits.map((trait, index) => (
                         <div key={index} className="trait-item meta">
                           <span className="trait-name">{trait.name}</span>
-                          <span className="trait-level">Lv.{trait.level || 1}</span>
+                          <span className="trait-level">Lv.{trait.level || 50}</span>
                         </div>
                       ))}
                     </div>

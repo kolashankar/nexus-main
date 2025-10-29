@@ -20,10 +20,13 @@ export const authSlice = (set, get) => ({
         refreshToken: response.refresh_token,
         isAuthenticated: true,
         isLoading: false,
+        error: null,
       });
     } catch (error) {
+      // Use user-friendly message from API client
+      const errorMessage = error.userMessage || error.message || 'Login failed. Please try again.';
       set({
-        error: error.message,
+        error: errorMessage,
         isLoading: false,
       });
       throw error;
@@ -39,10 +42,13 @@ export const authSlice = (set, get) => ({
         refreshToken: response.refresh_token,
         isAuthenticated: true,
         isLoading: false,
+        error: null,
       });
     } catch (error) {
+      // Use user-friendly message from API client
+      const errorMessage = error.userMessage || error.message || 'Registration failed. Please try again.';
       set({
-        error: error.message,
+        error: errorMessage,
         isLoading: false,
       });
       throw error;
