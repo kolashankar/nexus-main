@@ -2,7 +2,9 @@
 
 ## 📝 Current Session (Latest)
 
-**Task:** Fix CORS errors and improve error messages, then implement missing Initial Tasks features in batches
+**Task:** Fix city model scale, layout, and rendering for optimal desktop and mobile performance
+
+**Current Work: City Model Optimization & Scale Normalization** 🚧 IN PROGRESS
 
 **Priority 1: CORS & Error Messages** ✅ COMPLETE
 - Fixed CORS configuration to allow all origins (deployment-ready)
