@@ -99,9 +99,17 @@ const Play = () => {
       {/* 3D Game World */}
       <GameWorldEnhanced player={player} isFullscreen={isFullscreen} />
       
+      {/* Mobile Menu - Only on mobile */}
+      {isMobile && !isFullscreen && (
+        <MobileMenu 
+          onMenuItemClick={handleMobileMenuClick}
+          currentTab={currentMobileTab}
+        />
+      )}
+      
       {/* Fullscreen Toggle Button - Top Right */}
       <button
-        className="absolute top-4 right-4 bg-purple-600/80 hover:bg-purple-700 text-white p-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg backdrop-blur-sm z-[100]"
+        className={`absolute ${isMobile ? 'top-4 right-4' : 'top-4 right-4'} bg-purple-600/80 hover:bg-purple-700 text-white p-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg backdrop-blur-sm z-[100]`}
         onClick={toggleFullscreen}
         title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
       >
@@ -111,33 +119,64 @@ const Play = () => {
       {/* Hide UI elements in fullscreen mode */}
       {!isFullscreen && (
         <>
-          {/* Game HUD Overlay */}
-          <GameHUD player={player} />
+          {/* Game HUD Overlay - Responsive */}
+          <div className={isMobile ? 'mobile-hud' : ''}>
+            <GameHUD player={player} />
+          </div>
           
-          {/* Task Panel - Right Side */}
-          <TaskPanel 
-            player={player} 
-            onTaskComplete={handleTaskComplete}
-          />
+          {/* Task Panel - Desktop or Mobile Toggle */}
+          {!isMobile ? (
+            <TaskPanel 
+              player={player} 
+              onTaskComplete={handleTaskComplete}
+            />
+          ) : showTaskPanel && (
+            <div className="mobile-task-panel">
+              <TaskPanel 
+                player={player} 
+                onTaskComplete={handleTaskComplete}
+              />
+              <button 
+                className="absolute top-2 right-2 bg-red-500/80 text-white px-3 py-1 rounded"
+                onClick={() => setShowTaskPanel(false)}
+              >
+                Close
+              </button>
+            </div>
+          )}
           
-          {/* Marketplace Button */}
-          <button
-            className="absolute bottom-20 right-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
-            onClick={() => setShowMarketplace(true)}
-            style={{ zIndex: 90 }}
-          >
-            🏪 Marketplace
-          </button>
+          {/* Marketplace Button - Desktop only (mobile uses hamburger menu) */}
+          {!isMobile && (
+            <button
+              className="absolute bottom-20 right-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 hover:scale-105 shadow-lg"
+              onClick={() => setShowMarketplace(true)}
+              style={{ zIndex: 90 }}
+            >
+              🏪 Marketplace
+            </button>
+          )}
           
-          {/* Game Instructions */}
-          <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-sm">
+          {/* Game Instructions - Responsive */}
+          <div className={`absolute ${isMobile ? 'bottom-2 left-2' : 'bottom-4 left-4'} bg-black/70 text-white px-4 py-2 rounded-lg text-sm backdrop-blur-sm ${isMobile ? 'text-xs' : ''}`}>
             <p className="font-semibold mb-2 text-cyan-400">Controls:</p>
             <div className="space-y-1 text-xs">
-              <p><span className="text-green-400">↑↓←→ or WASD</span> - Walk</p>
-              <p><span className="text-yellow-400">Shift + Arrows</span> - Run</p>
-              <p><span className="text-blue-400">Ctrl + L / Ctrl + R</span> - Rotate View</p>
-              <p><span className="text-purple-400">Space</span> - Jump</p>
-              <p><span className="text-pink-400">E</span> - Interact</p>
+              {!isMobile ? (
+                <>
+                  <p><span className="text-green-400">↑↓←→ or WASD</span> - Walk</p>
+                  <p><span className="text-yellow-400">Shift + Arrows</span> - Run</p>
+                  <p><span className="text-blue-400">Ctrl + L / Ctrl + R</span> - Rotate View</p>
+                  <p><span className="text-purple-400">Space</span> - Jump</p>
+                  <p><span className="text-pink-400">E</span> - Interact</p>
+                </>
+              ) : (
+                <>
+                  <p><span className="text-green-400">Joystick</span> - Move</p>
+                  <p><span className="text-yellow-400">Run Button</span> - Toggle Run</p>
+                  <p><span className="text-purple-400">Jump Button</span> - Jump</p>
+                  <p><span className="text-pink-400">Interact Button</span> - Interact</p>
+                  <p><span className="text-blue-400">Swipe Screen</span> - Rotate Camera</p>
+                </>
+              )}
             </div>
           </div>
         </>
