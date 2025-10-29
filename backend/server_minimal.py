@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://quest-mechanics-plus.preview.emergentagent.com"
+    "https://task-evolution-3.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
