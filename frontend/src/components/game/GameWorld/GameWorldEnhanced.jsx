@@ -301,22 +301,20 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
       ];
 
       for (let i = 0; i < 10; i++) {
+        const spawnPos = getRandomSpawnPosition();
+        
         try {
           const type = characterTypes[i % characterTypes.length];
           const result = await loadModel(`/models/characters/${type}.glb`);
           const npc = result.model;
 
-          npc.position.set(
-            (Math.random() - 0.5) * 80,
-            1,
-            (Math.random() - 0.5) * 80
-          );
+          npc.position.copy(spawnPos);
           npc.scale.set(1, 1, 1);
           npc.userData = {
             type: 'npc_character',
             name: `Citizen ${i + 1}`,
-            basePos: npc.position.clone(),
-            targetPos: npc.position.clone(),
+            basePos: spawnPos.clone(),
+            targetPos: spawnPos.clone(),
             speed: 0.03 + Math.random() * 0.02,
             idleTime: 0,
             moving: false
@@ -324,6 +322,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
 
           scene.add(npc);
           npcsRef.current.push(npc);
+          console.log(`✅ NPC ${i+1} spawned at (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
         } catch (error) {
           console.warn(`⚠️ Failed to load NPC character ${i}`);
         }
