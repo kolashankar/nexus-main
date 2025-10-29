@@ -210,32 +210,116 @@ const GameWorld = ({ player }) => {
       }
     };
 
-    // Load buildings
-    const loadBuildings = async () => {
-      const buildings = [
-        { type: 'tower', position: { x: 20, y: 0, z: -20 } },
-        { type: 'shop', position: { x: -15, y: 0, z: -15 } },
-        { type: 'warehouse', position: { x: 25, y: 0, z: 10 } },
-        { type: 'headquarters', position: { x: -20, y: 0, z: 20 } }
-      ];
+    // City boundaries (to be calculated after loading city model)
+    const cityBounds = useRef({
+      minX: -50,
+      maxX: 50,
+      minZ: -50,
+      maxZ: 50,
+      minY: 0,
+      maxY: 20
+    });
 
-      for (const buildingConfig of buildings) {
-        try {
-          const building = await loadModel(`/models/environment/buildings/${buildingConfig.type}.glb`);
-          building.position.set(buildingConfig.position.x, buildingConfig.position.y, buildingConfig.position.z);
-          building.scale.set(2, 2, 2);
-          scene.add(building);
-          console.log(`✅ Building loaded: ${buildingConfig.type}`);
-        } catch (error) {
-          console.warn(`⚠️ Failed to load building ${buildingConfig.type}, using fallback`);
-          // Fallback procedural building
-          const geometry = new THREE.BoxGeometry(4, 6, 4);
-          const material = new THREE.MeshStandardMaterial({ color: 0x666666 });
-          const fallback = new THREE.Mesh(geometry, material);
-          fallback.position.set(buildingConfig.position.x, 3, buildingConfig.position.z);
-          scene.add(fallback);
-        }
+    // Load city model
+    const loadCityModel = async () => {
+      try {
+        console.log('🔄 Loading city model...');
+        const cityModel = await loadModel('/models/city/source/town4new.glb');
+        
+        // Position city at origin
+        cityModel.position.set(0, 0, 0);
+        scene.add(cityModel);
+        
+        // Calculate bounding box for city boundaries
+        const box = new THREE.Box3().setFromObject(cityModel);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        
+        // Set city boundaries with padding
+        const padding = 5;
+        cityBounds.current = {
+          minX: box.min.x - padding,
+          maxX: box.max.x + padding,
+          minZ: box.min.z - padding,
+          maxZ: box.max.z + padding,
+          minY: 0,
+          maxY: box.max.y + 10
+        };
+        
+        console.log('✅ City model loaded');
+        console.log(`📐 City bounds: X(${cityBounds.current.minX.toFixed(1)} to ${cityBounds.current.maxX.toFixed(1)}), Z(${cityBounds.current.minZ.toFixed(1)} to ${cityBounds.current.maxZ.toFixed(1)})`);
+        
+        // Create invisible boundary walls
+        createBoundaryWalls();
+        
+        return { size, center };
+      } catch (error) {
+        console.error('❌ Failed to load city model:', error);
+        // Fallback to simple ground plane
+        const geometry = new THREE.PlaneGeometry(100, 100);
+        const material = new THREE.MeshStandardMaterial({ color: 0x2a2a3e });
+        const fallbackGround = new THREE.Mesh(geometry, material);
+        fallbackGround.rotation.x = -Math.PI / 2;
+        scene.add(fallbackGround);
+        throw error;
       }
+    };
+
+    // Create invisible boundary walls
+    const createBoundaryWalls = () => {
+      const wallHeight = 100;
+      const wallMaterial = new THREE.MeshBasicMaterial({ 
+        transparent: true, 
+        opacity: 0,
+        side: THREE.DoubleSide
+      });
+      
+      const bounds = cityBounds.current;
+      const width = bounds.maxX - bounds.minX;
+      const depth = bounds.maxZ - bounds.minZ;
+      
+      // North wall
+      const northWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, wallHeight),
+        wallMaterial
+      );
+      northWall.position.set((bounds.minX + bounds.maxX) / 2, wallHeight / 2, bounds.maxZ);
+      northWall.userData.isBoundary = true;
+      scene.add(northWall);
+      
+      // South wall
+      const southWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, wallHeight),
+        wallMaterial
+      );
+      southWall.position.set((bounds.minX + bounds.maxX) / 2, wallHeight / 2, bounds.minZ);
+      southWall.rotation.y = Math.PI;
+      southWall.userData.isBoundary = true;
+      scene.add(southWall);
+      
+      // East wall
+      const eastWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(depth, wallHeight),
+        wallMaterial
+      );
+      eastWall.position.set(bounds.maxX, wallHeight / 2, (bounds.minZ + bounds.maxZ) / 2);
+      eastWall.rotation.y = Math.PI / 2;
+      eastWall.userData.isBoundary = true;
+      scene.add(eastWall);
+      
+      // West wall
+      const westWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(depth, wallHeight),
+        wallMaterial
+      );
+      westWall.position.set(bounds.minX, wallHeight / 2, (bounds.minZ + bounds.maxZ) / 2);
+      westWall.rotation.y = -Math.PI / 2;
+      westWall.userData.isBoundary = true;
+      scene.add(westWall);
+      
+      console.log('✅ Boundary walls created');
     };
 
     // Load NPC robots with movement behavior
