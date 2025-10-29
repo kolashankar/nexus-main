@@ -126,7 +126,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     directionalLight.shadow.camera.bottom = -100;
     scene.add(directionalLight);
 
-    // === GROUND (Grass Areas) ===
+    // === GROUND (Fallback - city model includes ground) ===
     const groundGeometry = new THREE.PlaneGeometry(300, 300);
     const groundMaterial = new THREE.MeshStandardMaterial({
       color: 0x2d5016,
@@ -135,48 +135,123 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
+    ground.visible = false; // Hidden by default, city model has ground
     scene.add(ground);
 
-    // === ROADS SYSTEM ===
-    const createRoad = (x, z, width, length, rotation = 0) => {
-      const roadGeometry = new THREE.PlaneGeometry(width, length);
-      const roadMaterial = new THREE.MeshStandardMaterial({
-        color: 0x3a3a3a,
-        roughness: 0.95
-      });
-      const road = new THREE.Mesh(roadGeometry, roadMaterial);
-      road.rotation.x = -Math.PI / 2;
-      road.rotation.z = rotation;
-      road.position.set(x, 0.02, z);
-      road.receiveShadow = true;
-      scene.add(road);
-
-      // Add road markings
-      const markingGeometry = new THREE.PlaneGeometry(width * 0.1, length * 0.9);
-      const markingMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-      const marking = new THREE.Mesh(markingGeometry, markingMaterial);
-      marking.rotation.x = -Math.PI / 2;
-      marking.rotation.z = rotation;
-      marking.position.set(x, 0.03, z);
-      scene.add(marking);
+    // === CITY MODEL FUNCTIONS ===
+    
+    // Get random spawn position within city bounds
+    const getRandomSpawnPosition = () => {
+      const bounds = cityBounds.current;
+      const margin = 10; // Keep away from edges
+      
+      return new THREE.Vector3(
+        bounds.minX + margin + Math.random() * (bounds.maxX - bounds.minX - margin * 2),
+        1, // Ground level with character height offset
+        bounds.minZ + margin + Math.random() * (bounds.maxZ - bounds.minZ - margin * 2)
+      );
     };
 
-    // Create grid of roads (city layout)
-    const roadWidth = 6;
-    const blockSize = 25;
-    const citySize = 6; // 6x6 grid of blocks
+    // Create invisible boundary walls
+    const createBoundaryWalls = () => {
+      const wallHeight = 100;
+      const wallMaterial = new THREE.MeshBasicMaterial({ 
+        transparent: true, 
+        opacity: 0,
+        side: THREE.DoubleSide
+      });
+      
+      const bounds = cityBounds.current;
+      const width = bounds.maxX - bounds.minX;
+      const depth = bounds.maxZ - bounds.minZ;
+      
+      // North wall
+      const northWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, wallHeight),
+        wallMaterial
+      );
+      northWall.position.set((bounds.minX + bounds.maxX) / 2, wallHeight / 2, bounds.maxZ);
+      northWall.userData.isBoundary = true;
+      scene.add(northWall);
+      
+      // South wall
+      const southWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, wallHeight),
+        wallMaterial
+      );
+      southWall.position.set((bounds.minX + bounds.maxX) / 2, wallHeight / 2, bounds.minZ);
+      southWall.rotation.y = Math.PI;
+      southWall.userData.isBoundary = true;
+      scene.add(southWall);
+      
+      // East wall
+      const eastWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(depth, wallHeight),
+        wallMaterial
+      );
+      eastWall.position.set(bounds.maxX, wallHeight / 2, (bounds.minZ + bounds.maxZ) / 2);
+      eastWall.rotation.y = Math.PI / 2;
+      eastWall.userData.isBoundary = true;
+      scene.add(eastWall);
+      
+      // West wall
+      const westWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(depth, wallHeight),
+        wallMaterial
+      );
+      westWall.position.set(bounds.minX, wallHeight / 2, (bounds.minZ + bounds.maxZ) / 2);
+      westWall.rotation.y = -Math.PI / 2;
+      westWall.userData.isBoundary = true;
+      scene.add(westWall);
+      
+      console.log('✅ Boundary walls created');
+    };
 
-    // Horizontal roads
-    for (let i = -citySize; i <= citySize; i++) {
-      createRoad(0, i * blockSize, blockSize * citySize * 2, roadWidth);
-    }
+    // Load city model
+    const loadCityModel = async () => {
+      try {
+        console.log('🔄 Loading city model...');
+        const cityResult = await loadModel('/models/city/source/town4new.glb');
+        const cityModel = cityResult.model;
+        
+        // Position city at origin
+        cityModel.position.set(0, 0, 0);
+        scene.add(cityModel);
+        
+        // Calculate bounding box for city boundaries
+        const box = new THREE.Box3().setFromObject(cityModel);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        
+        // Set city boundaries with padding
+        const padding = 5;
+        cityBounds.current = {
+          minX: box.min.x - padding,
+          maxX: box.max.x + padding,
+          minZ: box.min.z - padding,
+          maxZ: box.max.z + padding,
+          minY: 0,
+          maxY: box.max.y + 10
+        };
+        
+        console.log('✅ City model loaded');
+        console.log(`📐 City bounds: X(${cityBounds.current.minX.toFixed(1)} to ${cityBounds.current.maxX.toFixed(1)}), Z(${cityBounds.current.minZ.toFixed(1)} to ${cityBounds.current.maxZ.toFixed(1)})`);
+        
+        // Create invisible boundary walls
+        createBoundaryWalls();
+        
+        return { size, center };
+      } catch (error) {
+        console.error('❌ Failed to load city model:', error);
+        // Show fallback ground if city fails
+        ground.visible = true;
+        throw error;
+      }
+    };
 
-    // Vertical roads
-    for (let i = -citySize; i <= citySize; i++) {
-      createRoad(i * blockSize, 0, roadWidth, blockSize * citySize * 2, Math.PI / 2);
-    }
-
-    // === LOAD 40 BUILDINGS ===
+    // === LOAD 40 BUILDINGS === (REMOVED - Now using single city model)
     const loadBuildings = async () => {
       const buildingTypes = ['tower', 'shop', 'warehouse', 'headquarters'];
       const buildingModels = {};
