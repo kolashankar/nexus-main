@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://cityscape-adapt.preview.emergentagent.com"
+    "https://content-mapper-6.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
