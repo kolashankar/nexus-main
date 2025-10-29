@@ -795,7 +795,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
       }
       renderer.dispose();
     };
-  }, [player, isMobile, isRunning]);
+  }, [player, isMobile, isRunning, cameraView]);
 
   // === MOBILE CONTROL HANDLERS ===
   const handleJoystickMove = ({ x, y }) => {
