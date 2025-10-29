@@ -534,6 +534,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
       if (characterRef.current) {
         const speed = movement.current.run ? RUN_SPEED : WALK_SPEED;
         const state = playerState.current;
+        const bounds = cityBounds.current;
         let isMoving = false;
 
         // Forward/Backward
@@ -559,6 +560,10 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           state.position.z -= Math.sin(state.rotation) * speed;
           isMoving = true;
         }
+
+        // Apply boundary constraints
+        state.position.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, state.position.x));
+        state.position.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, state.position.z));
 
         // Rotation (Ctrl+L / Ctrl+R or Arrow keys)
         if (movement.current.rotateLeft) {
