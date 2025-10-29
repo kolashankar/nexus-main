@@ -47,9 +47,15 @@ class KarmaNexusAPITester:
             response = self.session.get(f"{self.base_url}/", timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                print(f"✅ Root endpoint (/) - Status: {response.status_code}")
-                print(f"   Response: {data}")
-                results['root_endpoint'] = True
+                expected_fields = ["name", "version", "status"]
+                if all(field in data for field in expected_fields):
+                    print(f"✅ Root endpoint (/) - Status: {response.status_code}")
+                    print(f"   Response: {data}")
+                    results['root_endpoint'] = True
+                else:
+                    print(f"❌ Root endpoint (/) - Missing expected fields")
+                    print(f"   Response: {data}")
+                    results['root_endpoint'] = False
             else:
                 print(f"❌ Root endpoint (/) - Status: {response.status_code}")
                 print(f"   Response: {response.text}")
@@ -58,14 +64,19 @@ class KarmaNexusAPITester:
             print(f"❌ Root endpoint (/) - Error: {str(e)}")
             results['root_endpoint'] = False
 
-        # Test health endpoint
+        # Test /health endpoint
         try:
             response = self.session.get(f"{self.base_url}/health", timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                print(f"✅ Health endpoint (/health) - Status: {response.status_code}")
-                print(f"   Response: {data}")
-                results['health_endpoint'] = True
+                if data.get("status") == "healthy":
+                    print(f"✅ Health endpoint (/health) - Status: {response.status_code}")
+                    print(f"   Response: {data}")
+                    results['health_endpoint'] = True
+                else:
+                    print(f"❌ Health endpoint (/health) - Unexpected response")
+                    print(f"   Response: {data}")
+                    results['health_endpoint'] = False
             else:
                 print(f"❌ Health endpoint (/health) - Status: {response.status_code}")
                 print(f"   Response: {response.text}")
@@ -73,6 +84,27 @@ class KarmaNexusAPITester:
         except Exception as e:
             print(f"❌ Health endpoint (/health) - Error: {str(e)}")
             results['health_endpoint'] = False
+
+        # Test /api/health endpoint
+        try:
+            response = self.session.get(f"{self.api_url}/health", timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "healthy":
+                    print(f"✅ API Health endpoint (/api/health) - Status: {response.status_code}")
+                    print(f"   Response: {data}")
+                    results['api_health_endpoint'] = True
+                else:
+                    print(f"❌ API Health endpoint (/api/health) - Unexpected response")
+                    print(f"   Response: {data}")
+                    results['api_health_endpoint'] = False
+            else:
+                print(f"❌ API Health endpoint (/api/health) - Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                results['api_health_endpoint'] = False
+        except Exception as e:
+            print(f"❌ API Health endpoint (/api/health) - Error: {str(e)}")
+            results['api_health_endpoint'] = False
 
         print()
         return results
