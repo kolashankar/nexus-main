@@ -697,7 +697,19 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           targetX = Math.max(bounds.minX + 2, Math.min(bounds.maxX - 2, targetX));
           targetZ = Math.max(bounds.minZ + 2, Math.min(bounds.maxZ - 2, targetZ));
           
-          data.targetPos = new THREE.Vector3(targetX, data.basePos.y, targetZ);
+          // === NEW: Snap target to nearest road if NavMesh exists ===
+          if (navMeshRef.current) {
+            const nearestRoadPoint = navMeshRef.current.getNearestPoint(targetX, targetZ, 10);
+            if (nearestRoadPoint) {
+              targetX = nearestRoadPoint.x;
+              targetZ = nearestRoadPoint.z;
+              data.targetPos = new THREE.Vector3(targetX, nearestRoadPoint.y, targetZ);
+            } else {
+              data.targetPos = new THREE.Vector3(targetX, data.basePos.y, targetZ);
+            }
+          } else {
+            data.targetPos = new THREE.Vector3(targetX, data.basePos.y, targetZ);
+          }
         }
       } else {
         // Move toward target
@@ -707,22 +719,45 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
 
         const newPosition = npc.position.clone().add(direction.multiplyScalar(data.speed));
         
-        // Check boundaries before moving
-        if (newPosition.x >= bounds.minX && newPosition.x <= bounds.maxX &&
-            newPosition.z >= bounds.minZ && newPosition.z <= bounds.maxZ) {
-          npc.position.copy(newPosition);
+        // === NEW: Check NavMesh constraints ===
+        let canMove = true;
+        if (navMeshRef.current) {
+          const nearestRoadPoint = navMeshRef.current.getNearestPoint(
+            newPosition.x,
+            newPosition.z,
+            2.0
+          );
+          
+          if (nearestRoadPoint) {
+            // Snap to road
+            newPosition.x = nearestRoadPoint.x;
+            newPosition.z = nearestRoadPoint.z;
+            newPosition.y = nearestRoadPoint.y;
+          } else {
+            // Off road, stop moving
+            canMove = false;
+            data.moving = false;
+          }
         } else {
-          // Hit boundary, stop moving
-          data.moving = false;
+          // Check boundaries (fallback)
+          if (newPosition.x < bounds.minX || newPosition.x > bounds.maxX ||
+              newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
+            canMove = false;
+            data.moving = false;
+          }
         }
+        
+        if (canMove) {
+          npc.position.copy(newPosition);
+          
+          // Rotate to face direction
+          const targetAngle = Math.atan2(direction.x, direction.z);
+          npc.rotation.y = targetAngle;
 
-        // Rotate to face direction
-        const targetAngle = Math.atan2(direction.x, direction.z);
-        npc.rotation.y = targetAngle;
-
-        // Check if reached target
-        if (npc.position.distanceTo(data.targetPos) < 0.5) {
-          data.moving = false;
+          // Check if reached target
+          if (npc.position.distanceTo(data.targetPos) < 0.5) {
+            data.moving = false;
+          }
         }
       }
     };
