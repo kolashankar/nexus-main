@@ -5,11 +5,11 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: pip install --upgrade pip && pip install -r backend/requirements.txt
+    buildCommand: pip install --upgrade pip && pip install --only-binary=:all: -r backend/requirements.txt || (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source $HOME/.cargo/env && pip install -r backend/requirements.txt)
     startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port 10000
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.12.3
       - key: DATABASE_URL
         sync: false
       - key: SECRET_KEY
