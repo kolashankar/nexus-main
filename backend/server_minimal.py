@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://task-master-298.preview.emergentagent.com"
+    "https://pensive-rubin.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
