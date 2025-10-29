@@ -322,30 +322,44 @@ const GameWorld = ({ player }) => {
       console.log('✅ Boundary walls created');
     };
 
+    // Get random spawn position within city bounds
+    const getRandomSpawnPosition = () => {
+      const bounds = cityBounds.current;
+      const margin = 10; // Keep away from edges
+      
+      return new THREE.Vector3(
+        bounds.minX + margin + Math.random() * (bounds.maxX - bounds.minX - margin * 2),
+        1, // Ground level with character height offset
+        bounds.minZ + margin + Math.random() * (bounds.maxZ - bounds.minZ - margin * 2)
+      );
+    };
+
     // Load NPC robots with movement behavior
     const loadNPCRobots = async () => {
       const npcs = [
-        { type: 'scout', position: { x: 8, y: 0, z: 8 }, name: 'Scout-01', traits: [{ name: 'Speed', level: 5, type: 'virtue' }] },
-        { type: 'trader', position: { x: -8, y: 0, z: -8 }, name: 'Trader-42', traits: [{ name: 'Charisma', level: 7, type: 'virtue' }] },
-        { type: 'medic', position: { x: 12, y: 0, z: -5 }, name: 'Medic-07', traits: [{ name: 'Compassion', level: 8, type: 'virtue' }] },
-        { type: 'combat', position: { x: -10, y: 0, z: 10 }, name: 'Combat-99', traits: [{ name: 'Strength', level: 9, type: 'virtue' }] },
-        { type: 'hacker', position: { x: 5, y: 0, z: -12 }, name: 'Hacker-13', traits: [{ name: 'Intelligence', level: 10, type: 'virtue' }] },
-        { type: 'guardian', position: { x: -6, y: 0, z: 15 }, name: 'Guardian-77', traits: [{ name: 'Defense', level: 8, type: 'virtue' }] }
+        { type: 'scout', name: 'Scout-01', traits: [{ name: 'Speed', level: 5, type: 'virtue' }] },
+        { type: 'trader', name: 'Trader-42', traits: [{ name: 'Charisma', level: 7, type: 'virtue' }] },
+        { type: 'medic', name: 'Medic-07', traits: [{ name: 'Compassion', level: 8, type: 'virtue' }] },
+        { type: 'combat', name: 'Combat-99', traits: [{ name: 'Strength', level: 9, type: 'virtue' }] },
+        { type: 'hacker', name: 'Hacker-13', traits: [{ name: 'Intelligence', level: 10, type: 'virtue' }] },
+        { type: 'guardian', name: 'Guardian-77', traits: [{ name: 'Defense', level: 8, type: 'virtue' }] }
       ];
 
       for (const npcConfig of npcs) {
+        const spawnPos = getRandomSpawnPosition();
+        
         try {
           const robot = await loadModel(`/models/robots/${npcConfig.type}.glb`);
-          robot.position.set(npcConfig.position.x, npcConfig.position.y, npcConfig.position.z);
+          robot.position.copy(spawnPos);
           robot.scale.set(1, 1, 1);
           
-          // Add NPC data
+          // Add NPC data with city-aware behavior
           robot.userData = {
             name: npcConfig.name,
             type: npcConfig.type,
             traits: npcConfig.traits,
-            basePosition: new THREE.Vector3(npcConfig.position.x, 0, npcConfig.position.z),
-            targetPosition: new THREE.Vector3(npcConfig.position.x, 0, npcConfig.position.z),
+            basePosition: spawnPos.clone(),
+            targetPosition: spawnPos.clone(),
             moveSpeed: 0.02 + Math.random() * 0.03,
             rotationSpeed: 0.02,
             idleTime: 0,
@@ -354,7 +368,7 @@ const GameWorld = ({ player }) => {
           
           scene.add(robot);
           npcsRef.current.push(robot);
-          console.log(`✅ NPC Robot loaded: ${npcConfig.type}`);
+          console.log(`✅ NPC Robot loaded: ${npcConfig.type} at position (${spawnPos.x.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
         } catch (error) {
           console.warn(`⚠️ Failed to load NPC ${npcConfig.type}, using fallback`);
           // Fallback procedural robot
@@ -362,13 +376,13 @@ const GameWorld = ({ player }) => {
             new THREE.BoxGeometry(0.8, 1.2, 0.6),
             new THREE.MeshStandardMaterial({ color: 0xff6600 })
           );
-          body.position.set(npcConfig.position.x, 0.6, npcConfig.position.z);
+          body.position.copy(spawnPos);
           body.userData = {
             name: npcConfig.name,
             type: npcConfig.type,
             traits: npcConfig.traits,
-            basePosition: new THREE.Vector3(npcConfig.position.x, 0.6, npcConfig.position.z),
-            targetPosition: new THREE.Vector3(npcConfig.position.x, 0.6, npcConfig.position.z),
+            basePosition: spawnPos.clone(),
+            targetPosition: spawnPos.clone(),
             moveSpeed: 0.02 + Math.random() * 0.03,
             rotationSpeed: 0.02,
             idleTime: 0,
