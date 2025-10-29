@@ -10,6 +10,7 @@ import MobileMenu from '../../components/mobile/MobileMenu';
 import { isMobileDevice } from '../../utils/mobileDetection';
 import useStore from '../../store';
 import { Loader2, Maximize2, Minimize2 } from 'lucide-react';
+import './PlayMobile.css';
 
 const Play = () => {
   const { player, fetchPlayer, isLoadingPlayer } = useStore();
