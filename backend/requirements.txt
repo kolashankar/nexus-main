@@ -61,3 +61,4 @@ python-dateutil==2.8.2
 pytz==2023.3.post1
 google-ai-generativelanguage
 httplib2
+google-api-python-client
