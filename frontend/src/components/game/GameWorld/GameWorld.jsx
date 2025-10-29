@@ -149,7 +149,7 @@ const GameWorld = ({ player }) => {
     const hemisphereLight = new THREE.HemisphereLight(0x4040ff, 0x80ff80, 0.5);
     scene.add(hemisphereLight);
 
-    // Ground
+    // Ground (fallback - city model includes ground)
     const groundGeometry = new THREE.PlaneGeometry(200, 200);
     const groundMaterial = new THREE.MeshStandardMaterial({ 
       color: 0x2a2a3e,
@@ -159,14 +159,17 @@ const GameWorld = ({ player }) => {
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
+    ground.visible = false; // Hidden by default, city model has ground
     scene.add(ground);
 
-    // Grid helper
-    const gridHelper = new THREE.GridHelper(200, 100, 0x00ff00, 0x404040);
-    scene.add(gridHelper);
-
-    // Load player character model
-    const loadPlayerCharacter = async () => {
+    // Initialize all assets
+    const initializeWorld = async () => {
+      await loadCityModel();
+      await loadPlayerCharacter();
+      await loadNPCRobots();
+      setIsLoaded(true);
+      console.log('✅ Game world fully loaded');
+    };
       try {
         const characterModel = player?.appearance?.model || player?.character_model || 'male_base';
         console.log(`🔄 Loading player character: ${characterModel}`);
