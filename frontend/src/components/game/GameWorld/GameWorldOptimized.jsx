@@ -1085,6 +1085,9 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('resize', handleResize);
+      if (mountRef.current) {
+        mountRef.current.removeEventListener('click', handleMouseClick);
+      }
       
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -1093,6 +1096,18 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
       if (performanceMonitorRef.current) {
         performanceMonitorRef.current.dispose();
       }
+      
+      // Clean up world item meshes
+      worldItemMeshesRef.current.forEach((mesh) => {
+        if (sceneRef.current) {
+          sceneRef.current.remove(mesh);
+        }
+        mesh.traverse((child) => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+        });
+      });
+      worldItemMeshesRef.current.clear();
       
       if (mountRef.current && renderer.domElement) {
         mountRef.current.removeChild(renderer.domElement);
