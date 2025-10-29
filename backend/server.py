@@ -104,6 +104,30 @@ async def health():
     """Health check endpoint."""
     return {"status": "healthy"}
 
+@app.get("/api/health")
+async def api_health():
+    """Health check endpoint with /api prefix for external access."""
+    return {"status": "healthy"}
+
+@app.get("/api")
+async def api_root():
+    """API root endpoint."""
+    return {
+        "name": "Karma Nexus API",
+        "version": "2.0.0",
+        "status": "operational",
+        "endpoints": {
+            "health": "/api/health",
+            "docs": "/docs",
+            "auth": "/api/auth",
+            "player": "/api/player",
+            "tasks": "/api/tasks",
+            "marketplace": "/api/marketplace",
+            "upgrades": "/api/upgrades",
+            "traits": "/api/traits"
+        }
+    }
+
 
 # Register WebSocket endpoint
 app.websocket("/ws")(websocket_endpoint)
