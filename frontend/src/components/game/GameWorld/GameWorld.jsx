@@ -509,6 +509,26 @@ const GameWorld = ({ player }) => {
         keysPressed.current[key] = true;
         keysPressed.current[e.key] = true;
       }
+      
+      // Toggle debug visuals with 'V' key
+      if (key === 'v') {
+        setShowDebugVisuals(prev => {
+          const newValue = !prev;
+          console.log(`🔧 Debug visuals: ${newValue ? 'ON' : 'OFF'}`);
+          
+          // Update visibility of debug meshes
+          if (debugVisualsRef.current.roads) {
+            debugVisualsRef.current.roads.forEach(mesh => {
+              mesh.visible = newValue;
+            });
+          }
+          if (debugVisualsRef.current.navMesh) {
+            debugVisualsRef.current.navMesh.visible = newValue;
+          }
+          
+          return newValue;
+        });
+      }
     };
 
     const handleKeyUp = (e) => {
