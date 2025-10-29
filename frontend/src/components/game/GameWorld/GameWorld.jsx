@@ -431,9 +431,10 @@ const GameWorld = ({ player }) => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // NPC AI: Random movement behavior
+    // NPC AI: Random movement behavior with boundary awareness
     const updateNPCBehavior = (npc, deltaTime) => {
       const userData = npc.userData;
+      const bounds = cityBounds.current;
       
       if (!userData.isMoving) {
         // Idle state
@@ -444,14 +445,17 @@ const GameWorld = ({ player }) => {
           userData.isMoving = true;
           userData.idleTime = 0;
           
-          // Set random target within 10 units of base position
+          // Set random target within boundaries
           const angle = Math.random() * Math.PI * 2;
-          const distance = 5 + Math.random() * 5;
-          userData.targetPosition.set(
-            userData.basePosition.x + Math.cos(angle) * distance,
-            userData.basePosition.y,
-            userData.basePosition.z + Math.sin(angle) * distance
-          );
+          const distance = 5 + Math.random() * 10;
+          let targetX = userData.basePosition.x + Math.cos(angle) * distance;
+          let targetZ = userData.basePosition.z + Math.sin(angle) * distance;
+          
+          // Clamp to boundaries
+          targetX = Math.max(bounds.minX + 2, Math.min(bounds.maxX - 2, targetX));
+          targetZ = Math.max(bounds.minZ + 2, Math.min(bounds.maxZ - 2, targetZ));
+          
+          userData.targetPosition.set(targetX, userData.basePosition.y, targetZ);
         }
       } else {
         // Moving state
@@ -459,8 +463,17 @@ const GameWorld = ({ player }) => {
           .subVectors(userData.targetPosition, npc.position)
           .normalize();
         
-        // Move towards target
-        npc.position.add(direction.multiplyScalar(userData.moveSpeed));
+        // Calculate new position
+        const newPosition = npc.position.clone().add(direction.multiplyScalar(userData.moveSpeed));
+        
+        // Check boundaries
+        if (newPosition.x >= bounds.minX && newPosition.x <= bounds.maxX &&
+            newPosition.z >= bounds.minZ && newPosition.z <= bounds.maxZ) {
+          npc.position.copy(newPosition);
+        } else {
+          // Hit boundary, stop moving and find new target
+          userData.isMoving = false;
+        }
         
         // Rotate to face movement direction
         const targetRotation = Math.atan2(direction.x, direction.z);
