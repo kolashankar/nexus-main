@@ -23,16 +23,15 @@ class KarmaNexusAPITester:
         self.session = requests.Session()
         self.auth_token = None
         self.player_id = None
-        self.current_task = None
         self.test_user_data = {
-            "username": "karma_nexus_tester",
-            "email": "karma.nexus.tester@gametest.com", 
-            "password": "GameTest2024!",
+            "username": "karma_nexus_character_tester",
+            "email": "character.tester@karmanexus.game", 
+            "password": "CharacterTest2024!",
             "economic_class": "middle",
             "moral_class": "average"
         }
         
-        print(f"🔗 Testing backend at: {self.base_url}")
+        print(f"🔗 Testing Karma Nexus 2.0 Backend at: {self.base_url}")
         print(f"🔗 API endpoints at: {self.api_url}")
         print("=" * 60)
 
