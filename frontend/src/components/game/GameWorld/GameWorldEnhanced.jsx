@@ -97,6 +97,11 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
     });
   };
 
+  // Detect mobile device on mount
+  useEffect(() => {
+    setIsMobile(isMobileDevice() || isTouchDevice());
+  }, []);
+
   useEffect(() => {
     if (!mountRef.current) return;
 
