@@ -806,9 +806,45 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           }
         }
 
-        // Apply boundary constraints
-        state.position.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, state.position.x));
-        state.position.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, state.position.z));
+        // === NEW: NavMesh constraint - slide back to road if off-road ===
+        if (navMeshRef.current) {
+          const nearestRoadPoint = navMeshRef.current.getNearestPoint(
+            state.position.x,
+            state.position.z,
+            2.0  // Max distance to search for road
+          );
+          
+          if (nearestRoadPoint) {
+            // Check if player is too far from road
+            const dx = state.position.x - nearestRoadPoint.x;
+            const dz = state.position.z - nearestRoadPoint.z;
+            const distanceFromRoad = Math.sqrt(dx * dx + dz * dz);
+            
+            if (distanceFromRoad > 0.5) {
+              // Slide back towards road (smooth correction)
+              const slideSpeed = 0.15;
+              state.position.x = THREE.MathUtils.lerp(
+                state.position.x,
+                nearestRoadPoint.x,
+                slideSpeed
+              );
+              state.position.z = THREE.MathUtils.lerp(
+                state.position.z,
+                nearestRoadPoint.z,
+                slideSpeed
+              );
+            }
+            
+            // Update Y position to match road height (when grounded)
+            if (state.isGrounded) {
+              state.position.y = nearestRoadPoint.y + 1; // Character height offset
+            }
+          }
+        } else {
+          // No NavMesh, use regular boundary constraints
+          state.position.x = Math.max(bounds.minX + 1, Math.min(bounds.maxX - 1, state.position.x));
+          state.position.z = Math.max(bounds.minZ + 1, Math.min(bounds.maxZ - 1, state.position.z));
+        }
 
         // Jump
         if (movement.current.jump && state.isGrounded) {
