@@ -56,6 +56,7 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   const [showItemModal, setShowItemModal] = useState(false);
   const [activeAcquisition, setActiveAcquisition] = useState(null);
   const worldItemsRef = useRef([]);
+  const worldItemMeshesRef = useRef(new Map());
 
   // Movement state
   const movement = useRef({
