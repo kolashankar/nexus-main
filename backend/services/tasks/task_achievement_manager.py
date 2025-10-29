@@ -1,7 +1,7 @@
 """Task achievement manager - manages achievements for task completions."""
 
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 class TaskAchievementManager:
