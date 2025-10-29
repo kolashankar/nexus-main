@@ -39,6 +39,11 @@ const Play = () => {
     }
   }, [player, isLoadingPlayer]);
 
+  useEffect(() => {
+    // Detect mobile device
+    setIsMobile(isMobileDevice());
+  }, []);
+
   const handleTaskComplete = (rewardData) => {
     // Refresh player data to update coin balance
     fetchPlayer();
@@ -51,6 +56,30 @@ const Play = () => {
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  const handleMobileMenuClick = (menuItem) => {
+    setCurrentMobileTab(menuItem);
+    
+    switch (menuItem) {
+      case 'marketplace':
+        setShowMarketplace(true);
+        break;
+      case 'tasks':
+        setShowTaskPanel(!showTaskPanel);
+        break;
+      case 'inventory':
+      case 'quests':
+      case 'map':
+      case 'social':
+      case 'achievements':
+      case 'settings':
+        // These would open their respective modals/panels
+        console.log(`Opening ${menuItem}`);
+        break;
+      default:
+        break;
+    }
   };
 
   if (isLoadingPlayer || !player || !gameReady) {
