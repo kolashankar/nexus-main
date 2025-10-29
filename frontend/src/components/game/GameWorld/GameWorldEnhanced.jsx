@@ -854,6 +854,14 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           />
         </>
       )}
+
+      {/* Camera View Toggle - Show when loaded */}
+      {isLoaded && !isFullscreen && (
+        <CameraViewToggle
+          currentView={cameraView}
+          onViewChange={setCameraView}
+        />
+      )}
     </div>
   );
 };
