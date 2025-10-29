@@ -478,6 +478,7 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
       if (!npc.userData || npc.userData.type === 'building') return;
 
       const data = npc.userData;
+      const bounds = cityBounds.current;
 
       if (!data.moving) {
         data.idleTime += deltaTime;
@@ -485,14 +486,17 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           data.moving = true;
           data.idleTime = 0;
 
-          // Set new random target
+          // Set new random target within boundaries
           const angle = Math.random() * Math.PI * 2;
           const distance = 10 + Math.random() * (data.patrolRadius || 15);
-          data.targetPos = new THREE.Vector3(
-            data.basePos.x + Math.cos(angle) * distance,
-            data.basePos.y,
-            data.basePos.z + Math.sin(angle) * distance
-          );
+          let targetX = data.basePos.x + Math.cos(angle) * distance;
+          let targetZ = data.basePos.z + Math.sin(angle) * distance;
+          
+          // Clamp to boundaries
+          targetX = Math.max(bounds.minX + 2, Math.min(bounds.maxX - 2, targetX));
+          targetZ = Math.max(bounds.minZ + 2, Math.min(bounds.maxZ - 2, targetZ));
+          
+          data.targetPos = new THREE.Vector3(targetX, data.basePos.y, targetZ);
         }
       } else {
         // Move toward target
@@ -500,7 +504,16 @@ const GameWorldEnhanced = ({ player, isFullscreen = false }) => {
           .subVectors(data.targetPos, npc.position)
           .normalize();
 
-        npc.position.add(direction.multiplyScalar(data.speed));
+        const newPosition = npc.position.clone().add(direction.multiplyScalar(data.speed));
+        
+        // Check boundaries before moving
+        if (newPosition.x >= bounds.minX && newPosition.x <= bounds.maxX &&
+            newPosition.z >= bounds.minZ && newPosition.z <= bounds.maxZ) {
+          npc.position.copy(newPosition);
+        } else {
+          // Hit boundary, stop moving
+          data.moving = false;
+        }
 
         // Rotate to face direction
         const targetAngle = Math.atan2(direction.x, direction.z);
