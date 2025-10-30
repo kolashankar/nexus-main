@@ -973,6 +973,12 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     // === INITIALIZE WORLD ===
     const initWorld = async () => {
       try {
+        // Load shared animations first
+        console.log('🎬 Loading shared animations...');
+        animationControllerRef.current = getSharedAnimationController();
+        await animationControllerRef.current.loadAnimations();
+        setLoadingProgress(20);
+        
         await loadCityModel();
         setLoadingProgress(60);
         
@@ -990,6 +996,7 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
         console.log(`   Performance target: ${config.targetFPS} FPS`);
         console.log(`   Shadow quality: ${config.enableShadows ? `${config.shadowMapSize}x${config.shadowMapSize}` : 'Disabled'}`);
         console.log(`   Render distance: ${config.renderDistance} units`);
+        console.log(`   NavMesh: Roads only`);
       } catch (error) {
         console.error('❌ World initialization failed:', error);
         setIsLoaded(false);
