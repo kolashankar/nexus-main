@@ -8,6 +8,7 @@ import GameHUD from '../../components/game/GameHUD/GameHUD';
 import TaskPanel from '../../components/game/TaskPanel/TaskPanel';
 import Marketplace from '../../components/game/Marketplace/Marketplace';
 import MobileMenu from '../../components/mobile/MobileMenu';
+import LandscapePrompt from '../../components/mobile/LandscapePrompt';
 import { QuestLog } from '../../components/quests/QuestLog';
 import { QuestTracker } from '../../components/quests/QuestTracker';
 import CombatArena from '../../components/combat/CombatArena/CombatArena';
