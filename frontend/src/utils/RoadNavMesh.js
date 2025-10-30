@@ -346,10 +346,15 @@ export class RoadNavMesh {
    * Clamp position to NavMesh
    */
   clampToNavMesh(position) {
-    if (!this.navMesh) return position;
+    if (!this.navMesh || !this.navMesh.zone) return position.clone();
     
-    const closestPoint = this.getClosestNode(position);
-    return closestPoint;
+    try {
+      const closestPoint = this.getClosestNode(position);
+      return closestPoint.clone ? closestPoint.clone() : new THREE.Vector3(closestPoint.x, closestPoint.y, closestPoint.z);
+    } catch (error) {
+      console.warn('⚠️ Failed to clamp to NavMesh:', error);
+      return position.clone();
+    }
   }
 
   /**
