@@ -829,27 +829,51 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     const loadCityModel = async () => {
       try {
         setLoadingProgress(10);
-        console.log('🏙️ Loading city model...');
+        console.log('🏙️ Loading city model (FBX)...');
         
-        const cityResult = await loadModel('/models/city/source/town4new.glb', true);
+        const cityResult = await loadModel('/models/city/source/city.fbx', true);
         const cityModel = cityResult.model;
         cityModelRef.current = cityModel;
+        
+        // CRITICAL: Lock city rotation to prevent any rotation
+        cityModel.rotation.set(0, 0, 0);
+        cityModel.quaternion.set(0, 0, 0, 1);
+        
+        // Make city completely static
+        cityModel.matrixAutoUpdate = false;
+        cityModel.updateMatrix();
         
         setLoadingProgress(30);
         
         // Normalize city scale
         const scaleInfo = normalizeCityScale(cityModel);
         
+        // Update matrix after scale changes
+        cityModel.updateMatrix();
+        cityModel.matrixAutoUpdate = false; // Lock again after scale
+        
         setLoadingProgress(40);
         
         // Add to scene
         scene.add(cityModel);
+        
+        // Generate NavMesh from road surfaces
+        console.log('🗺️ Generating NavMesh for roads...');
+        roadNavMeshRef.current = new RoadNavMesh(cityModel);
+        await roadNavMeshRef.current.generateNavMesh();
+        
+        // Update boundaries from NavMesh
+        const navBounds = roadNavMeshRef.current.getRoadBoundaries();
+        cityBounds.current = navBounds;
+        
+        setLoadingProgress(50);
         
         // Create boundaries
         createBoundaryWalls(scene);
         
         console.log('✅ City model loaded and optimized');
         console.log(`   Boundaries: X(${cityBounds.current.minX.toFixed(1)} to ${cityBounds.current.maxX.toFixed(1)}), Z(${cityBounds.current.minZ.toFixed(1)} to ${cityBounds.current.maxZ.toFixed(1)})`);
+        console.log('   🛣️ NavMesh generated - entities restricted to roads');
         
         return scaleInfo;
       } catch (error) {
