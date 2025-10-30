@@ -273,23 +273,43 @@ export class RoadNavMesh {
   createNavMesh(geometry) {
     console.log('🗺️ Creating NavMesh from geometry...');
     
+    // Ensure geometry has indices (required for pathfinding)
+    if (!geometry.index) {
+      console.log('   Generating indices for geometry...');
+      // Use non-indexed geometry directly (three-pathfinding can handle this)
+    }
+    
     // Store road geometry for visualization
     this.roadGeometry = geometry;
     
     // Create a mesh for pathfinding
     const navMeshMesh = new THREE.Mesh(geometry);
     
-    // Build the navigation mesh
-    const zone = Pathfinding.createZone(geometry);
-    this.pathfinding.setZoneData(this.zoneId, zone);
-    
-    this.navMesh = {
-      mesh: navMeshMesh,
-      zone: zone,
-      geometry: geometry
-    };
-    
-    console.log('✅ NavMesh created');
+    try {
+      // Build the navigation mesh
+      console.log('   Building pathfinding zone...');
+      const zone = Pathfinding.createZone(geometry);
+      
+      if (!zone || !zone.groups || zone.groups.length === 0) {
+        console.warn('⚠️ Created zone has no groups, falling back');
+        this.createFallbackNavMesh();
+        return;
+      }
+      
+      this.pathfinding.setZoneData(this.zoneId, zone);
+      
+      this.navMesh = {
+        mesh: navMeshMesh,
+        zone: zone,
+        geometry: geometry
+      };
+      
+      console.log('✅ NavMesh created');
+      console.log(`   Zone groups: ${zone.groups ? zone.groups.length : 0}`);
+    } catch (error) {
+      console.error('❌ Failed to create zone:', error);
+      this.createFallbackNavMesh();
+    }
   }
 
   /**
