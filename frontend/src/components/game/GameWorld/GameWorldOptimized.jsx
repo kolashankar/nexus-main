@@ -1290,6 +1290,19 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
         performanceMonitorRef.current.dispose();
       }
       
+      // Clean up NavMesh
+      if (roadNavMeshRef.current) {
+        roadNavMeshRef.current.dispose();
+      }
+      
+      // Clean up animation controller
+      if (animationControllerRef.current && characterRef.current) {
+        animationControllerRef.current.removeModel(characterRef.current);
+        npcsRef.current.forEach(npc => {
+          animationControllerRef.current.removeModel(npc);
+        });
+      }
+      
       // Clean up world item meshes
       worldItemMeshesRef.current.forEach((mesh) => {
         if (sceneRef.current) {
