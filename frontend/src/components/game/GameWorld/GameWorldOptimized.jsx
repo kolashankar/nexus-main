@@ -892,9 +892,17 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
         const result = await loadModel(`/models/characters/${characterModel}.glb`, false);
         const character = result.model;
 
-        // Set spawn position
+        // Set spawn position on NavMesh
         const spawnPos = getRandomSpawnPosition();
-        playerState.current.position.copy(spawnPos);
+        
+        // Clamp spawn position to NavMesh (roads only)
+        if (roadNavMeshRef.current) {
+          const clampedPos = roadNavMeshRef.current.clampToNavMesh(spawnPos);
+          playerState.current.position.copy(clampedPos);
+        } else {
+          playerState.current.position.copy(spawnPos);
+        }
+        
         character.position.copy(playerState.current.position);
         
         // Scale character to match normalized city scale
@@ -914,11 +922,15 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
         scene.add(character);
         characterRef.current = character;
 
-        if (result.animations.length > 0) {
-          mixerRef.current = new THREE.AnimationMixer(character);
+        // Setup shared animations and start with idle
+        if (animationControllerRef.current) {
+          animationControllerRef.current.setupMixer(character);
+          animationControllerRef.current.setIdleAnimation(character);
+          playerState.current.currentAnimation = 'idle';
+          console.log('🎬 Player animations initialized (idle)');
         }
 
-        console.log(`✅ Player character loaded at (${spawnPos.x.toFixed(1)}, ${spawnPos.y.toFixed(1)}, ${spawnPos.z.toFixed(1)})`);
+        console.log(`✅ Player character loaded at (${playerState.current.position.x.toFixed(1)}, ${playerState.current.position.y.toFixed(1)}, ${playerState.current.position.z.toFixed(1)})`);
       } catch (error) {
         console.error('❌ Failed to load player character:', error);
         // Fallback capsule
