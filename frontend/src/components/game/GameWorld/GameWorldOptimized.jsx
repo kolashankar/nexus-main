@@ -1172,6 +1172,42 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     }
   }, [worldItems, isLoaded]);
 
+  // Handle camera view changes and city scaling
+  useEffect(() => {
+    if (!cityModelRef.current || !isLoaded) return;
+    
+    const cityModel = cityModelRef.current;
+    const smoothTransition = 0.3; // Animation duration
+    
+    // Define scale factors for each view
+    const scaleFactors = {
+      'top-down': 1.0,    // 100% scale for top view
+      'side': 0.8,         // 80% scale for side view
+      'front': 0.7,        // 70% scale for front view
+      'third-person': 1.0  // 100% scale for third-person (default)
+    };
+    
+    const targetScale = scaleFactors[cameraView] || 1.0;
+    
+    // Smoothly transition to target scale
+    const animateScale = () => {
+      const currentScale = cityModel.scale.x;
+      const diff = targetScale - currentScale;
+      
+      if (Math.abs(diff) > 0.01) {
+        const newScale = currentScale + diff * smoothTransition;
+        cityModel.scale.set(newScale, newScale, newScale);
+        requestAnimationFrame(animateScale);
+      } else {
+        cityModel.scale.set(targetScale, targetScale, targetScale);
+      }
+    };
+    
+    animateScale();
+    
+    console.log(`📷 Camera view changed to: ${cameraView}, City scale: ${targetScale * 100}%`);
+  }, [cameraView, isLoaded]);
+
   // === MOBILE JOYSTICK HANDLERS ===
   const handleJoystickMove = (x, y) => {
     movement.current.joystickX = x;
