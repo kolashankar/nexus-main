@@ -784,7 +784,7 @@ The enhanced game world is ready for:
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** deep_testing_backend_v2  
-**Backend URL:** https://feature-integration-1.preview.emergentagent.com  
+**Backend URL:** https://nexus-route-plus.preview.emergentagent.com  
 **Test Scope:** Quest System, Combat System, World Items, New Routers, Auth & Error Handling
 
 ### 📊 OVERALL RESULTS: 22/39 tests passed (56.4%)
@@ -980,7 +980,7 @@ The enhanced game world is ready for:
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** auto_frontend_testing_agent  
-**Frontend URL:** https://feature-integration-1.preview.emergentagent.com  
+**Frontend URL:** https://nexus-route-plus.preview.emergentagent.com  
 **Test Focus:** Dashboard loading, Play page, Navigation, and Error handling as requested in review
 
 ### ❌ CRITICAL FRONTEND ISSUES FOUND (Multiple Failures)
