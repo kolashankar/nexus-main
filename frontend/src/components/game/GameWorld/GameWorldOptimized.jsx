@@ -325,19 +325,53 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   };
 
   /**
-   * Update camera to follow character
+   * Update camera to follow character with support for different views
    */
   const updateCamera = (camera, character) => {
     if (!character) return;
     
-    const distance = isMobile ? 12 : 10;
-    const height = isMobile ? 5 : 4;
     const smoothing = 0.1;
+    let distance, height, targetX, targetZ, targetY;
     
-    // Calculate target position
-    const targetX = character.position.x - Math.sin(playerState.current.rotation) * distance;
-    const targetZ = character.position.z - Math.cos(playerState.current.rotation) * distance;
-    const targetY = character.position.y + height;
+    // Configure camera based on view mode
+    switch (cameraView) {
+      case 'top-down':
+        // Top-down view - directly above character
+        distance = isMobile ? 20 : 18;
+        targetX = character.position.x;
+        targetZ = character.position.z;
+        targetY = character.position.y + distance;
+        break;
+        
+      case 'front':
+        // Front view - facing the character
+        distance = isMobile ? 10 : 8;
+        height = isMobile ? 3 : 2.5;
+        targetX = character.position.x + Math.sin(playerState.current.rotation) * distance;
+        targetZ = character.position.z + Math.cos(playerState.current.rotation) * distance;
+        targetY = character.position.y + height;
+        break;
+        
+      case 'side':
+        // Side view - 90 degrees from character direction
+        distance = isMobile ? 10 : 8;
+        height = isMobile ? 3 : 2.5;
+        const sideAngle = playerState.current.rotation + Math.PI / 2;
+        targetX = character.position.x + Math.sin(sideAngle) * distance;
+        targetZ = character.position.z + Math.cos(sideAngle) * distance;
+        targetY = character.position.y + height;
+        break;
+        
+      case 'third-person':
+      default:
+        // Third-person view (behind character)
+        distance = isMobile ? 12 : 10;
+        height = isMobile ? 5 : 4;
+        targetX = character.position.x - Math.sin(playerState.current.rotation) * distance;
+        targetZ = character.position.z - Math.cos(playerState.current.rotation) * distance;
+        targetY = character.position.y + height;
+        break;
+    }
     
     // Smooth camera movement
     camera.position.x += (targetX - camera.position.x) * smoothing;
