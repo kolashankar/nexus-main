@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://nexus-route-plus.preview.emergentagent.com"
+    "https://deploy-test-buddy.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(
