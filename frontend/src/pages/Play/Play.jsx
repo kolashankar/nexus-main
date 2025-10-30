@@ -138,6 +138,9 @@ const Play = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
+      {/* Landscape Orientation Prompt - Mobile Only */}
+      {isMobile && <LandscapePrompt />}
+      
       {/* 3D Game World - Optimized Version */}
       <GameWorldOptimized player={player} isFullscreen={isFullscreen} />
       
