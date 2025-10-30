@@ -18,20 +18,20 @@ export const MODEL_PATHS = {
     },
   },
 
-  // Character Animations
+  // Character Animations (FBX format)
   animations: {
-    idle: '/models/animations/idle.glb',
-    walk: '/models/animations/walk.glb',
-    run: '/models/animations/run.glb',
-    jump: '/models/animations/jump.glb',
-    attack: '/models/animations/attack.glb',
-    defend: '/models/animations/defend.glb',
-    victory: '/models/animations/victory.glb',
-    defeat: '/models/animations/defeat.glb',
+    idle: '/models/animations/Stand_Idle.fbx',
+    walk: '/models/animations/Walk.fbx',
+    run: '/models/animations/Running.fbx',
+    jump: '/models/animations/Jump.fbx',
+    attack: '/models/animations/Attack.fbx',
+    defend: '/models/animations/Defend.fbx',
+    victory: '/models/animations/Victory.fbx',
+    defeat: '/models/animations/Defeat.fbx',
     emotes: {
-      wave: '/models/animations/emotes/wave.glb',
-      dance: '/models/animations/emotes/dance.glb',
-      laugh: '/models/animations/emotes/laugh.glb',
+      wave: '/models/animations/emotes/Wave.fbx',
+      dance: '/models/animations/emotes/Dance.fbx',
+      laugh: '/models/animations/emotes/Laugh.fbx',
     },
   },
 
