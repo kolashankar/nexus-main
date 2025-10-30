@@ -39,151 +39,168 @@ const ProtectedRoute = ({ children }) => {
   return <>{children}</>;
 };
 
+// Wrapper component to detect route changes
+const AppLayout = () => {
+  const location = useLocation();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(isMobileDevice());
+  }, []);
+
+  // Hide footer on Play page when on mobile
+  const shouldHideFooter = isMobile && location.pathname === '/play';
+
+  return (
+    <div className="app">
+      <Header />
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/asset-test" element={<AssetTest />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/play"
+            element={
+              <ProtectedRoute>
+                <Play />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/combat"
+            element={
+              <ProtectedRoute>
+                <Combat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/actions"
+            element={
+              <ProtectedRoute>
+                <Actions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guild"
+            element={
+              <ProtectedRoute>
+                <Guild />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/karma"
+            element={
+              <ProtectedRoute>
+                <Karma />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/prestige"
+            element={
+              <ProtectedRoute>
+                <Prestige />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/progression"
+            element={
+              <ProtectedRoute>
+                <Progression />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quests"
+            element={
+              <ProtectedRoute>
+                <Quests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seasonal"
+            element={
+              <ProtectedRoute>
+                <Seasonal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/skills"
+            element={
+              <ProtectedRoute>
+                <Skills />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/social"
+            element={
+              <ProtectedRoute>
+                <SocialHub />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/territories"
+            element={
+              <ProtectedRoute>
+                <Territories />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/world"
+            element={
+              <ProtectedRoute>
+                <World />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upgrades"
+            element={
+              <ProtectedRoute>
+                <UpgradeStation />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </main>
+      {!shouldHideFooter && <Footer />}
+      <Toaster />
+    </div>
+  );
+};
+
 function App() {
   return (
     <BrowserRouter>
-      <div className="app">
-        <Header />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/asset-test" element={<AssetTest />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/play"
-              element={
-                <ProtectedRoute>
-                  <Play />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/combat"
-              element={
-                <ProtectedRoute>
-                  <Combat />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/actions"
-              element={
-                <ProtectedRoute>
-                  <Actions />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/guild"
-              element={
-                <ProtectedRoute>
-                  <Guild />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/karma"
-              element={
-                <ProtectedRoute>
-                  <Karma />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/prestige"
-              element={
-                <ProtectedRoute>
-                  <Prestige />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/progression"
-              element={
-                <ProtectedRoute>
-                  <Progression />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quests"
-              element={
-                <ProtectedRoute>
-                  <Quests />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/seasonal"
-              element={
-                <ProtectedRoute>
-                  <Seasonal />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/skills"
-              element={
-                <ProtectedRoute>
-                  <Skills />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/social"
-              element={
-                <ProtectedRoute>
-                  <SocialHub />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/territories"
-              element={
-                <ProtectedRoute>
-                  <Territories />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/world"
-              element={
-                <ProtectedRoute>
-                  <World />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/upgrades"
-              element={
-                <ProtectedRoute>
-                  <UpgradeStation />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
-        <Footer />
-        <Toaster />
-      </div>
+      <AppLayout />
     </BrowserRouter>
   );
 }
