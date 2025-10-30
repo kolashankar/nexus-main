@@ -244,25 +244,34 @@ export class RoadNavMesh {
       const geometry = mesh.geometry.clone();
       geometry.applyMatrix4(mesh.matrixWorld);
       
-      // Ensure geometry is indexed and has normals
-      if (!geometry.index) {
+      // Ensure geometry has normals
+      if (!geometry.attributes.normal) {
         geometry.computeVertexNormals();
       }
       
       geometries.push(geometry);
     }
     
-    // Merge all geometries
-    const mergedGeometry = mergeGeometries(geometries, false);
+    // Merge all geometries WITH indexing (required for pathfinding)
+    const mergedGeometry = mergeGeometries(geometries, true);
     
     if (!mergedGeometry) {
       console.error('❌ Failed to merge geometries');
       return null;
     }
     
+    // Ensure the merged geometry is indexed
+    if (!mergedGeometry.index) {
+      console.log('   Converting to indexed geometry...');
+      mergedGeometry.computeVertexNormals();
+      const indexed = mergedGeometry.toNonIndexed();
+      return indexed;
+    }
+    
     // Simplify for NavMesh (reduce vertex count)
     // Note: three-pathfinding works best with simplified geometry
     console.log(`   Original vertices: ${mergedGeometry.attributes.position.count}`);
+    console.log(`   Indices: ${mergedGeometry.index ? mergedGeometry.index.count : 'none'}`);
     
     return mergedGeometry;
   }
