@@ -961,12 +961,20 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
           const npc = result.model;
           
           const spawnPos = getRandomSpawnPosition();
-          npc.position.copy(spawnPos);
+          
+          // Clamp NPC spawn position to NavMesh (roads only)
+          if (roadNavMeshRef.current) {
+            const clampedPos = roadNavMeshRef.current.clampToNavMesh(spawnPos);
+            npc.position.copy(clampedPos);
+          } else {
+            npc.position.copy(spawnPos);
+          }
+          
           npc.scale.set(0.8, 0.8, 0.8);
           npc.userData = {
             type: 'npc',
-            basePos: spawnPos.clone(),
-            targetPos: spawnPos.clone(),
+            basePos: npc.position.clone(),
+            targetPos: npc.position.clone(),
             speed: 0.02,
             idleTime: 0,
             moving: false
@@ -974,12 +982,18 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
           
           scene.add(npc);
           npcsRef.current.push(npc);
+          
+          // Setup shared animations and start with idle
+          if (animationControllerRef.current) {
+            animationControllerRef.current.setupMixer(npc);
+            animationControllerRef.current.setIdleAnimation(npc);
+          }
         } catch (error) {
           console.warn(`⚠️ Failed to load NPC ${i}`);
         }
       }
       
-      console.log(`✅ Loaded ${npcsRef.current.length} NPCs`);
+      console.log(`✅ Loaded ${npcsRef.current.length} NPCs (all on roads)`);
     };
 
     // === INITIALIZE WORLD ===
