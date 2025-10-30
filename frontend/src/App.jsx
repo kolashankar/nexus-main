@@ -1,9 +1,10 @@
 /**
  * Main App component
  */
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import useStore from './store';
+import { isMobileDevice } from './utils/mobileDetection';
 import Header from './components/layout/Header/Header';
 import Footer from './components/layout/Footer/Footer';
 import Landing from './pages/Landing/Landing';
