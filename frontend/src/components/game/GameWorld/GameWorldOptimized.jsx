@@ -262,10 +262,19 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     const maxDimension = Math.max(size.x, size.z);
     const scaleFactor = CITY_SCALE_CONFIG.TARGET_CITY_SIZE / maxDimension;
     
-    console.log(`   Scale factor: ${scaleFactor.toFixed(3)}`);
+    console.log(`   Scale factor: ${scaleFactor.toFixed(6)}`);
     
-    // Apply scale
-    cityModel.scale.multiplyScalar(scaleFactor);
+    // Only apply scaling if the model is reasonably sized
+    // Skip scaling for very large models (> 100,000 units) as they might be using different units
+    if (maxDimension < 100000) {
+      // Apply scale
+      cityModel.scale.multiplyScalar(scaleFactor);
+    } else {
+      // For very large models, use a fixed small scale
+      console.log('   ⚠️ Model is very large - using fixed scale of 0.01');
+      const fixedScale = 0.01;
+      cityModel.scale.set(fixedScale, fixedScale, fixedScale);
+    }
     
     // Center the city at origin
     box.setFromObject(cityModel);
