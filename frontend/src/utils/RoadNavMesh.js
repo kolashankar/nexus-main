@@ -5,6 +5,7 @@
 
 import * as THREE from 'three';
 import { Pathfinding } from 'three-pathfinding';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export class RoadNavMesh {
   constructor(cityModel) {
