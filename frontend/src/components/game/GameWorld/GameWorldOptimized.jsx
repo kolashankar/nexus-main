@@ -45,6 +45,8 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   const clockRef = useRef(new THREE.Clock());
   const performanceMonitorRef = useRef(null);
   const modelOptimizerRef = useRef(null);
+  const roadNavMeshRef = useRef(null);
+  const animationControllerRef = useRef(null);
   
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
