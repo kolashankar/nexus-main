@@ -784,7 +784,7 @@ The enhanced game world is ready for:
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** deep_testing_backend_v2  
-**Backend URL:** https://fixed-road-movement.preview.emergentagent.com  
+**Backend URL:** https://navmesh-roadways.preview.emergentagent.com  
 **Test Scope:** Quest System, Combat System, World Items, New Routers, Auth & Error Handling
 
 ### 📊 OVERALL RESULTS: 22/39 tests passed (56.4%)
@@ -980,7 +980,7 @@ The enhanced game world is ready for:
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** auto_frontend_testing_agent  
-**Frontend URL:** https://fixed-road-movement.preview.emergentagent.com  
+**Frontend URL:** https://navmesh-roadways.preview.emergentagent.com  
 **Test Focus:** Dashboard loading, Play page, Navigation, and Error handling as requested in review
 
 ### ❌ CRITICAL FRONTEND ISSUES FOUND (Multiple Failures)
@@ -1427,7 +1427,7 @@ The 10 newly created trait ability files are **production-ready** and working fl
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** auto_frontend_testing_agent  
-**Frontend URL:** https://fixed-road-movement.preview.emergentagent.com  
+**Frontend URL:** https://navmesh-roadways.preview.emergentagent.com  
 **Test Scope:** Desktop & Mobile functionality, SPA routing, Authentication, Performance, Asset loading  
 
 ### 📊 OVERALL RESULTS: Mixed - Core Infrastructure Working, Game Features Require Authentication
@@ -1786,7 +1786,7 @@ The 10 newly created trait ability files are **production-ready** and working fl
 ### Test Execution Summary
 **Date:** Current Testing Session  
 **Tester:** deep_testing_backend_v2  
-**Backend URL:** https://fixed-road-movement.preview.emergentagent.com  
+**Backend URL:** https://navmesh-roadways.preview.emergentagent.com  
 **Test Focus:** Health endpoints, Authentication, Core Game APIs, CORS, Error Handling, Performance  
 
 ### 📊 OVERALL RESULTS: 23/41 tests passed (56.1%)

@@ -13,7 +13,7 @@ app = FastAPI(
 # CORS
 origins = [
     "http://localhost:3000",
-    "https://fixed-road-movement.preview.emergentagent.com"
+    "https://navmesh-roadways.preview.emergentagent.com"
 ]
 # Configure CORS
 app.add_middleware(

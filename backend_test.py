@@ -14,8 +14,8 @@ from typing import Dict, Any, Optional
 # Use the backend URL from the environment or default
 def get_backend_url() -> str:
     """Get backend URL - using the external URL from supervisor config."""
-    # From supervisor config: APP_URL="https://fixed-road-movement.preview.emergentagent.com"
-    return "https://fixed-road-movement.preview.emergentagent.com"
+    # From supervisor config: APP_URL="https://navmesh-roadways.preview.emergentagent.com"
+    return "https://navmesh-roadways.preview.emergentagent.com"
 
 class KarmaNexusAPITester:
     def __init__(self):

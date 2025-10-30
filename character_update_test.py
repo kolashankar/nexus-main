@@ -11,7 +11,7 @@ import sys
 def test_character_update():
     """Test the character update endpoint specifically."""
     
-    base_url = "https://fixed-road-movement.preview.emergentagent.com"
+    base_url = "https://navmesh-roadways.preview.emergentagent.com"
     api_url = f"{base_url}/api"
     
     print("🎮 KARMA NEXUS 2.0 - CHARACTER UPDATE ENDPOINT TEST")
@@ -195,7 +195,7 @@ def test_character_update():
 def test_feature_endpoints():
     """Test if feature endpoints are registered (not necessarily working)."""
     
-    base_url = "https://fixed-road-movement.preview.emergentagent.com"
+    base_url = "https://navmesh-roadways.preview.emergentagent.com"
     api_url = f"{base_url}/api"
     
     print("\n🔍 FEATURE ENDPOINTS REGISTRATION TEST")
