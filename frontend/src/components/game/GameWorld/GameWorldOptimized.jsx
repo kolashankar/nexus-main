@@ -1179,16 +1179,19 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
       // Update camera
       updateCamera(camera, characterRef.current);
       
-      // Update animations
-      if (mixerRef.current) {
-        mixerRef.current.update(delta);
+      // Update shared animation controller
+      if (animationControllerRef.current) {
+        animationControllerRef.current.update(delta);
       }
       
       // Update NPCs (simple idle animation)
       npcsRef.current.forEach(npc => {
         if (npc.userData.type === 'npc') {
-          // Simple idle bobbing
-          npc.position.y = npc.userData.basePos.y + Math.sin(Date.now() * 0.001) * 0.05;
+          // Keep NPCs on NavMesh
+          if (roadNavMeshRef.current && !roadNavMeshRef.current.isOnNavMesh(npc.position)) {
+            const clampedPos = roadNavMeshRef.current.clampToNavMesh(npc.position);
+            npc.position.copy(clampedPos);
+          }
         }
       });
       
