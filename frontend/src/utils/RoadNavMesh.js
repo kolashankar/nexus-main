@@ -316,12 +316,18 @@ export class RoadNavMesh {
    * Find nearest point on NavMesh
    */
   getClosestNode(position) {
-    if (!this.navMesh) return position;
+    if (!this.navMesh || !this.navMesh.zone) return position;
     
-    const group = this.pathfinding.getGroup(this.zoneId, position);
-    const closestNode = this.pathfinding.getClosestNode(position, this.zoneId, group);
-    
-    return closestNode ? closestNode.centroid : position;
+    try {
+      const group = this.pathfinding.getGroup(this.zoneId, position);
+      if (!group) return position;
+      
+      const closestNode = this.pathfinding.getClosestNode(position, this.zoneId, group);
+      return closestNode ? closestNode.centroid : position;
+    } catch (error) {
+      console.warn('⚠️ Failed to get closest node:', error);
+      return position;
+    }
   }
 
   /**
