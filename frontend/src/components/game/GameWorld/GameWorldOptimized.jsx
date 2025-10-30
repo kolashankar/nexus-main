@@ -152,48 +152,94 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   };
 
   /**
-   * Load and optimize GLB model
+   * Load and optimize GLB or FBX model
    */
   const loadModel = (path, optimize = true) => {
     return new Promise((resolve, reject) => {
-      const loader = new GLTFLoader();
-      loader.load(
-        path,
-        (gltf) => {
-          let model = gltf.scene;
-          
-          // Apply shadows
-          model.traverse((child) => {
-            if (child.isMesh) {
-              const config = getPerformanceConfig();
-              child.castShadow = config.enableShadows;
-              child.receiveShadow = config.enableShadows;
-              
-              // Optimize materials
-              if (child.material) {
-                child.material.needsUpdate = true;
+      const isGLB = path.toLowerCase().endsWith('.glb') || path.toLowerCase().endsWith('.gltf');
+      const isFBX = path.toLowerCase().endsWith('.fbx');
+      
+      if (isGLB) {
+        const loader = new GLTFLoader();
+        loader.load(
+          path,
+          (gltf) => {
+            let model = gltf.scene;
+            
+            // Apply shadows
+            model.traverse((child) => {
+              if (child.isMesh) {
+                const config = getPerformanceConfig();
+                child.castShadow = config.enableShadows;
+                child.receiveShadow = config.enableShadows;
+                
+                // Optimize materials
+                if (child.material) {
+                  child.material.needsUpdate = true;
+                }
               }
+            });
+
+            // Optimize model if requested
+            if (optimize && modelOptimizerRef.current) {
+              model = modelOptimizerRef.current.optimize(model, isMobile);
             }
-          });
 
-          // Optimize model if requested
-          if (optimize && modelOptimizerRef.current) {
-            model = modelOptimizerRef.current.optimize(model, isMobile);
+            resolve({ model, animations: gltf.animations || [] });
+          },
+          (progress) => {
+            if (progress.total > 0) {
+              const percent = (progress.loaded / progress.total) * 100;
+              setLoadingProgress(Math.min(Math.round(percent), 99));
+            }
+          },
+          (error) => {
+            console.error('Model load error:', error);
+            reject(error);
           }
+        );
+      } else if (isFBX) {
+        const loader = new FBXLoader();
+        loader.load(
+          path,
+          (fbx) => {
+            let model = fbx;
+            
+            // Apply shadows
+            model.traverse((child) => {
+              if (child.isMesh) {
+                const config = getPerformanceConfig();
+                child.castShadow = config.enableShadows;
+                child.receiveShadow = config.enableShadows;
+                
+                // Optimize materials
+                if (child.material) {
+                  child.material.needsUpdate = true;
+                }
+              }
+            });
 
-          resolve({ model, animations: gltf.animations || [] });
-        },
-        (progress) => {
-          if (progress.total > 0) {
-            const percent = (progress.loaded / progress.total) * 100;
-            setLoadingProgress(Math.min(Math.round(percent), 99));
+            // Optimize model if requested
+            if (optimize && modelOptimizerRef.current) {
+              model = modelOptimizerRef.current.optimize(model, isMobile);
+            }
+
+            resolve({ model, animations: fbx.animations || [] });
+          },
+          (progress) => {
+            if (progress.total > 0) {
+              const percent = (progress.loaded / progress.total) * 100;
+              setLoadingProgress(Math.min(Math.round(percent), 99));
+            }
+          },
+          (error) => {
+            console.error('Model load error:', error);
+            reject(error);
           }
-        },
-        (error) => {
-          console.error('Model load error:', error);
-          reject(error);
-        }
-      );
+        );
+      } else {
+        reject(new Error(`Unsupported model format: ${path}`));
+      }
     });
   };
 
