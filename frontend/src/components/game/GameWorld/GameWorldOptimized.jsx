@@ -434,7 +434,7 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   };
 
   /**
-   * Handle player movement with boundary checking
+   * Handle player movement with boundary checking and NavMesh constraints
    */
   const updatePlayerMovement = (delta) => {
     if (!characterRef.current) return;
@@ -475,31 +475,61 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     const newX = state.position.x + Math.sin(state.rotation) * moveZ + Math.cos(state.rotation) * moveX;
     const newZ = state.position.z + Math.cos(state.rotation) * moveZ - Math.sin(state.rotation) * moveX;
     
-    // Boundary checking
-    const bounds = cityBounds.current;
-    const margin = 2;
+    // Create temporary position for testing
+    const testPosition = new THREE.Vector3(newX, state.position.y, newZ);
     
-    if (newX >= bounds.minX + margin && newX <= bounds.maxX - margin) {
-      state.position.x = newX;
-    }
-    if (newZ >= bounds.minZ + margin && newZ <= bounds.maxZ - margin) {
-      state.position.z = newZ;
+    // Check NavMesh constraints (roads only)
+    if (roadNavMeshRef.current) {
+      if (roadNavMeshRef.current.isOnNavMesh(testPosition, 1.5)) {
+        // Position is on road - allow movement
+        state.position.x = newX;
+        state.position.z = newZ;
+      } else {
+        // Position is off road - clamp to nearest road point
+        const clampedPos = roadNavMeshRef.current.clampToNavMesh(testPosition);
+        state.position.x = clampedPos.x;
+        state.position.z = clampedPos.z;
+      }
+    } else {
+      // Fallback to boundary checking if no NavMesh
+      const bounds = cityBounds.current;
+      const margin = 2;
+      
+      if (newX >= bounds.minX + margin && newX <= bounds.maxX - margin) {
+        state.position.x = newX;
+      }
+      if (newZ >= bounds.minZ + margin && newZ <= bounds.maxZ - margin) {
+        state.position.z = newZ;
+      }
     }
     
     // Apply gravity and jumping
     if (mov.jump && state.isGrounded) {
       state.velocity.y = JUMP_FORCE;
       state.isGrounded = false;
+      
+      // Trigger jump animation
+      if (animationControllerRef.current) {
+        animationControllerRef.current.playJumpAnimation(character);
+      }
     }
     
     state.velocity.y -= GRAVITY;
     state.position.y += state.velocity.y;
     
-    // Ground collision
+    // Ground collision - ensure landing on road
     const groundLevel = CITY_SCALE_CONFIG.CHARACTER_HEIGHT / 2;
     if (state.position.y <= groundLevel) {
       state.position.y = groundLevel;
       state.velocity.y = 0;
+      
+      // Just landed - clamp to NavMesh
+      if (!state.isGrounded && roadNavMeshRef.current) {
+        const clampedPos = roadNavMeshRef.current.clampToNavMesh(state.position);
+        state.position.copy(clampedPos);
+        state.position.y = groundLevel;
+      }
+      
       state.isGrounded = true;
     }
     
@@ -507,9 +537,23 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
     character.position.copy(state.position);
     character.rotation.y = state.rotation;
     
-    // Update animation state
+    // Update animation state with shared animation controller
     const isMoving = moveX !== 0 || moveZ !== 0;
-    state.currentAnimation = isMoving ? (mov.run ? 'run' : 'walk') : 'idle';
+    const targetAnimation = isMoving ? (mov.run ? 'run' : 'walk') : 'idle';
+    
+    if (state.currentAnimation !== targetAnimation && state.isGrounded) {
+      state.currentAnimation = targetAnimation;
+      
+      if (animationControllerRef.current) {
+        if (targetAnimation === 'idle') {
+          animationControllerRef.current.setIdleAnimation(character);
+        } else if (targetAnimation === 'walk') {
+          animationControllerRef.current.setWalkAnimation(character);
+        } else if (targetAnimation === 'run') {
+          animationControllerRef.current.setRunAnimation(character);
+        }
+      }
+    }
   };
 
   /**
