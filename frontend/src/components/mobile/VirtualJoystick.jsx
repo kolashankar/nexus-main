@@ -5,7 +5,7 @@ import './VirtualJoystick.css';
  * Virtual Joystick Component for Mobile Touch Controls
  * Returns normalized x, y values (-1 to 1) for movement direction
  */
-const VirtualJoystick = ({ onMove, size = 120, maxDistance = 50 }) => {
+const VirtualJoystick = ({ onMove, onEnd, size = 120, maxDistance = 50 }) => {
   const joystickRef = useRef(null);
   const stickRef = useRef(null);
   const [isActive, setIsActive] = useState(false);
@@ -81,6 +81,10 @@ const VirtualJoystick = ({ onMove, size = 120, maxDistance = 50 }) => {
       if (onMove) {
         onMove({ x: 0, y: 0, distance: 0 });
       }
+      
+      if (onEnd) {
+        onEnd();
+      }
     };
 
     joystick.addEventListener('touchstart', handleTouchStart, { passive: false });
@@ -94,7 +98,7 @@ const VirtualJoystick = ({ onMove, size = 120, maxDistance = 50 }) => {
       joystick.removeEventListener('touchend', handleTouchEnd);
       joystick.removeEventListener('touchcancel', handleTouchEnd);
     };
-  }, [onMove, maxDistance]);
+  }, [onMove, onEnd, maxDistance]);
 
   return (
     <div className="virtual-joystick-container">
