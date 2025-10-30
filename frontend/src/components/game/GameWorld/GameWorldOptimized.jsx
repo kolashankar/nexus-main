@@ -10,6 +10,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { Canvas } from '@react-three/fiber';
 import VirtualJoystick from '../../mobile/VirtualJoystick';
 import MobileControls from '../../mobile/MobileControls';
@@ -20,6 +21,8 @@ import AcquisitionTracker from '../WorldItems/AcquisitionTracker';
 import { isMobileDevice, isTouchDevice } from '../../../utils/mobileDetection';
 import { ModelOptimizer } from '../../../utils/ModelOptimizer';
 import { PerformanceMonitor } from '../../../utils/PerformanceMonitor';
+import { RoadNavMesh } from '../../../utils/RoadNavMesh';
+import { getSharedAnimationController } from '../../../utils/SharedAnimationController';
 import { 
   getActiveWorldItems, 
   checkCanAcquireItem, 
