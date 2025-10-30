@@ -253,7 +253,7 @@ export class RoadNavMesh {
     }
     
     // Merge all geometries
-    const mergedGeometry = THREE.BufferGeometryUtils.mergeGeometries(geometries, false);
+    const mergedGeometry = mergeGeometries(geometries, false);
     
     if (!mergedGeometry) {
       console.error('❌ Failed to merge geometries');
