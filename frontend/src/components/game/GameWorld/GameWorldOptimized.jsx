@@ -1209,9 +1209,10 @@ const GameWorldOptimized = ({ player, isFullscreen = false }) => {
   }, [cameraView, isLoaded]);
 
   // === MOBILE JOYSTICK HANDLERS ===
-  const handleJoystickMove = (x, y) => {
-    movement.current.joystickX = x;
-    movement.current.joystickY = y;
+  const handleJoystickMove = (data) => {
+    // VirtualJoystick passes {x, y, distance} object
+    movement.current.joystickX = data.x || 0;
+    movement.current.joystickY = data.y || 0;
   };
 
   const handleJoystickEnd = () => {
