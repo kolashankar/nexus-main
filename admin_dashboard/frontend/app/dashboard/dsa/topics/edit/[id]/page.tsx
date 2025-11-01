@@ -1,161 +1,22 @@
 'use client'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import ModernDashboardLayout from '@/components/ui/layout/sidebar/navigation/items/menu/handlers/ModernDashboardLayout'
+import ModernDSATopicForm from '@/components/ui/forms/dsa/ModernDSATopicForm'
+import { ListTree, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { dsaApi } from '@/lib/api/client/config/interceptors/auth/token/dsaApi'
-import toast from 'react-hot-toast'
-
-export default function EditTopic() {
-  const router = useRouter()
+export default function EditDSATopicPage() {
   const params = useParams()
-  const id = params.id as string
-  const [loading, setLoading] = useState(false)
-  const [fetching, setFetching] = useState(true)
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    icon: '📚',
-    color: '#3b82f6',
-    is_active: true,
-  })
-
+  const [topic, setTopic] = useState(null)
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
-    fetchTopic()
-  }, [id])
-
-  const fetchTopic = async () => {
-    try {
-      setFetching(true)
-      const response = await dsaApi.topics.getById(id)
-      const topic = response.data
-      setFormData({
-        name: topic.name,
-        description: topic.description,
-        icon: topic.icon,
-        color: topic.color,
-        is_active: topic.is_active,
-      })
-    } catch (error: any) {
-      toast.error('Failed to fetch topic')
-      console.error(error)
-    } finally {
-      setFetching(false)
+    const load = async () => {
+      try { const res = await fetch(`/api/admin/dsa/topics/${params.id}`); setTopic(await res.json()) }
+      catch (e) { alert('Failed') } finally { setLoading(false) }
     }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
-    try {
-      await dsaApi.topics.update(id, formData)
-      toast.success('Topic updated successfully')
-      router.push('/dashboard/dsa/topics/list')
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Failed to update topic')
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (fetching) {
-    return <div className="p-6 text-center">Loading topic...</div>
-  }
-
-  const commonIcons = ['📚', '📊', '🔍', '🧠', '💻', '🎯', '⚙️', '🔒', '🌳', '📊']
-
-  return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Edit DSA Topic</h1>
-
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Name *</label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Description *</label>
-            <textarea
-              required
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg"
-              rows={4}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Icon</label>
-            <div className="flex gap-2 mb-2">
-              {commonIcons.map((icon) => (
-                <button
-                  key={icon}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, icon })}
-                  className={`text-2xl p-2 rounded border ${
-                    formData.icon === icon ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                  }`}
-                >
-                  {icon}
-                </button>
-              ))}
-            </div>
-            <input
-              type="text"
-              value={formData.icon}
-              onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg"
-              placeholder="Or enter custom emoji"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Color</label>
-            <input
-              type="color"
-              value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className="w-full h-12 border rounded-lg"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-              className="mr-2"
-            />
-            <label className="text-sm font-medium">Active</label>
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              {loading ? 'Updating...' : 'Update Topic'}
-            </button>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  )
+    if (params.id) load()
+  }, [params.id])
+  if (loading) return <ModernDashboardLayout><div className="flex items-center justify-center h-96"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div></div></ModernDashboardLayout>
+  return <ModernDashboardLayout><div className="space-y-6"><div><Link href="/dashboard/dsa/topics/list" className="inline-flex items-center text-sm text-slate-600 mb-2"><ArrowLeft className="w-4 h-4 mr-1" />Back</Link><div className="flex items-center space-x-3"><div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg"><ListTree className="w-6 h-6 text-white" /></div><div><h1 className="text-3xl font-bold text-slate-900">Edit Topic</h1></div></div></div>{topic && <ModernDSATopicForm initialData={topic} isEditing />}</div></ModernDashboardLayout>
 }
