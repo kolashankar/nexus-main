@@ -5,7 +5,7 @@ Complete UI redesign of both web app and mobile app to match the modern, clean d
 
 ## Design Changes Applied
 
-### Color Scheme
+#### Color Scheme
 - **Primary**: Blue gradients (#2563eb to #4f46e5 to #6366f1)
 - **Accent**: Yellow (#fbbf24) for CTAs
 - **Background**: Light gray (#f9fafb) and white
