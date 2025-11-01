@@ -1,78 +1,71 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import DashboardLayout from '@/components/ui/layout/sidebar/navigation/items/menu/handlers/DashboardLayout'
-import InternshipForm from '@/components/ui/forms/internship/create/fields/input/validation/InternshipForm'
-import { internshipsApi, type Internship } from '@/lib/api/client/config/interceptors/auth/token/internshipsApi'
+import { useParams } from 'next/navigation'
+import ModernDashboardLayout from '@/components/ui/layout/sidebar/navigation/items/menu/handlers/ModernDashboardLayout'
+import ModernInternshipForm from '@/components/ui/forms/internship/ModernInternshipForm'
+import { GraduationCap, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
 export default function EditInternshipPage() {
-  const router = useRouter()
   const params = useParams()
-  const [internship, setInternship] = useState<Internship | null>(null)
+  const [internship, setInternship] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchInternship = async () => {
       try {
-        if (!params.id || typeof params.id !== 'string') {
-          setError('Invalid internship ID')
-          setLoading(false)
-          return
-        }
-
-        const internshipData = await internshipsApi.getById(params.id)
-        setInternship(internshipData)
-      } catch (err: any) {
-        console.error('Error fetching internship:', err)
-        setError(err.response?.data?.detail || 'Failed to load internship')
+        const response = await fetch(`/api/admin/internships/${params.id}`)
+        const data = await response.json()
+        setInternship(data)
+      } catch (error) {
+        console.error('Error fetching internship:', error)
+        alert('Failed to load internship')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchInternship()
+    if (params.id) {
+      fetchInternship()
+    }
   }, [params.id])
 
   if (loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading internship details...</p>
-          </div>
+      <ModernDashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
         </div>
-      </DashboardLayout>
-    )
-  }
-
-  if (error || !internship) {
-    return (
-      <DashboardLayout>
-        <div className="text-center py-12">
-          <div className="text-red-500 text-xl mb-4">❌ {error || 'Internship not found'}</div>
-          <button
-            onClick={() => router.push('/dashboard/internships/list')}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          >
-            Back to Internships List
-          </button>
-        </div>
-      </DashboardLayout>
+      </ModernDashboardLayout>
     )
   }
 
   return (
-    <DashboardLayout>
+    <ModernDashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Internship</h1>
-          <p className="text-gray-600 mt-1">Update internship listing details</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <Link 
+              href="/dashboard/internships/list"
+              className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 mb-2 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back to Internships
+            </Link>
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg">
+                <GraduationCap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900">Edit Internship</h1>
+                <p className="text-slate-600 mt-1">Update internship details</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <InternshipForm initialData={internship} isEditing={true} />
+        {internship && <ModernInternshipForm initialData={internship} isEditing />}
       </div>
-    </DashboardLayout>
+    </ModernDashboardLayout>
   )
 }
